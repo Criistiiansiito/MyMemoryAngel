@@ -102,7 +102,7 @@ export default function DashboardPaciente({ navigation }) {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuCard}>
+        <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('Calendario')}>
           <View style={[styles.menuIconContainer, { backgroundColor: '#F3E8FF' }]}>
             <MaterialCommunityIcons name="calendar-month-outline" size={28} color="#A855F7" />
           </View>
