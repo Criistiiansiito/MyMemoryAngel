@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Platform, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { auth } from '../../services/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import * as SecureStore from 'expo-secure-store';
 import { styles } from '../../style/styles'; 
 
-const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://192.168.1.99:5000/api';
+const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://172.20.10.5:5000/api';
 
 const setToken = async (key, value) => {
   if (Platform.OS === 'web') localStorage.setItem(key, value);
@@ -23,44 +24,53 @@ export default function InicioSesion({ navigation }) {
   const [messageType, setMessageType] = useState('error');
 
   const handleLogin = async () => {
-    setMessage(null);
-    if (!email || !password) {
-      setMessage('Rellena email y contraseña');
-      setMessageType('error');
-      return;
-    }
+  setMessage(null);
+  if (!email || !password) {
+    setMessage('Rellena email y contraseña');
+    setMessageType('error');
+    return;
+  }
 
-    setLoading(true);
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      const idToken = await user.getIdToken();
-      await setToken('userToken', idToken);
+  setLoading(true);
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    const idToken = await user.getIdToken();
+    
+    // Guardamos el token de sesión
+    await setToken('userToken', idToken);
 
-      const res = await axios.get(`${API}/auth/profile`, {
-        headers: { Authorization: `Bearer ${idToken}` }
-      });
+    // Obtenemos el perfil desde la base de datos MySQL
+    const res = await axios.get(`${API}/auth/profile`, {
+      headers: { Authorization: `Bearer ${idToken}` }
+    });
 
-      const perfil = res.data.usuario;
-      setLoading(false);
-      setMessage('Inicio de sesión exitoso');
-      setMessageType('success');
+    const perfil = res.data.usuario;
 
-      setTimeout(() => {
-        if (perfil.tipo_usuario === 'paciente') {
-          navigation.replace('DashboardPaciente');
-        } else {
-          navigation.replace('DashboardCuidador');
-        }
-      }, 800);
+    // Guardamos el objeto completo del usuario para que otras pantallas lo usen
+    await AsyncStorage.setItem('user', JSON.stringify(perfil));
+    console.log("Sesión guardada localmente para el usuario:", perfil.id_usuario);
+    // ------------------------------
 
-    } catch (err) {
-      setLoading(false);
-      setMessage(err.response?.data?.error || "Error al iniciar sesión");
-      setMessageType('error');
-    }
-  };
+    setLoading(false);
+    setMessage('Inicio de sesión exitoso');
+    setMessageType('success');
 
+    setTimeout(() => {
+      if (perfil.tipo_usuario === 'paciente') {
+        navigation.replace('DashboardPaciente');
+      } else {
+        navigation.replace('DashboardCuidador');
+      }
+    }, 800);
+
+  } catch (err) {
+    setLoading(false);
+    console.error("Error en login:", err);
+    setMessage(err.response?.data?.error || "Error al iniciar sesión");
+    setMessageType('error');
+  }
+};
   return (
     <View style={styles.container}>
       
