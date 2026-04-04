@@ -84,13 +84,13 @@ export default function RegistroPaciente({ navigation }) {
 
         <Text style={styles.label}>Nombre completo</Text>
         <View style={styles.inputContainer}>
-          <MaterialCommunityIcons name="account-outline" size={22} color="#A0AEC0" style={styles.inputIcon} />
+          <MaterialCommunityIcons name="account-outline" style={styles.inputIcon} />
           <TextInput placeholder="Tu nombre" value={nombre} onChangeText={setNombre} style={styles.input} />
         </View>
 
         <Text style={styles.label}>Correo electrónico</Text>
         <View style={styles.inputContainer}>
-          <MaterialCommunityIcons name="email-outline" size={22} color="#A0AEC0" style={styles.inputIcon} />
+          <MaterialCommunityIcons name="email-outline" style={styles.inputIcon} />
           <TextInput 
             placeholder="tu@email.com" 
             value={email} 
@@ -103,7 +103,7 @@ export default function RegistroPaciente({ navigation }) {
 
         <Text style={styles.label}>Contraseña</Text>
         <View style={styles.inputContainer}>
-          <MaterialCommunityIcons name="lock-outline" size={22} color="#A0AEC0" style={styles.inputIcon} />
+          <MaterialCommunityIcons name="lock-outline" style={styles.inputIcon} />
           <TextInput 
             placeholder="Mínimo 6 caracteres" 
             secureTextEntry={!showPassword} 
@@ -112,13 +112,13 @@ export default function RegistroPaciente({ navigation }) {
             style={styles.input} 
           />
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <MaterialCommunityIcons name={showPassword ? "eye-off" : "eye"} size={22} color="#A0AEC0" />
+            <MaterialCommunityIcons name={showPassword ? "eye-off" : "eye"} style={styles.inputIcon} />
           </TouchableOpacity>
         </View>
 
         <Text style={styles.label}>Fecha de nacimiento</Text>
         <TouchableOpacity style={styles.inputContainer} onPress={() => setShowDatePicker(true)}>
-          <MaterialCommunityIcons name="calendar-outline" size={22} color="#A0AEC0" style={styles.inputIcon} />
+          <MaterialCommunityIcons name="calendar-outline" style={styles.inputIcon} />
           <Text style={[styles.dateDisplay, { color: fechaSQL ? '#2D3748' : '#A0AEC0' }]}>{dateText}</Text>
         </TouchableOpacity>
 
@@ -133,11 +133,7 @@ export default function RegistroPaciente({ navigation }) {
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity 
-          style={styles.mainButton} 
-          onPress={handleRegistro}
-          disabled={loading}
-        >
+        <TouchableOpacity style={styles.mainButton} onPress={handleRegistro} disabled={loading}>
           {loading ? <ActivityIndicator color="#FFF" /> : <Text style={styles.mainButtonText}>Crear Cuenta</Text>}
         </TouchableOpacity>
       </View>

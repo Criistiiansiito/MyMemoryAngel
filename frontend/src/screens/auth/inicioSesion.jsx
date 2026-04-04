@@ -24,58 +24,59 @@ export default function InicioSesion({ navigation }) {
   const [messageType, setMessageType] = useState('error');
 
   const handleLogin = async () => {
-  setMessage(null);
-  if (!email || !password) {
-    setMessage('Rellena email y contraseña');
-    setMessageType('error');
-    return;
-  }
+    setMessage(null);
+    if (!email || !password) {
+      setMessage('Rellena email y contraseña');
+      setMessageType('error');
+      return;
+    }
 
-  setLoading(true);
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    const idToken = await user.getIdToken();
-    
-    // Guardamos el token de sesión
-    await setToken('userToken', idToken);
+    setLoading(true);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      const idToken = await user.getIdToken();
+      
+      // Guardar token de sesión de forma segura
+      await setToken('userToken', idToken);
 
-    // Obtenemos el perfil desde la base de datos MySQL
-    const res = await axios.get(`${API}/auth/profile`, {
-      headers: { Authorization: `Bearer ${idToken}` }
-    });
+      // Obtener perfil desde la base de datos MySQL
+      const res = await axios.get(`${API}/auth/profile`, {
+        headers: { Authorization: `Bearer ${idToken}` }
+      });
 
-    const perfil = res.data.usuario;
+      const perfil = res.data.usuario;
 
-    // Guardamos el objeto completo del usuario para que otras pantallas lo usen
-    await AsyncStorage.setItem('user', JSON.stringify(perfil));
-    console.log("Sesión guardada localmente para el usuario:", perfil.id_usuario);
-    // ------------------------------
+      // Guardar objeto completo del usuario para persistencia
+      await AsyncStorage.setItem('user', JSON.stringify(perfil));
 
-    setLoading(false);
-    setMessage('Inicio de sesión exitoso');
-    setMessageType('success');
+      setLoading(false);
+      setMessage('Inicio de sesión exitoso');
+      setMessageType('success');
 
-    setTimeout(() => {
-      if (perfil.tipo_usuario === 'paciente') {
-        navigation.replace('DashboardPaciente');
-      } else {
-        navigation.replace('DashboardCuidador');
-      }
-    }, 800);
+      // Navegación basada en el rol del usuario
+      setTimeout(() => {
+        if (perfil.tipo_usuario === 'paciente') {
+          navigation.replace('DashboardPaciente');
+        } else {
+          navigation.replace('DashboardCuidador');
+        }
+      }, 800);
 
-  } catch (err) {
-    setLoading(false);
-    console.error("Error en login:", err);
-    setMessage(err.response?.data?.error || "Error al iniciar sesión");
-    setMessageType('error');
-  }
-};
+    } catch (err) {
+      setLoading(false);
+      setMessage(err.response?.data?.error || "Error al iniciar sesión");
+      setMessageType('error');
+    }
+  };
+
   return (
     <View style={styles.container}>
-      
-      <ScrollView style={styles.contentPadding} showsVerticalScrollIndicator={false}>
-        {/* TITULO DE BIENVENIDA */}
+      <ScrollView 
+        style={styles.contentPadding} 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
         <View style={{ marginBottom: 30, marginTop: 10 }}>
           <Text style={{ fontSize: 28, fontWeight: '800', color: '#1A202C' }}>¡Hola de nuevo!</Text>
           <Text style={{ fontSize: 15, color: '#718096', marginTop: 5 }}>Te echábamos de menos en MyMemoryAngel</Text>
@@ -87,10 +88,9 @@ export default function InicioSesion({ navigation }) {
           </Text>
         )}
 
-        {/* INPUT EMAIL */}
         <Text style={styles.label}>Correo electrónico</Text>
         <View style={styles.inputContainer}>
-          <MaterialCommunityIcons name="email-outline" size={22} color="#A0AEC0" style={styles.inputIcon} />
+          <MaterialCommunityIcons name="email-outline" style={styles.inputIcon} />
           <TextInput 
             placeholder="tu@email.com" 
             value={email} 
@@ -102,10 +102,9 @@ export default function InicioSesion({ navigation }) {
           />
         </View>
 
-        {/* INPUT CONTRASEÑA */}
         <Text style={styles.label}>Contraseña</Text>
         <View style={styles.inputContainer}>
-          <MaterialCommunityIcons name="lock-outline" size={22} color="#A0AEC0" style={styles.inputIcon} />
+          <MaterialCommunityIcons name="lock-outline" style={styles.inputIcon} />
           <TextInput 
             placeholder="........" 
             value={password} 
@@ -119,7 +118,6 @@ export default function InicioSesion({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* ENLACE REGISTRO */}
         <TouchableOpacity 
           style={styles.loginLink} 
           onPress={() => navigation.navigate('Bienvenida')}
@@ -128,14 +126,17 @@ export default function InicioSesion({ navigation }) {
         </TouchableOpacity>
       </ScrollView>
 
-      {/* FOOTER CON BOTÓN ENTRAR */}
       <View style={styles.footer}>
         <TouchableOpacity 
           style={styles.mainButton} 
           onPress={handleLogin} 
           disabled={loading}
         >
-          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.mainButtonText}>Entrar</Text>}
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.mainButtonText}>Entrar</Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>

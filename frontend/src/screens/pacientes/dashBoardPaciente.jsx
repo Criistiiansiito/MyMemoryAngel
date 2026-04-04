@@ -7,7 +7,7 @@ import axios from 'axios';
 import { styles } from '../../style/styles';
 import BottomTabBar from '../../components/BottomTabBar';
 
-const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://192.168.1.99:5000/api';
+const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://172.20.10.5:5000/api';
 
 export default function DashboardPaciente({ navigation }) {
   const [nombreUsuario, setNombreUsuario] = useState('Paciente'); 

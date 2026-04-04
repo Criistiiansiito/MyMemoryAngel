@@ -35,6 +35,10 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 5,
   },
+  topBarArrow:{
+    fontSize:26,
+    color:"#334155"
+  },
   logoRow: { 
     flexDirection: 'row',
     alignItems: 'center',
@@ -52,7 +56,8 @@ export const styles = StyleSheet.create({
   brandName: { 
     fontSize: 22, 
     fontWeight: '800', 
-    color: '#1A202C' 
+    color: '#1A202C',
+    marginLeft: 15
   },
   subtitle: { 
     fontSize: 13, 
@@ -111,6 +116,8 @@ export const styles = StyleSheet.create({
   },
   inputIcon: {
     marginRight: 10,
+    fontSize: 22,      
+    color: '#94A3B8'
   },
   input: {
     flex: 1,
@@ -580,7 +587,6 @@ export const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#FFFFFF',
   },
-  // Contenedor principal para las actividades (Lienzo/Lectura)
   activityCanvas: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -591,15 +597,12 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     margin: 20,
-    // Sombra suave para que resalte
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-
-  // Texto de ayuda dentro de los lienzos
   canvasHint: {
     color: '#94A3B8',
     marginTop: 12,
@@ -607,8 +610,6 @@ export const styles = StyleSheet.create({
     fontWeight: '500',
     textAlign: 'center',
   },
-
-  // Contenedor de la paleta de colores o herramientas
   actionPanel: {
     backgroundColor: '#FFFFFF',
     padding: 20,
@@ -616,15 +617,12 @@ export const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     borderWidth: 1,
     borderColor: '#F1F5F9',
-    // Sombra hacia arriba
     elevation: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -3 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
   },
-
-  // Círculos de color para la paleta
   colorPicker: {
     width: 48,
     height: 48,
@@ -638,10 +636,8 @@ export const styles = StyleSheet.create({
 
   colorPickerSelected: {
     borderColor: '#334155',
-    transform: [{ scale: 1.1 }], // Se hace un pelín más grande al seleccionar
+    transform: [{ scale: 1.1 }], 
   },
-
-  // Botones de acción (Pincel, Borrar, etc.)
   iconButton: {
     width: 56,
     height: 56,
@@ -650,5 +646,109 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
+  },
+  // ==========================================
+  // SECCIÓN: RECORDATORIOS (LISTADO)
+  // ==========================================
+  headerActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  headerButtonsGroup: {
+    flexDirection: 'row',
+  },
+  dateHeaderContainer: {
+    alignItems: 'center', 
+    marginVertical: 20,
+  },
+  emptyStateContainer: {
+    alignItems: 'center', 
+    marginTop: 50,
+  },
+  emptyStateText: {
+    color: '#718096', 
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  menuCardCompleted: {
+    borderColor: '#4ADE80', 
+    borderWidth: 1.5, 
+    opacity: 0.8,
+  },
+  reminderInfoBody: {
+    flex: 1,
+  },
+  reminderTopRow: {
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    marginBottom: 6,
+  },
+  timeBadge: {
+    backgroundColor: '#F1F5F9', 
+    paddingHorizontal: 8, 
+    paddingVertical: 3, 
+    borderRadius: 6, 
+    marginRight: 8, 
+    flexDirection: 'row', 
+    alignItems: 'center',
+  },
+  timeBadgeText: {
+    color: '#4D6BFE', 
+    fontWeight: 'bold', 
+    fontSize: 11, 
+    marginLeft: 4,
+  },
+  completedBadge: {
+    backgroundColor: '#DCFCE7', 
+    paddingHorizontal: 6, 
+    paddingVertical: 2, 
+    borderRadius: 4,
+  },
+  completedCheck: {
+    color: '#16A34A', 
+    fontSize: 10, 
+    fontWeight: 'bold',
+  },
+  reminderFooterRow: {
+    flexDirection: 'row', 
+    marginTop: 8, 
+    alignItems: 'center',
+  },
+  typeDot: {
+    width: 6, 
+    height: 6, 
+    borderRadius: 3, 
+    marginRight: 6,
+  },
+  typeTabText: {
+    fontSize: 11, 
+    color: '#94A3B8', 
+    fontWeight: '600',
+    textTransform: 'capitalize',
+  },
+  centeredLoader: {
+    marginTop: 50,
+  },
+  calendarCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 10,
+    marginBottom: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  calendarTheme: {
+    calendarBackground: '#FFFFFF',
+    selectedDayBackgroundColor: '#4D6BFE',
+    todayTextColor: '#4D6BFE',
+    arrowColor: '#4D6BFE',
+    textMonthFontWeight: '800',
+    textDayHeaderFontWeight: '600',
+    dotStyle: { width: 6, height: 6, borderRadius: 3 }
   }
 });
