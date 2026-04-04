@@ -17,6 +17,7 @@ app.use((req, res, next) => {
 // Rutas
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
+app.use('/api/recordatorios', authRoutes);
 
 // Arrancar servidor en IP local
 const PORT = process.env.PORT || 5000;
