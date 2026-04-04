@@ -1,71 +1,113 @@
-import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch, Platform } from 'react-native';
+import React, { useState } from 'react'; 
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  ScrollView, 
+  Switch, 
+  Platform, 
+  Alert, 
+  ActivityIndicator 
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker'; // Importante
+import DateTimePicker from '@react-native-community/datetimepicker'; 
 import { styles } from '../../style/styles'; 
+
+import { 
+  TIPOS_RECORDATORIO, 
+  formatToMySQL, 
+  crearRecordatorio 
+} from '../../services/recordatoriosService';
 
 export default function NuevoRecordatorio({ navigation }) {
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
-  const [tipoSeleccionado, setTipoSeleccionado] = useState('Tarea');
+  
+  const defaultTipo = TIPOS_RECORDATORIO.find(t => t.id === 'Medicamento')?.id || TIPOS_RECORDATORIO[0].id;
+  const [tipoSeleccionado, setTipoSeleccionado] = useState(defaultTipo);
+
   const [frecuencia, setFrecuencia] = useState('Puntual');
   const [alertaSonora, setAlertaSonora] = useState(true);
-  const [soloMensaje, setSoloMensaje] = useState(false);
-
-  // Estados para Fecha y Hora
+  const [enviando, setEnviando] = useState(false);
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
   const [mode, setMode] = useState('date');
 
-  const tipos = [
-    { id: 'Medicación', icon: 'pill', color: '#E8F0FE', iconColor: '#3B82F6' },
-    { id: 'Cita médica', icon: 'calendar-check', color: '#E7F9ED', iconColor: '#22C55E' },
-    { id: 'Tarea', icon: 'checkbox-marked-outline', color: '#F3E8FF', iconColor: '#A855F7' },
-    { id: 'Evento personal', icon: 'account-outline', color: '#FFF7E6', iconColor: '#F59E0B' },
-    { id: 'Otro', icon: 'plus', color: '#F7FAFC', iconColor: '#718096' },
-  ];
+  const handleGuardar = async () => {
+    if (!titulo.trim()) {
+      Alert.alert("Campos incompletos", "Por favor, escribe un título para el recordatorio.");
+      return;
+    }
 
-  const onChangeDate = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShowPicker(Platform.OS === 'ios'); // En iOS queda abierto, en Android se cierra
-    setDate(currentDate);
+    setEnviando(true);
+    try {
+      const tipoAlertaFinal = alertaSonora ? 'sonora' : 'visual';
+
+      await crearRecordatorio({
+        titulo,
+        descripcion,
+        tipo: tipoSeleccionado,
+        recurrencia: frecuencia.toLowerCase(),
+        fecha_hora: formatToMySQL(date),
+        tipo_alerta: tipoAlertaFinal
+      });
+
+      Alert.alert("¡Éxito!", "El recordatorio se ha guardado correctamente.");
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert("Error", "No se pudo conectar con el servidor.");
+    } finally {
+      setEnviando(false);
+    }
   };
 
   const showMode = (currentMode) => {
-    setShowPicker(true);
     setMode(currentMode);
+    setShowPicker(true);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* HEADER */}
       <View style={styles.topBar}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <MaterialCommunityIcons name="arrow-left" size={26} color="#334155" />
+            <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
           </TouchableOpacity>
-          <Text style={[styles.brandName, { marginLeft: 15 }]}>Nuevo Recordatorio</Text>
+          <Text style={[styles.brandName]}>Nuevo Recordatorio</Text>
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: 50 }]} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
         <Text style={styles.label}>Título</Text>
         <View style={styles.inputContainer}>
-          <TextInput placeholder="Ej: Tomar medicamento" value={titulo} onChangeText={setTitulo} style={styles.input} />
+          <TextInput 
+            placeholder="Ej: Tomar paracetamol" 
+            value={titulo} 
+            onChangeText={setTitulo} 
+            style={styles.input} 
+            placeholderTextColor="#94A3B8"
+          />
         </View>
 
-        <Text style={styles.label}>Descripción</Text>
-        <View style={[styles.inputContainer, { height: 80, alignItems: 'flex-start', paddingTop: 10 }]}>
-          <TextInput placeholder="Detalles..." value={descripcion} onChangeText={setDescripcion} style={styles.input} multiline />
+        <Text style={styles.label}>Descripción (Opcional)</Text>
+        <View style={[styles.inputContainer, { height: 100, alignItems: 'flex-start', paddingTop: 12 }]}>
+          <TextInput 
+            placeholder="Detalles adicionales..." 
+            value={descripcion} 
+            onChangeText={setDescripcion} 
+            style={styles.input} 
+            multiline 
+            placeholderTextColor="#94A3B8"
+          />
         </View>
 
-        {/* TIPO DE RECORDATORIO */}
-        <Text style={styles.label}>Tipo de recordatorio</Text>
+        <Text style={styles.label}>Categoría</Text>
         <View style={styles.gridRecordatorios}>
-          {tipos.map((item) => {
-            const isSelected = tipoSeleccionado === item.id;
+          {TIPOS_RECORDATORIO.map((item) => {
+            const esSeleccionado = tipoSeleccionado === item.id;
             return (
               <TouchableOpacity 
                 key={item.id}
@@ -73,13 +115,20 @@ export default function NuevoRecordatorio({ navigation }) {
                 activeOpacity={0.7}
                 style={[
                   styles.cardTipoRecordatorio, 
-                  isSelected && styles.cardTipoActive // Se aplica si coincide el ID
+                  esSeleccionado && { 
+                    borderColor: '#4D6BFE', // Color azul del recuadro
+                    borderWidth: 2,         // Grosor para que se note
+                    backgroundColor: '#F0F4FF' // Opcional: un fondo muy clarito para resaltar
+                  }
                 ]}
               >
                 <View style={[styles.iconoTipoCirculo, { backgroundColor: item.color }]}>
                   <MaterialCommunityIcons name={item.icon} size={24} color={item.iconColor} />
                 </View>
-                <Text style={[styles.textoTipo, isSelected && styles.textoTipoActive]}>
+                <Text style={[
+                  styles.textoTipo, 
+                  esSeleccionado && { fontWeight: 'bold', color: '#4D6BFE' }
+                ]}>
                   {item.id}
                 </Text>
               </TouchableOpacity>
@@ -87,71 +136,85 @@ export default function NuevoRecordatorio({ navigation }) {
           })}
         </View>
 
-        {/* FRECUENCIA */}
-        <Text style={styles.label}>Repetición</Text>
+        <Text style={styles.label}>Frecuencia</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
           {['Puntual', 'Semanal', 'Mensual'].map((f) => (
             <TouchableOpacity 
               key={f} 
-              onPress={() => setFrecuencia(f)}
-              style={[styles.optionButton, { flex: 0.32, marginBottom: 0 }, frecuencia === f && styles.optionButtonActive]}
+              onPress={() => setFrecuencia(f)} 
+              style={[
+                styles.optionButton, 
+                { flex: 0.32 }, 
+                frecuencia === f && styles.optionButtonActive
+              ]}
             >
-              <Text style={[styles.optionText, frecuencia === f && styles.optionTextActive, { fontSize: 13 }]}>{f}</Text>
+              <Text style={[styles.optionText, frecuencia === f && styles.optionTextActive]}>
+                {f}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* DÍA Y HORA REAL */}
-        <Text style={styles.label}>Fecha y Hora</Text>
+        <Text style={styles.label}>Programación</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <TouchableOpacity onPress={() => showMode('date')} style={[styles.inputContainer, { flex: 0.55, marginRight: 10 }]}>
-              <MaterialCommunityIcons name="calendar" size={20} color="#4D6BFE" style={{ marginRight: 10 }} />
-              <Text style={{ color: '#2D3748' }}>{date.toLocaleDateString()}</Text>
-            </TouchableOpacity>
+          <TouchableOpacity onPress={() => showMode('date')} style={[styles.inputContainer, { flex: 0.52, marginRight: 10 }]}>
+            <MaterialCommunityIcons name="calendar" size={20} color="#4D6BFE" style={{ marginRight: 8 }} />
+            <Text style={{ color: '#1E293B' }}>{date.toLocaleDateString()}</Text>
+          </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => showMode('time')} style={[styles.inputContainer, { flex: 0.4 }]}>
-              <MaterialCommunityIcons name="clock-outline" size={20} color="#4D6BFE" style={{ marginRight: 10 }} />
-              <Text style={{ color: '#2D3748' }}>{date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
-            </TouchableOpacity>
+          <TouchableOpacity onPress={() => showMode('time')} style={[styles.inputContainer, { flex: 0.43 }]}>
+            <MaterialCommunityIcons name="clock-outline" size={20} color="#4D6BFE" style={{ marginRight: 8 }} />
+            <Text style={{ color: '#1E293B' }}>
+              {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {showPicker && (
-          <DateTimePicker
-            value={date}
-            mode={mode}
-            is24Hour={true}
-            display="default"
-            onChange={onChangeDate}
+          <DateTimePicker 
+            value={date} mode={mode} is24Hour={true} 
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'} 
+            onChange={(e, d) => { setShowPicker(Platform.OS === 'ios'); if(d) setDate(d); }} 
           />
         )}
 
-        {/* ALERTAS */}
-        <View style={[styles.settingsCard, { marginTop: 25 }]}>
-          <View style={[styles.rowSpace, { marginBottom: 15 }]}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialCommunityIcons name={alertaSonora ? "volume-high" : "volume-off"} size={22} color={alertaSonora ? "#4D6BFE" : "#4A5568"} />
-              <Text style={{ marginLeft: 10, fontWeight: '600' }}>Alerta Sonora</Text>
+        <Text style={[styles.label, { marginTop: 25 }]}>Aviso de notificación</Text>
+        <View style={[styles.settingsCard, { paddingVertical: 15, marginBottom: 10 }]}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+              <View style={{ width: 40, alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
+                <MaterialCommunityIcons 
+                  name={alertaSonora ? "bell-outline" : "bell-off-outline"} 
+                  size={26} 
+                  color={alertaSonora ? "#4D6BFE" : "#94A3B8"} 
+                />
+              </View>
+              <View>
+                <Text style={{ fontSize: 15, fontWeight: '700', color: '#1E293B' }}>
+                  {alertaSonora ? "Sonido Activado" : "Modo Silencioso"}
+                </Text>
+                <Text style={{ fontSize: 12, color: '#64748B' }}>
+                  {alertaSonora ? "Recibirás un aviso con sonido" : "Solo notificación visual"}
+                </Text>
+              </View>
             </View>
-            <Switch value={alertaSonora} onValueChange={setAlertaSonora} trackColor={{ true: '#4D6BFE' }} />
-          </View>
 
-          <View style={styles.rowSpace}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialCommunityIcons name="message-text-outline" size={22} color={soloMensaje ? "#4D6BFE" : "#4A5568"} />
-              <Text style={{ marginLeft: 10, fontWeight: '600' }}>Solo Mensaje (Push)</Text>
-            </View>
-            <Switch value={soloMensaje} onValueChange={setSoloMensaje} trackColor={{ true: '#4D6BFE' }} />
+            <Switch
+              trackColor={{ false: "#CBD5E0", true: "#4D6BFE" }}
+              thumbColor="#FFFFFF"
+              ios_backgroundColor="#CBD5E0"
+              onValueChange={() => setAlertaSonora(prev => !prev)}
+              value={alertaSonora}
+            />
           </View>
         </View>
 
         <TouchableOpacity 
-          style={[styles.mainButton, { marginTop: 30 }]} 
-          onPress={() => {
-            console.log("Datos:", { titulo, tipoSeleccionado, date, alertaSonora });
-            navigation.goBack();
-          }}
+          style={[styles.mainButton, { marginTop: 25, marginBottom: 20, opacity: enviando ? 0.7 : 1 }]} 
+          onPress={handleGuardar} 
+          disabled={enviando}
         >
-          <Text style={styles.mainButtonText}>Guardar Recordatorio</Text>
+          {enviando ? <ActivityIndicator color="#FFF" /> : <Text style={styles.mainButtonText}>Guardar Recordatorio</Text>}
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

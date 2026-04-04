@@ -1,30 +1,53 @@
-import { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { styles } from '../../style/styles'; // Tu CSS original
+import { useFocusEffect } from '@react-navigation/native';
+import { styles } from '../../style/styles';
 import BottomTabBar from '../../components/BottomTabBar';
 
+import { 
+  fetchRecordatorios, 
+  getIconConfig, 
+  formatearFechaYHora 
+} from '../../services/recordatoriosService';
+
 export default function Recordatorios({ navigation }) {
- 
-  const [reminders] = useState([
-    { id: 1, time: '08:00', title: 'Desayuno', desc: 'Tomar medicamento con comida', icon: 'silverware-fork-knife', color: '#FFEDD5', iconColor: '#F97316', completed: true },
-    { id: 2, time: '14:00', title: 'Medicamento', desc: 'Pastilla azul después de comer', icon: 'pill', color: '#DBEAFE', iconColor: '#3B82F6', completed: false },
-    { id: 3, time: '20:00', title: 'Cena', desc: 'Cenar ligero', icon: 'silverware-fork-knife', color: '#DCFCE7', iconColor: '#22C55E', completed: false },
-    { id: 4, time: '22:00', title: 'Dormir', desc: 'Hora de descansar', icon: 'moon-waning-crescent', color: '#F3E8FF', iconColor: '#A855F7', completed: false },
-  ]);
+  const [reminders, setReminders] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const cargarDatos = async () => {
+    setLoading(true);
+    const result = await fetchRecordatorios();
+    if (result.ok) {
+      setReminders(result.data);
+    } else if (result.status !== 404) {
+      Alert.alert("Error", "No se pudieron obtener los recordatorios.");
+    } else {
+      setReminders([]);
+    }
+    setLoading(false);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      cargarDatos();
+    }, [])
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* HEADER DINÁMICO */}
       <View style={styles.topBar}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <View style={styles.headerActions}>
           <Text style={styles.brandName}>Recordatorios</Text>
-          <View style={{ flexDirection: 'row' }}>
+          <View style={styles.headerButtonsGroup}>
             <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('Calendario')}>
               <MaterialCommunityIcons name="calendar-month-outline" size={24} color="#8B5CF6" />
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.headerIconButton, { backgroundColor: '#4D6BFE' }]} onPress={() => navigation.navigate('NuevoRecordatorio')}>
+            <TouchableOpacity 
+              style={[styles.headerIconButton, { backgroundColor: '#334155' }]} 
+              onPress={() => navigation.navigate('NuevoRecordatorio')}
+            >
               <MaterialCommunityIcons name="plus" size={24} color="#FFF" />
             </TouchableOpacity>
           </View>
@@ -32,44 +55,65 @@ export default function Recordatorios({ navigation }) {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* FECHA */}
-        <View style={{ alignItems: 'center', marginVertical: 20 }}>
-          <Text style={styles.dateText}>Hoy, martes, 3 de marzo</Text>
+        <View style={styles.dateHeaderContainer}>
+          <Text style={styles.dateText}>
+            {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+          </Text>
         </View>
 
-        {/* LISTA DE CARDS */}
-        {reminders.map((item) => (
-          <TouchableOpacity 
-            key={item.id} 
-            style={[
-              styles.menuCard, 
-              item.completed && { borderColor: '#4ADE80', borderWidth: 1.5 }
-            ]}
-          >
-            {/* ICONO IZQUIERDA */}
-            <View style={[styles.menuIconContainer, { backgroundColor: item.color }]}>
-              <MaterialCommunityIcons name={item.icon} size={30} color={item.iconColor} />
-            </View>
-
-            {/* TEXTO */}
-            <View style={{ flex: 1 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-                <View style={{ backgroundColor: '#F1F5F9', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, marginRight: 8 }}>
-                  <Text style={{ color: '#4D6BFE', fontWeight: 'bold', fontSize: 12 }}>{item.time}</Text>
+        {loading ? (
+          <ActivityIndicator size="large" color="#4D6BFE" style={styles.centeredLoader} />
+        ) : reminders.length === 0 ? (
+          <View style={styles.emptyStateContainer}>
+            <MaterialCommunityIcons name="bell-off-outline" size={60} color="#CBD5E0" />
+            <Text style={styles.emptyStateText}>No hay recordatorios registrados</Text>
+          </View>
+        ) : (
+          reminders.map((item) => {
+            const config = getIconConfig(item.tipo);
+            const { fecha, hora } = formatearFechaYHora(item.fecha_hora);
+            
+            return (
+              <TouchableOpacity 
+                key={item.id_recordatorio} 
+                style={[styles.menuCard, item.cumplido && styles.menuCardCompleted]}
+                onPress={() => navigation.navigate('ModificarRecordatorio', { recordatorio: item })}
+              >
+                <View style={[styles.menuIconContainer, { backgroundColor: config.color }]}>
+                  <MaterialCommunityIcons name={config.icon} size={30} color={config.iconColor} />
                 </View>
-                {item.completed && (
-                  <View style={{ backgroundColor: '#DCFCE7', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 }}>
-                    <Text style={{ color: '#16A34A', fontSize: 11, fontWeight: '700' }}>✓ Completado</Text>
-                  </View>
-                )}
-              </View>
-              <Text style={styles.menuTitle}>{item.title}</Text>
-              <Text style={styles.menuSubtitle}>{item.desc}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
 
+                <View style={styles.reminderInfoBody}>
+                  <View style={styles.reminderTopRow}>
+                    <View style={styles.timeBadge}>
+                      <MaterialCommunityIcons name="clock-outline" size={14} color="#4D6BFE" />
+                      <Text style={styles.timeBadgeText}>{fecha} | {hora}</Text>
+                    </View>
+                    {/* Cambiado && por ternario con null para evitar errores de texto */}
+                    {item.cumplido ? (
+                      <View style={styles.completedBadge}>
+                        <Text style={styles.completedCheck}>✓</Text>
+                      </View>
+                    ) : null}
+                  </View>
+
+                  <Text style={styles.menuTitle}>{item.titulo}</Text>
+                  
+                  {/* Aseguramos que la descripción sea un string válido antes de renderizar */}
+                  {item.descripcion && item.descripcion.trim().length > 0 ? (
+                    <Text style={styles.menuSubtitle}>{item.descripcion}</Text>
+                  ) : null}
+
+                  <View style={styles.reminderFooterRow}>
+                    <View style={[styles.typeDot, { backgroundColor: config.iconColor }]} />
+                    <Text style={styles.typeTabText}>{item.tipo}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            );
+          })
+        )}
+      </ScrollView>
       <BottomTabBar />
     </SafeAreaView>
   );
