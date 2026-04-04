@@ -8,7 +8,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import * as SecureStore from 'expo-secure-store';
 import { styles } from '../../style/styles'; 
 
-const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://192.168.1.99:5000/api';
+const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://172.20.10.5:5000/api';
 
 const setToken = async (key, value) => {
   if (Platform.OS === 'web') localStorage.setItem(key, value);
