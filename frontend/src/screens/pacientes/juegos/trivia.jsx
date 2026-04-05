@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { getStyles } from '../../../style/styles';
+import { useAccesibilidad } from '../../../services/accesibilidadContext';
 
 const questions = [
   { question: '¿El Alzheimer afecta la memoria?', answer: 'Sí' },
@@ -8,6 +10,9 @@ const questions = [
 ];
 
 export default function Trivia({ onBack }) {
+  const { aplicarEscala } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala);
+  
   const [current, setCurrent] = useState(0);
 
   const handleAnswer = (ans) => {

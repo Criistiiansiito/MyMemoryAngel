@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Platform, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
-import { styles } from '../../style/styles';
+import { getStyles } from '../../style/styles';
+import { useAccesibilidad } from '../../services/accesibilidadContext';
 import BottomTabBar from '../../components/BottomTabBar';
 
 const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://172.20.10.5:5000/api';
@@ -13,6 +14,9 @@ export default function DashboardPaciente({ navigation }) {
   const [nombreUsuario, setNombreUsuario] = useState('Paciente'); 
   const [loading, setLoading] = useState(true);
   const fechaHoy = "martes, 3 de marzo de 2026";
+
+  const { aplicarEscala } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala);
 
   useEffect(() => {
     obtenerPerfil();
@@ -122,15 +126,22 @@ export default function DashboardPaciente({ navigation }) {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('ChatBot')}>
-          <View style={[styles.menuIconContainer, { backgroundColor: '#FEF3C7' }]}>
-            <MaterialCommunityIcons name="chat-bubble-outline" size={28} color="#F59E0B" />
-          </View>
-          <View>
-            <Text style={styles.menuTitle}>Asistente</Text>
-            <Text style={styles.menuSubtitle}>Habla conmigo</Text>
-          </View>
-        </TouchableOpacity>
+<TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('ChatBot')}>
+  <View style={[styles.menuIconContainer, { backgroundColor: '#FEF3C7' }]}>
+    
+    {/* REEMPLAZAMOS EL ICONO POR TU IMAGEN PERSONALIZADA */}
+    <Image 
+      source={require('../../../assets/icons/bot-icon.png')} 
+      style={{ width: 35, height: 35 }} // Ajusta el tamaño para que quepa bien en el cuadro
+      resizeMode="contain" 
+    />
+
+  </View>
+  <View>
+    <Text style={styles.menuTitle}>Asistente</Text>
+    <Text style={styles.menuSubtitle}>Habla conmigo</Text>
+  </View>
+</TouchableOpacity>
       </ScrollView>
       
       <BottomTabBar />

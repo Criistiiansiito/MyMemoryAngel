@@ -1,7 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import { getStyles } from '../../../style/styles';
+import { useAccesibilidad } from '../../../services/accesibilidadContext';
 
 export default function Memoria({ onBack }) {
+  const { aplicarEscala } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala);
+  
   const simbolos = ['★', '▲', '●', '■', '♥'];
   const [objetivo, setObjetivo] = useState('');
   const [lista, setLista] = useState([]);

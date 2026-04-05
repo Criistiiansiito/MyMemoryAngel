@@ -1,4 +1,5 @@
 import { NavigationContainer } from '@react-navigation/native';
+import { AccesibilidadProvider } from './services/accesibilidadContext';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // Screens
@@ -21,6 +22,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
+    <AccesibilidadProvider>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Bienvenida" screenOptions={{ headerShown: true, headerBackTitleVisible: false, headerTintColor: '#2D3748',headerTitleStyle: { fontWeight: '700' }, animation: 'fade_from_bottom'}}>
         <Stack.Screen name="Bienvenida" component={Bienvenida} options={{ headerShown: false }} />
@@ -38,5 +40,6 @@ export default function App() {
         <Stack.Screen name="Actividades" component={Actividades} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
+    </AccesibilidadProvider>
   );
 }

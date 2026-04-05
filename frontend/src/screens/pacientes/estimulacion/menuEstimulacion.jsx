@@ -1,9 +1,13 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { styles } from '../../../style/styles';
 import BottomTabBar from '../../../components/BottomTabBar';
+import { getStyles } from '../../../style/styles';
+import { useAccesibilidad } from '../../../services/accesibilidadContext';
 
 export default function MenuEstimulacion({ onBack, onSelectActivity }) {
+  const { aplicarEscala } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala);
+  
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.scrollContent}>

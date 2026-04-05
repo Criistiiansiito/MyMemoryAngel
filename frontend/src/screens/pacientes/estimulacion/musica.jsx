@@ -1,7 +1,12 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { getStyles } from '../../../style/styles';
+import { useAccesibilidad } from '../../../services/accesibilidadContext';
 
 export default function Musica({ onBack }) {
+  const { aplicarEscala } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala);
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.closeBtn} onPress={onBack}>

@@ -2,9 +2,13 @@ import { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { styles } from '../../../style/styles';
+import { getStyles } from '../../../style/styles';
+import { useAccesibilidad } from '../../../services/accesibilidadContext';
 
 export default function ArteActividad({ onBack }) {
+  const { aplicarEscala } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala);
+
   const [selectedColor, setSelectedColor] = useState('#EF4444');
   
   const colors = [

@@ -6,7 +6,8 @@ import axios from 'axios';
 import { auth } from '../../services/firebase'; 
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import * as SecureStore from 'expo-secure-store';
-import { styles } from '../../style/styles'; 
+import { getStyles } from '../../style/styles';
+import { useAccesibilidad } from '../../services/accesibilidadContext';
 
 const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://172.20.10.5:5000/api';
 
@@ -16,6 +17,9 @@ const setToken = async (key, value) => {
 };
 
 export default function RegistroCuidador({ navigation }) {
+  const { aplicarEscala } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala);
+  
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

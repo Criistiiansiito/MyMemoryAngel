@@ -1,7 +1,12 @@
 import { View, Text, TouchableOpacity, Image, StatusBar } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { styles } from '../../style/styles';
+import { getStyles } from '../../style/styles';
+import { useAccesibilidad } from '../../services/accesibilidadContext';
 export default function Bienvenida({ navigation }) {
+
+  const { aplicarEscala } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala);
+  
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
