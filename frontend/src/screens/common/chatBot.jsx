@@ -1,70 +1,177 @@
-import  { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, KeyboardAvoidingView, Platform } from 'react-native';
+import { useState, useRef, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, KeyboardAvoidingView, Platform, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { styles } from '../../style/styles';
+import { styles } from '../../style/styles'; 
 import BottomTabBar from '../../components/BottomTabBar';
+
+const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://172.20.10.5:5000/api';
+
+const CATEGORIAS_COMPLETA = [
+  { id: 1, titulo: 'Cuidados', pregunta: 'Cuidados Diarios', subtemas: ['Vestimenta', 'Dentadura', 'Piel y Escaras', 'Incontinencia', 'Corte de Uñas'] },
+  { id: 2, titulo: 'Memoria', pregunta: 'Memoria y Mente', subtemas: ['Ejercicios Mentales', 'Musicoterapia', 'Uso de Fotos', 'Orientación', 'Manualidades'] },
+  { id: 3, titulo: 'Conducta', pregunta: 'Comportamiento', subtemas: ['Agresividad', 'Deambulación', 'Repeticiones', 'Síndrome Ocaso'] },
+  { id: 4, titulo: 'Seguridad', pregunta: 'Seguridad', subtemas: ['Evitar Caídas', 'Prevención de Fugas'] },
+  { id: 5, titulo: 'Comida', pregunta: 'Comida', subtemas: ['Agua', 'Nutrición'] },
+  { id: 6, titulo: 'Medicina', pregunta: 'Medicina', subtemas: ['Citas', 'Síntomas'] },
+];
 
 export default function ChatbotScreen({ navigation }) {
   const [mensaje, setMensaje] = useState('');
   const [chatLog, setChatLog] = useState([
-    { id: 1, texto: '¡Hola! Soy tu asistente. ¿En qué puedo ayudarte hoy?', sender: 'bot' },
+    { id: 1, texto: '¡Hola! Selecciona un tema para empezar.', sender: 'bot' },
   ]);
+  const [escribiendo, setEscribiendo] = useState(false);
+  const scrollViewRef = useRef();
+  const fadeAnim = useRef(new Animated.Value(0.3)).current;
 
-  const enviarMensaje = () => {
-    if (mensaje.trim() === '') return;
-    
-    const nuevoMensaje = { id: Date.now(), texto: mensaje, sender: 'user' };
-    setChatLog([...chatLog, nuevoMensaje]);
-    setMensaje('');
+  useEffect(() => {
+    if (escribiendo) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
+          Animated.timing(fadeAnim, { toValue: 0.3, duration: 600, useNativeDriver: true }),
+        ])
+      ).start();
+    }
+  }, [escribiendo]);
 
-    // Simulación de respuesta automática
+  useEffect(() => {
     setTimeout(() => {
-      setChatLog(prev => [...prev, {
-        id: Date.now() + 1,
-        texto: 'Entiendo tu pregunta. Estoy aquí para ayudarte. ¿Necesitas información sobre tus medicamentos o recordatorios?',
-        sender: 'bot'
-      }]);
-    }, 1000);
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  }, [chatLog, escribiendo]);
+
+  const enviarMensaje = async (texto) => {
+    const textoFinal = texto || mensaje;
+    if (textoFinal.trim() === '' || escribiendo) return;
+
+    setChatLog(prev => [...prev, { id: Date.now(), texto: textoFinal, sender: 'user' }]);
+    setMensaje('');
+    setEscribiendo(true);
+
+    try {
+      const response = await fetch(`${API}/chatbot/preguntar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mensajeUsuario: textoFinal })
+      });
+      const data = await response.json();
+
+      setTimeout(() => {
+        const categoriaEncontrada = CATEGORIAS_COMPLETA.find(cat => cat.pregunta === textoFinal);
+        
+        setChatLog(prev => {
+          const nuevoLog = [...prev, { id: Date.now() + 1, texto: data.respuesta, sender: 'bot' }];
+          if (categoriaEncontrada) {
+            nuevoLog.push({
+              id: Date.now() + 2,
+              texto: `¿Sobre qué parte de "${categoriaEncontrada.titulo}" quieres preguntar?`,
+              sender: 'bot',
+              opciones: categoriaEncontrada.subtemas
+            });
+          }
+          return nuevoLog;
+        });
+        setEscribiendo(false);
+      }, 1000);
+
+    } catch (error) {
+      setChatLog(prev => [...prev, { id: Date.now() + 1, texto: "Error de conexión.", sender: 'bot' }]);
+      setEscribiendo(false);
+    }
   };
 
   return (
-<SafeAreaView style={styles.chatContainer}> 
-  <View style={styles.topBar}>
-    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-      <View style={styles.avatarContainer}>
-        <Image source={require('../../../assets/icons/bot-icon.png')} style={{ width: 30, height: 30 }} />
-        <View style={styles.statusDot} />
-      </View>
-      <View style={{ marginLeft: 12 }}>
-        <Text style={{ fontSize: 18, fontWeight: '700' }}>Asistente</Text>
-        <Text style={{ fontSize: 12, color: '#22C55E' }}>● Disponible</Text>
-      </View>
-    </View>
-  </View>
-
-  <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-    <ScrollView contentContainerStyle={{ padding: 20 }}>
-      {chatLog.map((item) => (
-        <View key={item.id} style={{ alignSelf: item.sender === 'bot' ? 'flex-start' : 'flex-end', maxWidth: '85%', marginBottom: 15 }}>
-          <View style={item.sender === 'bot' ? styles.bubbleBot : styles.bubbleUser}>
-            <Text style={item.sender === 'bot' ? styles.textBot : styles.textUser}>{item.texto}</Text>
+    <SafeAreaView style={styles.chatContainer}>
+      {/* CABECERA */}
+      <View style={styles.topBar}>
+        <View style={styles.headerInfo}>
+          <View style={styles.avatarContainer}>
+            <Image source={require('../../../assets/icons/bot-icon.png')} style={styles.botIcon} />
+            <View style={styles.statusDot} />
+          </View>
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.headerTitle}>Asistente</Text>
+            <Text style={styles.headerStatus}>● Disponible</Text>
           </View>
         </View>
-      ))}
-    </ScrollView>
-
-    <View style={styles.chatInputContainer}>
-      <View style={styles.inputChatWrapper}>
-        <TextInput value={mensaje} onChangeText={setMensaje} style={{ flex: 1 }} placeholder="Escribe tu pregunta..." />
       </View>
-      <TouchableOpacity onPress={enviarMensaje} style={styles.sendButton}>
-        <MaterialCommunityIcons name="send" size={24} color="white" />
-      </TouchableOpacity>
-    </View>
-  </KeyboardAvoidingView>
 
-  <BottomTabBar />
-</SafeAreaView>
+      {/* PANEL SUPERIOR 3x3 */}
+      <View style={styles.gridContainer}>
+        <View style={styles.gridRow}>
+          {CATEGORIAS_COMPLETA.map((item) => (
+            <TouchableOpacity 
+              key={item.id} 
+              style={styles.chipTema} 
+              onPress={() => enviarMensaje(item.pregunta)}
+            >
+              <Text style={styles.chipTemaText}>{item.titulo}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      {/* CUERPO DEL CHAT */}
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      >
+        <ScrollView 
+          ref={scrollViewRef} 
+          contentContainerStyle={styles.scrollContent}
+        >
+          {chatLog.map((item) => (
+            <View key={item.id} style={styles.messageWrapper}>
+              <View style={[
+                item.sender === 'bot' ? styles.bubbleBot : styles.bubbleUser
+              ]}>
+                <Text style={item.sender === 'bot' ? styles.textBot : styles.textUser}>
+                  {item.texto}
+                </Text>
+              </View>
+
+              {item.opciones && (
+                <View style={styles.subtemasContainer}>
+                  {item.opciones.map((opt, idx) => (
+                    <TouchableOpacity 
+                      key={idx} 
+                      style={styles.btnSubtema}
+                      onPress={() => enviarMensaje(opt)}
+                    >
+                      <Text style={styles.btnSubtemaText}>{opt}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+            </View>
+          ))}
+
+          {escribiendo && (
+            <Animated.View style={[styles.writingIndicator, { opacity: fadeAnim }]}>
+              <MaterialCommunityIcons name="dots-horizontal" size={24} color="#64748B" />
+              <Text style={styles.writingText}>Pensando...</Text>
+            </Animated.View>
+          )}
+        </ScrollView>
+
+        {/* INPUT INFERIOR */}
+        <View style={styles.chatInputContainer}>
+          <TextInput 
+            value={mensaje} 
+            onChangeText={setMensaje} 
+            style={styles.inputChatWrapper} 
+            placeholder="Haz una pregunta..." 
+          />
+          <TouchableOpacity onPress={() => enviarMensaje()} style={styles.sendButton}>
+            <MaterialCommunityIcons name="send" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+
+      <BottomTabBar />
+    </SafeAreaView>
   );
 }
