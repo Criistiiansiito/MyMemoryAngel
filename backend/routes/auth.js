@@ -134,4 +134,37 @@ router.delete('/recordatorios/:id', (req, res) => {
     });
 });
 
+router.post('/preguntar', async (req, res) => {
+    const { mensajeUsuario } = req.body;
+    
+    try {
+        // 1. Intento de búsqueda exacta o por frase contenida
+        let [rows] = await db.query(
+            "SELECT respuesta FROM chatbot_contenido WHERE pregunta LIKE ? OR categoria LIKE ?",
+            [`%${mensajeUsuario}%`, `%${mensajeUsuario}%`]
+        );
+
+        // 2. Si no hay éxito, buscamos por palabras clave (Razonamiento simple)
+        if (rows.length === 0) {
+            const palabras = mensajeUsuario.split(' ').filter(p => p.length > 3); // Solo palabras largas
+            if (palabras.length > 0) {
+                const clausulaOr = palabras.map(() => "pregunta LIKE ?").join(" OR ");
+                const valores = palabras.map(p => `%${p}%`);
+                [rows] = await db.query(`SELECT respuesta FROM chatbot_contenido WHERE ${clausulaOr} LIMIT 1`, valores);
+            }
+        }
+
+        // 3. Respuesta final
+        if (rows.length > 0) {
+            res.json({ respuesta: rows[0].respuesta });
+        } else {
+            res.json({ 
+                respuesta: "No tengo información específica sobre eso, pero puedes preguntarme sobre higiene, ejercicios de memoria o alimentación." 
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ respuesta: "Error al consultar la base de datos." });
+    }
+});
+
 module.exports = router;
