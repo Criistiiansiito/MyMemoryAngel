@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
     paddingTop: 20,
   },
 
-  // --- TOP BAR / HEADER (De tu primer código) ---
+  // --- TOP BAR / HEADER ---
   topBar: {
     backgroundColor: '#FFFFFF',
     width: '100%',
@@ -42,13 +42,13 @@ export const styles = StyleSheet.create({
   logoRow: { 
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', // <--- ESTO empuja los iconos a la derecha
-    width: '100%', // <--- Obligatorio para que ocupe todo el ancho
+    justifyContent: 'space-between', 
+    width: '100%', 
   },
   logoHeader: { 
     width: 60, 
     height: 60, 
-    marginRight: 55, // Ajustado de 50 a 15 para que el texto esté cerca del logo
+    marginRight: 55, 
   },
   textContainer: {
     justifyContent: 'center',
@@ -205,7 +205,6 @@ export const styles = StyleSheet.create({
     paddingBottom: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#F1F5F9',
-    // La sombra ahora la tiene este contenedor para que el bloque superior "flote"
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -226,12 +225,12 @@ export const styles = StyleSheet.create({
   },
   menuCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 15, // Mucho más redondo como en la imagen
+    borderRadius: 15, 
     padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
-    marginHorizontal: 4, // Pequeño margen para que respire la sombra
+    marginHorizontal: 4,
     elevation: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -239,7 +238,7 @@ export const styles = StyleSheet.create({
     shadowRadius: 10,
   },
   menuIconContainer: {
-    width: 65, // Un poco más grande
+    width: 65, 
     height: 65,
     borderRadius: 20,
     justifyContent: 'center',
@@ -259,7 +258,7 @@ export const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
-    height: Platform.OS === 'ios' ? 95 : 75, // Altura fija para que no se vea aplastado
+    height: Platform.OS === 'ios' ? 95 : 75, 
     borderTopWidth: 1,
     borderTopColor: '#F1F5F9',
     justifyContent: 'space-around',
@@ -279,13 +278,13 @@ export const styles = StyleSheet.create({
   tabTextActive: {
     color: '#334155',
   },
-  // --- AJUSTE DE CONTENEDOR PARA QUE NO TOQUE BORDES ---
   scrollContent: {
-    paddingHorizontal: 20, // Esto evita que las cards lleguen al borde de la pantalla
-    paddingTop: 20,
-    paddingBottom: 40,
+    paddingHorizontal: 20, 
+    paddingTop: 15,
   },
-
+messageWrapper: {
+    marginBottom: 15,
+  },
   // --- SECCIÓN DE PERFIL (Sin borde de card, más limpio) ---
   profileSection: {
     paddingVertical: 10,
@@ -378,16 +377,15 @@ export const styles = StyleSheet.create({
   profilePhotoContainer: {
     alignSelf: 'center',
     marginBottom: 25,
-    position: 'relative', // Para posicionar el botón de editar encima
+    position: 'relative',
   },
   photoCircle: {
     width: 130,
     height: 130,
     borderRadius: 65,
-    backgroundColor: '#E8F0FE', // Azul clarito de fondo
+    backgroundColor: '#E8F0FE', 
     justifyContent: 'center',
     alignItems: 'center',
-    // Sombra para darle profundidad
     elevation: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -398,7 +396,7 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: '#334155', // Gris oscuro como tus botones
+    backgroundColor: '#334155',
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -413,7 +411,7 @@ export const styles = StyleSheet.create({
     marginTop: 5,
   },
   typeCard: {
-    width: '48%', // Dos columnas
+    width: '48%', 
     backgroundColor: '#FFFFFF',
     borderRadius: 15,
     paddingVertical: 20,
@@ -421,7 +419,6 @@ export const styles = StyleSheet.create({
     marginBottom: 15,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    // Sombra suave
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -453,12 +450,12 @@ export const styles = StyleSheet.create({
   },
   gridRecordatorios: {
     flexDirection: 'row',
-    flexWrap: 'wrap', // ESTO ES VITAL para que no se salgan de la pantalla
+    flexWrap: 'wrap', 
     justifyContent: 'space-between',
     width: '100%',
   },
   cardTipoRecordatorio: {
-    width: '48%', // Esto hace que quepan 2 por fila
+    width: '48%', 
     backgroundColor: '#FFFFFF',
     borderRadius: 15,
     paddingVertical: 15,
@@ -468,7 +465,6 @@ export const styles = StyleSheet.create({
     borderColor: '#E2E8F0',
     elevation: 2,
   },
-  // Reutiliza tus estilos de optionButton para la frecuencia
   optionButton: {
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -480,25 +476,30 @@ export const styles = StyleSheet.create({
   // --- ESTILOS DEL CHATBOT ---
   chatContainer: {
     flex: 1,
-    backgroundColor: '#FFFCF5', // Ese tono crema suave de fondo
+    backgroundColor: '#FFFCF5', 
   },
-  bubbleBot: {
+bubbleBot: {
+    alignSelf: 'flex-start',
     backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    borderTopLeftRadius: 2, // Pico de la burbuja
-    padding: 15,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 20,
+    borderBottomLeftRadius: 4, 
+    maxWidth: '85%',
     elevation: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
   },
-  bubbleUser: {
-    backgroundColor: '#3B82F6', // Azul brillante del usuario
-    borderRadius: 18,
-    borderTopRightRadius: 2, // Pico de la burbuja
-    padding: 15,
-    elevation: 1,
+bubbleUser: {
+    alignSelf: 'flex-end',
+    backgroundColor: '#334155', 
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 20,
+    borderBottomRightRadius: 4,
+    maxWidth: '85%',
   },
   textBot: {
     color: '#4A5568',
@@ -510,29 +511,26 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 22,
   },
-  chatInputContainer: {
+chatInputContainer: {
     flexDirection: 'row',
-    padding: 15,
-    backgroundColor: '#FFFFFF',
     alignItems: 'center',
+    padding: 5,
+    backgroundColor: '#fff',
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
+    borderColor: '#E2E8F0',
   },
-  inputChatWrapper: {
+ inputChatWrapper: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#3B82F6', // Borde azul como en tu foto
-    borderRadius: 12,
+    height: 35,
+    backgroundColor: '#F1F5F9',
+    borderRadius: 20,
     paddingHorizontal: 15,
-    height: 50,
+    marginRight: 10,
   },
   sendButton: {
-    backgroundColor: '#3B82F6',
-    width: 50,
-    height: 50,
+    backgroundColor: '#334155',
+    width: 40,
+    height: 40,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
@@ -548,7 +546,7 @@ export const styles = StyleSheet.create({
     borderTopColor: '#F1F5F9',
     justifyContent: 'space-around',
     alignItems: 'center',
-    paddingBottom: Platform.OS === 'ios' ? 20 : 10, // Ajuste para iPhone
+    paddingBottom: Platform.OS === 'ios' ? 20 : 10,
   },
   tabItem: {
     alignItems: 'center',
@@ -808,5 +806,92 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#FECACA',
     marginTop: 10,
+  },
+  gridContainer: {
+    padding: 10,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+  },
+  gridRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  chipTema: {
+    width: '31%', 
+    height: 40,
+    backgroundColor: '#F0F4FF',
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#E0E7FF',
+  },
+  chipTemaText: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: '#334155',
+    textAlign: 'center',
+  },
+  subtemasContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
+    paddingLeft: 5,
+  },
+  btnSubtema: {
+    backgroundColor: '#fff',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#334155',
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  btnSubtemaText: {
+    color: '#334155',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  // --- INDICADOR DE ESCRITURA ---
+writingIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: '#F1F5F9',
+    padding: 8,
+    borderRadius: 12,
+    marginLeft: 5,
+    marginBottom:10,
+  },
+  writingText: {
+    marginLeft: 5,
+    color: '#64748B',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  headerTextContainer: {
+    marginLeft: 12,
+  },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#1E293B',
+  },
+  headerStatus: {
+    fontSize: 11,
+    color: '#22C55E',
+    fontWeight: '600',
+  },
+  botIcon: {
+    width: 35,
+    height: 35,
+  },
+  headerInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

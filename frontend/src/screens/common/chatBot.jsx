@@ -166,7 +166,7 @@ export default function ChatbotScreen({ navigation }) {
             placeholder="Haz una pregunta..." 
           />
           <TouchableOpacity onPress={() => enviarMensaje()} style={styles.sendButton}>
-            <MaterialCommunityIcons name="send" size={24} color="white" />
+            <MaterialCommunityIcons name="send" size={20} color="white" />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
