@@ -167,4 +167,47 @@ router.post('/preguntar', async (req, res) => {
     }
 });
 
+// 4. Actualizar perfil (Nombre y Foto)
+router.put('/actualizar-perfil', async (req, res) => {
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.split(' ')[1];
+
+  if (!token) return res.status(401).json({ error: 'Token faltante' });
+
+  try {
+    // 1. Verificamos el token de Firebase para sacar el UID de forma segura
+    const decoded = await admin.auth().verifyIdToken(token);
+    const uid = decoded.uid;
+
+    // 2. Obtenemos los datos que vienen del móvil
+    const { nombre, foto_perfil } = req.body;
+
+    if (!nombre) {
+      return res.status(400).json({ error: 'El nombre es obligatorio' });
+    }
+
+    // 3. Ejecutamos el UPDATE en MySQL
+    const sql = `
+      UPDATE usuarios 
+      SET nombre = ?, foto_perfil = ? 
+      WHERE uid = ?
+    `;
+
+    const [result] = await db.query(sql, [nombre, foto_perfil, uid]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ ok: false, error: 'Usuario no encontrado' });
+    }
+
+    return res.json({ 
+      ok: true, 
+      message: 'Perfil actualizado correctamente' 
+    });
+
+  } catch (err) {
+    console.error('Error al actualizar perfil:', err);
+    return res.status(401).json({ error: 'Token inválido o error de servidor' });
+  }
+});
+
 module.exports = router;
