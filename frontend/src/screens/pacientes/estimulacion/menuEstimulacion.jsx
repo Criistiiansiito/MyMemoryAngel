@@ -1,3 +1,4 @@
+import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import BottomTabBar from '../../../components/BottomTabBar';
@@ -5,13 +6,21 @@ import { getStyles } from '../../../style/styles';
 import { useAccesibilidad } from '../../../services/accesibilidadContext';
 
 export default function MenuEstimulacion({ onBack, onSelectActivity }) {
-  const { aplicarEscala } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala);
-  
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
+
+  const ActivityCard = ({ title, icon, color, iconColor, onPress }) => (
+    <TouchableOpacity style={styles.typeCard} onPress={onPress}>
+      <View style={[styles.typeIconCircle, { backgroundColor: color }]}>
+        <MaterialCommunityIcons name={icon} size={32} color={iconColor} />
+      </View>
+      <Text style={styles.typeText}>{title}</Text>
+    </TouchableOpacity>
+  );
+
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Encabezado con flecha de volver */}
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
           <TouchableOpacity onPress={onBack}>
             <MaterialCommunityIcons name="arrow-left" size={28} color="#334155" />
@@ -50,10 +59,15 @@ export default function MenuEstimulacion({ onBack, onSelectActivity }) {
           />
         </View>
 
-        {/* Panel de información o progreso opcional */}
+        {/* Panel de información */}
         <View style={[styles.settingsCard, { marginTop: 10 }]}>
           <Text style={styles.sectionTitle}>Sugerencia del día</Text>
-          <Text style={{ color: '#64748B', marginTop: 10, lineHeight: 20 }}>
+          <Text style={{ 
+            color: '#64748B', 
+            marginTop: 10, 
+            lineHeight: 20,
+            fontSize: aplicarEscala(14)
+          }}>
             Escuchar música suave ayuda a mejorar el estado de ánimo y la relajación.
           </Text>
         </View>
@@ -62,13 +76,3 @@ export default function MenuEstimulacion({ onBack, onSelectActivity }) {
     </View>
   );
 }
-
-// Sub-componente idéntico al GameCard pero adaptado para Actividades
-const ActivityCard = ({ title, icon, color, iconColor, onPress }) => (
-  <TouchableOpacity style={styles.typeCard} onPress={onPress}>
-    <View style={[styles.typeIconCircle, { backgroundColor: color }]}>
-      <MaterialCommunityIcons name={icon} size={32} color={iconColor} />
-    </View>
-    <Text style={styles.typeText}>{title}</Text>
-  </TouchableOpacity>
-);
