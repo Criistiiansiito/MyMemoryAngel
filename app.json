@@ -1,15 +1,16 @@
 {
   "expo": {
-    "name": "app-alzheimer",
-    "slug": "app-alzheimer",
+    "name": "MyMemoryAngel",
+    "slug": "MyMemoryAngel",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./frontend/assets/icons/splash.png",
+    "resizeMode": "cover",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
+      "image": "./frontend/assets/icons/splash.png",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "ios": {
@@ -17,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./frontend/assets/icons/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true
