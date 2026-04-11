@@ -7,7 +7,7 @@ import axios from 'axios';
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
 
-const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://172.20.10.5:5000/api';
+const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
 
 export default function ModificarRecordatorio({ route, navigation }) {
   const { aplicarEscala } = useAccesibilidad();
