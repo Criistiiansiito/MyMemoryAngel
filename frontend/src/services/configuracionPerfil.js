@@ -29,5 +29,15 @@ export const configuracionPerfil = {
             headers: { Authorization: `Bearer ${token}` }
         });
         return res.data;
-    }
+    },
+
+    actualizarAccesibilidad: async (ajustes) => {
+        const token = Platform.OS === 'web' 
+            ? localStorage.getItem('userToken') 
+            : await SecureStore.getItemAsync('userToken');
+
+        return await axios.put(`${API}/auth/actualizar-accesibilidad`, ajustes, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+    }    
 };
