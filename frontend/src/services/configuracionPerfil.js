@@ -19,12 +19,12 @@ export const configuracionPerfil = {
         return res.data;
     },
 
-    actualizarPerfil: async (nombre, foto) => {
+    actualizarPerfil: async (nombre, foto, fecha) => {
         const token = await getAuthToken();
-        // Si el backend espera un JSON con la URL o base64 de la foto
         const res = await axios.put(`${API}/auth/actualizar-perfil`, {
             nombre,
-            foto_perfil: foto
+            foto_perfil: foto,
+            fecha_nacimiento: fecha
         }, {
             headers: { Authorization: `Bearer ${token}` }
         });

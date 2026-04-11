@@ -167,7 +167,7 @@ router.post('/preguntar', async (req, res) => {
     }
 });
 
-// 4. Actualizar perfil (Nombre y Foto)
+// 4. Actualizar perfil (Nombre, Foto y FECHA)
 router.put('/actualizar-perfil', async (req, res) => {
   const authHeader = req.headers.authorization || '';
   const token = authHeader.split(' ')[1];
@@ -175,29 +175,25 @@ router.put('/actualizar-perfil', async (req, res) => {
   if (!token) return res.status(401).json({ error: 'Token faltante' });
 
   try {
-    // 1. Verificamos el token de Firebase para sacar el UID de forma segura
     const decoded = await admin.auth().verifyIdToken(token);
     const uid = decoded.uid;
-
-    // 2. Obtenemos los datos que vienen del móvil
-    const { nombre, foto_perfil } = req.body;
+    const { nombre, foto_perfil, fecha_nacimiento } = req.body;
 
     if (!nombre) {
       return res.status(400).json({ error: 'El nombre es obligatorio' });
     }
 
-    // 3. Ejecutamos el UPDATE en MySQL
+    // VALIDACIÓN CRÍTICA: Si la fecha viene vacía o es inválida, enviamos NULL a MySQL
+    const fechaFinal = (fecha_nacimiento && fecha_nacimiento.trim() !== '') ? fecha_nacimiento : null;
+
     const sql = `
       UPDATE usuarios 
-      SET nombre = ?, foto_perfil = ? 
+      SET nombre = ?, foto_perfil = ?, fecha_nacimiento = ? 
       WHERE uid = ?
     `;
 
-    const [result] = await db.query(sql, [nombre, foto_perfil, uid]);
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ ok: false, error: 'Usuario no encontrado' });
-    }
+    // Ejecutamos la query
+    const [result] = await db.query(sql, [nombre, foto_perfil, fechaFinal, uid]);
 
     return res.json({ 
       ok: true, 
@@ -206,7 +202,8 @@ router.put('/actualizar-perfil', async (req, res) => {
 
   } catch (err) {
     console.error('Error al actualizar perfil:', err);
-    return res.status(401).json({ error: 'Token inválido o error de servidor' });
+    // Enviamos el error real para poder debugear en la consola del navegador/móvil
+    return res.status(500).json({ error: err.message || 'Error interno del servidor' });
   }
 });
 
