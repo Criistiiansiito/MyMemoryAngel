@@ -129,7 +129,7 @@ export default function DashboardPaciente({ navigation }) {
 
         <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('Actividades')}>
           <View style={[styles.menuIconContainer, { backgroundColor: '#DCFCE7' }]}>
-            <MaterialCommunityIcons name="brain" size={28} color="#22C55E" />
+            <MaterialCommunityIcons name="head-heart" size={28} color="#22C55E" />
           </View>
           <View>
             <Text style={styles.menuTitle}>Estimulación</Text>

@@ -59,7 +59,7 @@ export default function EstimulacionCognitiva() {
           <Text style={styles.brandName}>Estimulación</Text>
           <View style={styles.headerButtonsGroup}>
             <View style={[styles.headerIconButton, { backgroundColor: '#E8F0FE' }]}>
-               <MaterialCommunityIcons name="brain" size={24} color="#4D6BFE" />
+               <MaterialCommunityIcons name="head-heart" size={24} color="#4D6BFE" />
             </View>
           </View>
         </View>
