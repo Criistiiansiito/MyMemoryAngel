@@ -177,4 +177,21 @@ router.post('/preguntar', async (req, res) => {
     } catch (error) { res.status(500).json({ respuesta: "Error al consultar." }); }
 });
 
+router.get('/get-musica', async (req, res) => {
+  try {
+    const { tipo } = req.query;
+    const [rows] = await db.query('SELECT id, titulo, tipo, audio, imagen FROM musica WHERE tipo = ?', [tipo]);
+
+    const respuesta = rows.map(cancion => ({
+      ...cancion,
+      audio: cancion.audio ? Buffer.from(cancion.audio).toString('base64') : null,
+      imagen: cancion.imagen ? Buffer.from(cancion.imagen).toString('base64') : null
+    }));
+
+    res.json(respuesta);
+  } catch (error) {
+    res.status(500).send("Error en el servidor");
+  }
+});
+
 module.exports = router;
