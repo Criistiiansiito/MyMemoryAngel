@@ -49,21 +49,17 @@ export default function ConfiguracionPaciente({ navigation }) {
         }
     };
 
-    // NUEVA FUNCIÓN PARA GUARDADO AUTOMÁTICO DE ACCESIBILIDAD 
     const autoGuardarAccesibilidad = async (nuevoTamano, nuevoDaltonismo) => {
         try {
-            // Llamamos a la API inmediatamente
             await configuracionPerfil.actualizarAccesibilidad({
                 tamano_texto: nuevoTamano,
                 modo_daltonico: nuevoDaltonismo ? 1 : 0
             });
-            console.log("Accesibilidad guardada automáticamente");
         } catch (error) {
             console.error("Error en el auto-guardado:", error);
         }
     };
 
-    // MANEJADORES DE CAMBIO INSTANTÁNEO
     const manejarCambioTamano = (size) => {
         setTextSizeLabel(size); 
         autoGuardarAccesibilidad(size, isDaltonic); 
@@ -72,6 +68,27 @@ export default function ConfiguracionPaciente({ navigation }) {
     const manejarCambioDaltonismo = (val) => {
         setIsDaltonic(val); 
         autoGuardarAccesibilidad(textSizeLabel, val); 
+    };
+
+    // CERRAR SESIÓN 
+    const confirmarCerrarSesion = () => {
+        Alert.alert(
+            "Cerrar Sesión",
+            "¿Estás seguro de que quieres cerrar sesión?",
+            [
+                { text: "Cancelar", style: "cancel" },
+                { 
+                    text: "Sí, salir", 
+                    style: "destructive",
+                    onPress: () => {
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'Bienvenida' }], 
+                        });
+                    } 
+                }
+            ]
+        );
     };
 
     const onDateChange = (event, selectedDate) => {
@@ -104,17 +121,14 @@ export default function ConfiguracionPaciente({ navigation }) {
         }
     };
 
-    // GUARDADO MANUAL (SOLO LOS DATOS DE LA CUENTA) 
     const manejarGuardarPerfil = async () => {
         if (!nombre.trim()) {
             Alert.alert("Error", "El nombre es obligatorio");
             return;
         }
-
         try {
             setLoading(true);
             const resPerfil = await configuracionPerfil.actualizarPerfil(nombre, profilePhoto, fechaSQL);
-            
             if (resPerfil.ok) {
                 Alert.alert("Éxito", "Tus datos personales se han actualizado correctamente.");
             } else {
@@ -212,7 +226,6 @@ export default function ConfiguracionPaciente({ navigation }) {
                     <View style={styles.dividerLine} />
                 </View>
 
-                {/* Ajuste de Tamaño de Texto */}
                 <View style={styles.settingsCard}>
                     <View style={styles.sectionHeader}>
                         <MaterialCommunityIcons name="format-size" size={22} color="#4D6BFE" />
@@ -238,7 +251,6 @@ export default function ConfiguracionPaciente({ navigation }) {
                     </View>
                 </View>
 
-                {/* Ajuste de Daltonismo */}
                 <View style={styles.settingsCard}>
                     <View style={styles.sectionHeader}>
                         <MaterialCommunityIcons name="eye-outline" size={22} color={isDaltonic ? "#000" : "#8B5CF6"} />
@@ -252,6 +264,21 @@ export default function ConfiguracionPaciente({ navigation }) {
                         />
                     </View>
                 </View>
+
+                {/* CERRAR SESIÓN */}
+                <View style={[styles.dividerContainer, { marginTop: 30 }]}>
+                    <View style={styles.dividerLine} />
+                    <Text style={styles.dividerText}>Sesión</Text>
+                    <View style={styles.dividerLine} />
+                </View>
+
+                <TouchableOpacity style={[styles.mainButton, { backgroundColor: '#EF4444', marginBottom: 40, shadowColor: '#EF4444' }]} onPress={confirmarCerrarSesion}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <MaterialCommunityIcons name="logout" size={20} color="#FFF" style={{ marginRight: 10 }} />
+                        <Text style={styles.mainButtonText}>Cerrar Sesión</Text>
+                    </View>
+                </TouchableOpacity>
+
             </ScrollView>
         </SafeAreaView>
     );
