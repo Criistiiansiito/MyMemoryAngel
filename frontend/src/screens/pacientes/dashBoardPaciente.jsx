@@ -12,19 +12,23 @@ const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://172.20
 
 export default function DashboardPaciente({ navigation }) {
   const [nombreUsuario, setNombreUsuario] = useState('Paciente'); 
+  const [fotoPerfil, setFotoPerfil] = useState(null); 
   const [loading, setLoading] = useState(true);
   const fechaHoy = "martes, 3 de marzo de 2026";
 
   const { aplicarEscala } = useAccesibilidad();
   const styles = getStyles(aplicarEscala);
 
-  useEffect(() => {
-    obtenerPerfil();
-  }, []);
+    useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      obtenerPerfil();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const obtenerPerfil = async () => {
     try {
-      // 1. Obtener el token guardado
       let token;
       if (Platform.OS === 'web') {
         token = localStorage.getItem('userToken');
@@ -37,13 +41,15 @@ export default function DashboardPaciente({ navigation }) {
         return;
       }
 
-      // 2. Pedir datos al backend
       const res = await axios.get(`${API}/auth/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       if (res.data.ok) {
         setNombreUsuario(res.data.usuario.nombre);
+        if (res.data.usuario.foto_perfil) {
+          setFotoPerfil(res.data.usuario.foto_perfil);
+        }
       }
     } catch (error) {
       console.error("Error al obtener perfil:", error);
@@ -64,13 +70,22 @@ export default function DashboardPaciente({ navigation }) {
     <SafeAreaView style={styles.container}>
       {/* HEADER */}
       <View style={styles.topBar}>
-        {/* Fila principal */}
         <View style={styles.logoRow}>
           
           {/* Avatar + Nombre */}
           <View style={styles.headerUserInfo}>
-            <View style={[styles.iconCircle, { backgroundColor: '#E8F0FE', marginRight: 10 }]}>
-              <MaterialCommunityIcons name="account" size={30} color="#334155" />
+            <View style={[styles.iconCircle, { backgroundColor: '#E8F0FE', marginRight: 10, overflow: 'hidden' }]}>
+              {fotoPerfil ? (
+                // Si hay foto, la mostramos
+                <Image 
+                  source={{ uri: fotoPerfil }} 
+                  style={{ width: '100%', height: '100%' }} 
+                  resizeMode="cover"
+                />
+              ) : (
+                // Si no, el icono de siempre
+                <MaterialCommunityIcons name="account" size={30} color="#334155" />
+              )}
             </View>
             <Text style={styles.brandName}>Hola, {nombreUsuario}</Text> 
           </View>
@@ -90,12 +105,12 @@ export default function DashboardPaciente({ navigation }) {
 
         </View>
 
-        {/* FECHA */}
         <Text style={styles.dateText}>{fechaHoy}</Text>
       </View>
 
       {/* CUERPO */}
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, marginTop: 30, }}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, marginTop: 30 }}>
+        
         <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('Recordatorios')}>
           <View style={[styles.menuIconContainer, { backgroundColor: '#E1E7FF' }]}>
             <MaterialCommunityIcons name="bell-outline" size={28} color="#4D6BFE" />
@@ -126,22 +141,20 @@ export default function DashboardPaciente({ navigation }) {
           </View>
         </TouchableOpacity>
 
-<TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('ChatBot')}>
-  <View style={[styles.menuIconContainer, { backgroundColor: '#FEF3C7' }]}>
-    
-    {/* REEMPLAZAMOS EL ICONO POR TU IMAGEN PERSONALIZADA */}
-    <Image 
-      source={require('../../../assets/icons/bot-icon.png')} 
-      style={{ width: 35, height: 35 }} // Ajusta el tamaño para que quepa bien en el cuadro
-      resizeMode="contain" 
-    />
+        <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('ChatBot')}>
+          <View style={[styles.menuIconContainer, { backgroundColor: '#FEF3C7' }]}>
+            <Image 
+              source={require('../../../assets/icons/bot-icon.png')} 
+              style={{ width: 35, height: 35 }} 
+              resizeMode="contain" 
+            />
+          </View>
+          <View>
+            <Text style={styles.menuTitle}>Asistente</Text>
+            <Text style={styles.menuSubtitle}>Habla conmigo</Text>
+          </View>
+        </TouchableOpacity>
 
-  </View>
-  <View>
-    <Text style={styles.menuTitle}>Asistente</Text>
-    <Text style={styles.menuSubtitle}>Habla conmigo</Text>
-  </View>
-</TouchableOpacity>
       </ScrollView>
       
       <BottomTabBar />

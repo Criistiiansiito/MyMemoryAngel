@@ -16,8 +16,8 @@ export default function ConfiguracionPaciente({ navigation }) {
     // Estados
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
-    const [fechaSQL, setFechaSQL] = useState(''); // Formato YYYY-MM-DD para la BBDD
-    const [dateText, setDateText] = useState('dd/mm/aaaa'); // Lo que ve el usuario
+    const [fechaSQL, setFechaSQL] = useState(''); 
+    const [dateText, setDateText] = useState('dd/mm/aaaa'); 
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [profilePhoto, setProfilePhoto] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -35,11 +35,8 @@ export default function ConfiguracionPaciente({ navigation }) {
                 setEmail(data.usuario.correo || '');
                 
                 if (data.usuario.fecha_nacimiento) {
-                    // Limpiamos el formato de la BBDD
                     const fechaLimpia = data.usuario.fecha_nacimiento.split('T')[0];
                     setFechaSQL(fechaLimpia);
-                    
-                    // Convertimos a formato visual (DD/MM/AAAA)
                     const [year, month, day] = fechaLimpia.split('-');
                     setDateText(`${day}/${month}/${year}`);
                 }
@@ -57,27 +54,32 @@ export default function ConfiguracionPaciente({ navigation }) {
     const onDateChange = (event, selectedDate) => {
         setShowDatePicker(false);
         if (selectedDate) {
-            // Formato visual para el usuario
             setDateText(selectedDate.toLocaleDateString());
-            // Formato ISO para MySQL (YYYY-MM-DD)
             const isoDate = selectedDate.toISOString().split('T')[0];
             setFechaSQL(isoDate);
         }
     };
 
+    // Función pickImage con Base64 
     const pickImage = async () => {
         let resultPermission = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (!resultPermission.granted) {
             alert("Se necesitan permisos para acceder a la galería");
             return;
         }
+
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [1, 1],
-            quality: 0.5, 
+            quality: 0.4,
+            base64: true, //Esto genera el texto de la imagen
         });
-        if (!result.canceled) setProfilePhoto(result.assets[0].uri);
+
+        if (!result.canceled) {
+            const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+            setProfilePhoto(base64Image);
+        }
     };
 
     const manejarGuardar = async () => {
@@ -88,11 +90,17 @@ export default function ConfiguracionPaciente({ navigation }) {
 
         try {
             setLoading(true);
-            // Enviamos los datos validados a la BBDD
             const res = await configuracionPerfil.actualizarPerfil(nombre, profilePhoto, fechaSQL);
             
             if (res.ok) {
-                Platform.OS === 'web' ? alert("Perfil actualizado") : Alert.alert("Éxito", "Perfil actualizado correctamente");
+                if (Platform.OS === 'web') {
+                    alert("Perfil actualizado");
+                    navigation.goBack();
+                } else {
+                    Alert.alert("Éxito", "Perfil actualizado correctamente", [
+                        { text: "OK", onPress: () => navigation.goBack() }
+                    ]);
+                }
             } else {
                 alert(res.msg || "Hubo un error al actualizar");
             }
@@ -160,7 +168,6 @@ export default function ConfiguracionPaciente({ navigation }) {
                         />
                     </View>
 
-                    {/* Fecha de Nacimiento con Selector */}
                     <Text style={styles.label}>Fecha de nacimiento</Text>
                     <TouchableOpacity 
                         style={styles.inputContainer} 
