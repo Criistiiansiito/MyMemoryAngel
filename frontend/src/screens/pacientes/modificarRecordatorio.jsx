@@ -4,11 +4,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
-import { styles } from '../../style/styles';
+import { getStyles } from '../../style/styles';
+import { useAccesibilidad } from '../../services/accesibilidadContext';
 
 const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://10.0.2.2:5000/api';
 
 export default function ModificarRecordatorio({ route, navigation }) {
+  const { aplicarEscala } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala);
+    
   const { recordatorio } = route.params;
 
   const [titulo, setTitulo] = useState(recordatorio.titulo);

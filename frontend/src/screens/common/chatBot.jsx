@@ -2,7 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, KeyboardAvoidingView, Platform, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { styles } from '../../style/styles'; 
+import { getStyles } from '../../style/styles';
+import { useAccesibilidad } from '../../services/accesibilidadContext';
 import BottomTabBar from '../../components/BottomTabBar';
 
 const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://172.20.10.5:5000/api';
@@ -17,6 +18,9 @@ const CATEGORIAS_COMPLETA = [
 ];
 
 export default function ChatbotScreen({ navigation }) {
+  const { aplicarEscala } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala);
+
   const [mensaje, setMensaje] = useState('');
   const [chatLog, setChatLog] = useState([
     { id: 1, texto: '¡Hola! Selecciona un tema para empezar.', sender: 'bot' },

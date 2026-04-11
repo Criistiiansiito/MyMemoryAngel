@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { getStyles } from '../../../style/styles';
+import { useAccesibilidad } from '../../../services/accesibilidadContext';
 
 export default function Calculadora({ onBack }) {
+  const { aplicarEscala } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala);
   const [num1, setNum1] = useState(0);
   const [num2, setNum2] = useState(0);
   const [respuesta, setRespuesta] = useState('');

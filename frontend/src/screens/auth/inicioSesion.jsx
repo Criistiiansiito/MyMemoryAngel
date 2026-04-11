@@ -6,7 +6,8 @@ import axios from 'axios';
 import { auth } from '../../services/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import * as SecureStore from 'expo-secure-store';
-import { styles } from '../../style/styles'; 
+import { getStyles } from '../../style/styles'; 
+import { useAccesibilidad } from '../../services/accesibilidadContext';
 
 const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://172.20.10.5:5000/api';
 
@@ -22,6 +23,9 @@ export default function InicioSesion({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [messageType, setMessageType] = useState('error');
+
+  const { aplicarEscala } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala);
 
   const handleLogin = async () => {
     setMessage(null);

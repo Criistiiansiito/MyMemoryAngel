@@ -3,7 +3,8 @@ import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert } fr
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
-import { styles } from '../../style/styles';
+import { getStyles } from '../../style/styles'; 
+import { useAccesibilidad } from '../../services/accesibilidadContext';
 import BottomTabBar from '../../components/BottomTabBar';
 
 import { 
@@ -13,6 +14,9 @@ import {
 } from '../../services/recordatoriosService';
 
 export default function Recordatorios({ navigation }) {
+  const { aplicarEscala } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala);
+
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
 

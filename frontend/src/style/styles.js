@@ -2,7 +2,7 @@ import { StyleSheet, Platform, Dimensions } from 'react-native';
 
 const { height } = Dimensions.get('window');
 
-export const styles = StyleSheet.create({
+export const getStyles = (aplicarEscala) => StyleSheet.create({
   // --- ESTILOS GENERALES Y CONTENEDORES ---
   container: { 
     flex: 1, 
@@ -36,7 +36,7 @@ export const styles = StyleSheet.create({
     shadowRadius: 5,
   },
   topBarArrow:{
-    fontSize:26,
+    fontSize:aplicarEscala(26),
     color:"#334155"
   },
   logoRow: { 
@@ -54,13 +54,13 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   brandName: { 
-    fontSize: 22, 
+    fontSize: aplicarEscala(22), 
     fontWeight: '800', 
     color: '#1A202C',
     marginLeft: 15
   },
   subtitle: { 
-    fontSize: 13, 
+    fontSize: aplicarEscala(13), 
     color: '#718096', 
     fontWeight: '400'
   },
@@ -91,14 +91,14 @@ export const styles = StyleSheet.create({
     marginRight: 15,
   },
   cardButtonText: { 
-    fontSize: 18, 
+    fontSize: aplicarEscala(18), 
     fontWeight: '600', 
     color: '#2D3748' 
   },
 
   // --- FORMULARIOS (Registro/Login) ---
   label: {
-    fontSize: 14,
+    fontSize: aplicarEscala(14),
     fontWeight: '600',
     color: '#4A5568',
     marginBottom: 8,
@@ -116,20 +116,20 @@ export const styles = StyleSheet.create({
   },
   inputIcon: {
     marginRight: 10,
-    fontSize: 22,      
+    fontSize: aplicarEscala(22),      
     color: '#94A3B8'
   },
   input: {
     flex: 1,
     color: '#2D3748',
-    fontSize: 16,
+    fontSize: aplicarEscala(16),
   },
   eyeIcon: {
     padding: 5,
   },
   dateDisplay: {
     flex: 1,
-    fontSize: 16,
+    fontSize: aplicarEscala(16),
     textAlignVertical: 'center',
   },
 
@@ -153,7 +153,7 @@ export const styles = StyleSheet.create({
   },
   mainButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: aplicarEscala(16),
     fontWeight: '700',
   },
   loginLink: { 
@@ -162,7 +162,7 @@ export const styles = StyleSheet.create({
   },
   loginText: { 
     color: '#334155', 
-    fontSize: 15, 
+    fontSize: aplicarEscala(15), 
     fontWeight: '500',
     textDecorationLine: 'underline'
   },
@@ -192,7 +192,7 @@ export const styles = StyleSheet.create({
     color: '#E53E3E',
     textAlign: 'center',
     marginTop: 10,
-    fontSize: 14,
+    fontSize: aplicarEscala(14),
   },
   // --- NUEVOS: DASHBOARD ESPECÍFICOS ---
   headerUserInfo: {
@@ -213,7 +213,7 @@ export const styles = StyleSheet.create({
   },
   dateText: {
     color: '#718096',
-    fontSize: 16,
+    fontSize: aplicarEscala(16),
     left: 60,
     fontWeight: '500',
   },
@@ -246,31 +246,21 @@ export const styles = StyleSheet.create({
     marginRight: 15,
   },
   menuTitle: {
-    fontSize: 18,
+    fontSize: aplicarEscala(18),
     fontWeight: '700',
     color: '#2D3748',
   },
   menuSubtitle: {
-    fontSize: 14,
+    fontSize: aplicarEscala(14),
     color: '#718096',
     marginTop: 2,
-  },
-  tabBar: {
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    height: Platform.OS === 'ios' ? 95 : 75, 
-    borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingBottom: Platform.OS === 'ios' ? 25 : 10,
   },
   tabItem: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   tabText: {
-    fontSize: 11,
+    fontSize: aplicarEscala(11),
     fontWeight: '600',
     color: '#94A3B8',
     marginTop: 4,
@@ -304,7 +294,7 @@ messageWrapper: {
   },
   dividerText: {
     marginHorizontal: 15,
-    fontSize: 14,
+    fontSize: aplicarEscala(14),
     fontWeight: '700',
     color: '#94A3B8',
     textTransform: 'uppercase',
@@ -330,7 +320,7 @@ messageWrapper: {
     marginBottom: 15,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: aplicarEscala(18),
     fontWeight: '700',
     color: '#2D3748',
     marginLeft: 10,
@@ -350,7 +340,7 @@ messageWrapper: {
     borderWidth: 2,
   },
   optionText: {
-    fontSize: 16,
+    fontSize: aplicarEscala(16),
     color: '#4A5568',
     fontWeight: '600',
   },
@@ -439,7 +429,7 @@ messageWrapper: {
     marginBottom: 10,
   },
   typeText: {
-    fontSize: 14,
+    fontSize: aplicarEscala(14),
     color: '#718096',
     fontWeight: '500',
     textAlign: 'center',
@@ -503,12 +493,12 @@ bubbleUser: {
   },
   textBot: {
     color: '#4A5568',
-    fontSize: 16,
+    fontSize: aplicarEscala(16),
     lineHeight: 22,
   },
   textUser: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: aplicarEscala(16),
     lineHeight: 22,
   },
 chatInputContainer: {
@@ -554,7 +544,7 @@ chatInputContainer: {
     flex: 1,
   },
   tabText: {
-    fontSize: 11,
+    fontSize: aplicarEscala(11),
     color: '#94A3B8',
     marginTop: 4,
     fontWeight: '500',
@@ -604,7 +594,7 @@ chatInputContainer: {
   canvasHint: {
     color: '#94A3B8',
     marginTop: 12,
-    fontSize: 16,
+    fontSize: aplicarEscala(16),
     fontWeight: '500',
     textAlign: 'center',
   },
@@ -667,7 +657,7 @@ chatInputContainer: {
   emptyStateText: {
     color: '#718096', 
     marginTop: 10,
-    fontSize: 16,
+    fontSize: aplicarEscala(16),
     fontWeight: '500',
   },
   menuCardCompleted: {
@@ -695,7 +685,7 @@ chatInputContainer: {
   timeBadgeText: {
     color: '#4D6BFE', 
     fontWeight: 'bold', 
-    fontSize: 11, 
+    fontSize: aplicarEscala(11), 
     marginLeft: 4,
   },
   completedBadge: {
@@ -706,7 +696,7 @@ chatInputContainer: {
   },
   completedCheck: {
     color: '#16A34A', 
-    fontSize: 10, 
+    fontSize: aplicarEscala(10), 
     fontWeight: 'bold',
   },
   reminderFooterRow: {
@@ -721,7 +711,7 @@ chatInputContainer: {
     marginRight: 6,
   },
   typeTabText: {
-    fontSize: 11, 
+    fontSize: aplicarEscala(11), 
     color: '#94A3B8', 
     fontWeight: '600',
     textTransform: 'capitalize',
@@ -750,7 +740,7 @@ chatInputContainer: {
     dotStyle: { width: 6, height: 6, borderRadius: 3 }
   },
   inputLabel: {
-    fontSize: 13,
+    fontSize: aplicarEscala(13),
     color: '#64748B',
     marginBottom: 8,
     fontWeight: '700',
@@ -762,7 +752,7 @@ chatInputContainer: {
     padding: 14,
     borderRadius: 12,
     marginBottom: 20,
-    fontSize: 16,
+    fontSize: aplicarEscala(16),
     color: '#1E293B',
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -830,7 +820,7 @@ chatInputContainer: {
     borderColor: '#E0E7FF',
   },
   chipTemaText: {
-    fontSize: 13,
+    fontSize: aplicarEscala(13),
     fontWeight: 'bold',
     color: '#334155',
     textAlign: 'center',
@@ -853,7 +843,7 @@ chatInputContainer: {
   },
   btnSubtemaText: {
     color: '#334155',
-    fontSize: 12,
+    fontSize: aplicarEscala(12),
     fontWeight: '700',
   },
   // --- INDICADOR DE ESCRITURA ---
@@ -870,19 +860,19 @@ writingIndicator: {
   writingText: {
     marginLeft: 5,
     color: '#64748B',
-    fontSize: 12,
+    fontSize: aplicarEscala(12),
     fontWeight: '600',
   },
   headerTextContainer: {
     marginLeft: 12,
   },
   headerTitle: {
-    fontSize: 17,
+    fontSize: aplicarEscala(17),
     fontWeight: '700',
     color: '#1E293B',
   },
   headerStatus: {
-    fontSize: 11,
+    fontSize: aplicarEscala(11),
     color: '#22C55E',
     fontWeight: '600',
   },

@@ -1,19 +1,10 @@
 import React, { useState } from 'react'; 
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  ScrollView, 
-  Switch, 
-  Platform, 
-  Alert, 
-  ActivityIndicator 
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch, Platform, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker'; 
-import { styles } from '../../style/styles'; 
+import { getStyles } from '../../style/styles';
+import { useAccesibilidad } from '../../services/accesibilidadContext';
 
 import { 
   TIPOS_RECORDATORIO, 
@@ -22,6 +13,10 @@ import {
 } from '../../services/recordatoriosService';
 
 export default function NuevoRecordatorio({ navigation }) {
+
+  const { aplicarEscala } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala);
+
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
   

@@ -1,48 +1,59 @@
-import { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Platform, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import * as SecureStore from 'expo-secure-store';
-import axios from 'axios';
-import { styles } from '../../style/styles';
-import BottomTabBar from '../../components/BottomTabBar';
 
-const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://172.20.10.5:5000/api';
+import { getStyles } from '../../style/styles';
+import { useAccesibilidad } from '../../services/accesibilidadContext';
+import { configuracionPerfil } from '../../services/configuracionPerfil'; // Usamos tu servicio
+import BottomTabBar from '../../components/BottomTabBar';
 
 export default function DashboardPaciente({ navigation }) {
   const [nombreUsuario, setNombreUsuario] = useState('Paciente'); 
+  const [fotoPerfil, setFotoPerfil] = useState(null); 
   const [loading, setLoading] = useState(true);
-  const fechaHoy = "martes, 3 de marzo de 2026";
+  
+  // Fecha dinámica (opcional, para que no sea siempre martes 3 de marzo)
+  const fechaHoy = new Date().toLocaleDateString('es-ES', { 
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' 
+  });
+
+  const { aplicarEscala, cargarDesdeServidor, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
 
   useEffect(() => {
-    obtenerPerfil();
-  }, []);
+    // Usamos focus para que si cambias algo en Configuración, 
+    // al volver al Dashboard se refresquen los datos.
+    const unsubscribe = navigation.addListener('focus', () => {
+      obtenerPerfil();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const obtenerPerfil = async () => {
     try {
-      // 1. Obtener el token guardado
-      let token;
-      if (Platform.OS === 'web') {
-        token = localStorage.getItem('userToken');
-      } else {
-        token = await SecureStore.getItemAsync('userToken');
-      }
+      // Usamos el método centralizado de tu servicio
+      const res = await configuracionPerfil.obtenerPerfil();
 
-      if (!token) {
-        navigation.replace('InicioSesion');
-        return;
-      }
+      if (res.ok) {
+        const usuario = res.data?.usuario || res.usuario;
+        
+        setNombreUsuario(usuario.nombre || 'Paciente');
+        if (usuario.foto_perfil) {
+          setFotoPerfil(usuario.foto_perfil);
+        }
 
-      // 2. Pedir datos al backend
-      const res = await axios.get(`${API}/auth/profile`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      if (res.data.ok) {
-        setNombreUsuario(res.data.usuario.nombre);
+        // SINCRONIZAR ACCESIBILIDAD
+        // Le pasamos el objeto usuario completo, 
+        // tu función cargarDesdeServidor ya sabe qué campos usar.
+        cargarDesdeServidor(usuario);
       }
     } catch (error) {
       console.error("Error al obtener perfil:", error);
+      // Si el error es por token inválido, redirigir
+      if (error.response?.status === 401) {
+        navigation.replace('InicioSesion');
+      }
     } finally {
       setLoading(false);
     }
@@ -50,7 +61,7 @@ export default function DashboardPaciente({ navigation }) {
 
   if (loading) {
     return (
-      <View style={[styles.container, { justifyContent: 'center' }]}>
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
         <ActivityIndicator size="large" color="#4D6BFE" />
       </View>
     );
@@ -60,18 +71,23 @@ export default function DashboardPaciente({ navigation }) {
     <SafeAreaView style={styles.container}>
       {/* HEADER */}
       <View style={styles.topBar}>
-        {/* Fila principal */}
         <View style={styles.logoRow}>
           
-          {/* Avatar + Nombre */}
           <View style={styles.headerUserInfo}>
-            <View style={[styles.iconCircle, { backgroundColor: '#E8F0FE', marginRight: 10 }]}>
-              <MaterialCommunityIcons name="account" size={30} color="#334155" />
+            <View style={[styles.iconCircle, { backgroundColor: '#E8F0FE', marginRight: 10, overflow: 'hidden' }]}>
+              {fotoPerfil ? (
+                <Image 
+                  source={{ uri: fotoPerfil }} 
+                  style={{ width: '100%', height: '100%' }} 
+                  resizeMode="cover"
+                />
+              ) : (
+                <MaterialCommunityIcons name="account" size={30} color="#334155" />
+              )}
             </View>
             <Text style={styles.brandName}>Hola, {nombreUsuario}</Text> 
           </View>
 
-          {/* Botones de acción */}
           <View style={{ flexDirection: 'row' }}> 
             <TouchableOpacity style={styles.headerIconButton}>
               <MaterialCommunityIcons name="volume-high" size={24} color="#334155" />
@@ -83,15 +99,14 @@ export default function DashboardPaciente({ navigation }) {
               <MaterialCommunityIcons name="cog-outline" size={24} color="#334155" />
             </TouchableOpacity>
           </View>
-
         </View>
 
-        {/* FECHA */}
         <Text style={styles.dateText}>{fechaHoy}</Text>
       </View>
 
       {/* CUERPO */}
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, marginTop: 30, }}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 20 }}>
+        
         <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('Recordatorios')}>
           <View style={[styles.menuIconContainer, { backgroundColor: '#E1E7FF' }]}>
             <MaterialCommunityIcons name="bell-outline" size={28} color="#4D6BFE" />
@@ -124,13 +139,18 @@ export default function DashboardPaciente({ navigation }) {
 
         <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('ChatBot')}>
           <View style={[styles.menuIconContainer, { backgroundColor: '#FEF3C7' }]}>
-            <MaterialCommunityIcons name="chat-bubble-outline" size={28} color="#F59E0B" />
+            <Image 
+              source={require('../../../assets/icons/bot-icon.png')} 
+              style={{ width: 35, height: 35 }} 
+              resizeMode="contain" 
+            />
           </View>
           <View>
             <Text style={styles.menuTitle}>Asistente</Text>
             <Text style={styles.menuSubtitle}>Habla conmigo</Text>
           </View>
         </TouchableOpacity>
+
       </ScrollView>
       
       <BottomTabBar />

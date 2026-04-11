@@ -2,9 +2,13 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { styles } from '../style/styles';
+import { getStyles } from '../style/styles';
+import { useAccesibilidad } from '../services/accesibilidadContext';
 
 export default function BottomTabBar() {
+  const { aplicarEscala } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala);
+  
   const navigation = useNavigation();
   const route = useRoute();
 

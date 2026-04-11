@@ -1,23 +1,14 @@
 import React, { useState, useCallback } from 'react';
-import { 
-  View, 
-  Text, 
-  TouchableOpacity, 
-  ScrollView, 
-  ActivityIndicator 
-} from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 
 // Estilos y servicios
-import { styles } from '../../style/styles';
-import { 
-  fetchRecordatorios, 
-  getIconConfig, 
-  formatearFechaYHora 
-} from '../../services/recordatoriosService';
+import { getStyles } from '../../style/styles';
+import { useAccesibilidad } from '../../services/accesibilidadContext';
+import { fetchRecordatorios, getIconConfig, formatearFechaYHora } from '../../services/recordatoriosService';
 
 // Idioma del calendario
 LocaleConfig.locales['es'] = {
@@ -30,6 +21,9 @@ LocaleConfig.locales['es'] = {
 LocaleConfig.defaultLocale = 'es';
 
 export default function CalendarioView({ navigation }) {
+  const { aplicarEscala } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala);
+
   const [selected, setSelected] = useState(new Date().toISOString().split('T')[0]);
   const [reminders, setReminders] = useState([]);
   const [markedDates, setMarkedDates] = useState({});

@@ -1,9 +1,30 @@
+import React from 'react'; // Asegúrate de importar React
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { styles } from '../../../style/styles';
 import BottomTabBar from '../../../components/BottomTabBar';
+import { getStyles } from '../../../style/styles';
+import { useAccesibilidad } from '../../../services/accesibilidadContext';
 
 export default function MenuJuegos({ onBack, onSelectGame }) {
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
+  
+  const GameCard = ({ title, icon, color, iconColor, onPress }) => (
+    <TouchableOpacity style={styles.typeCard} onPress={onPress}>
+      <View style={[styles.typeIconCircle, { backgroundColor: color }]}>
+        <MaterialCommunityIcons name={icon} size={32} color={iconColor} />
+      </View>
+      <Text style={styles.typeText}>{title}</Text>
+    </TouchableOpacity>
+  );
+
+  const StatItem = ({ label, value, color }) => (
+    <View style={{ alignItems: 'center' }}>
+      <Text style={{ fontSize: aplicarEscala(24), fontWeight: 'bold', color: color }}>{value}</Text>
+      <Text style={{ fontSize: aplicarEscala(12), color: '#64748B', marginTop: 4 }}>{label}</Text>
+    </View>
+  );
+
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -36,20 +57,3 @@ export default function MenuJuegos({ onBack, onSelectGame }) {
     </View>
   );
 }
-
-// Sub-componentes internos para este menú
-const GameCard = ({ title, icon, color, iconColor, onPress }) => (
-  <TouchableOpacity style={styles.typeCard} onPress={onPress}>
-    <View style={[styles.typeIconCircle, { backgroundColor: color }]}>
-      <MaterialCommunityIcons name={icon} size={32} color={iconColor} />
-    </View>
-    <Text style={styles.typeText}>{title}</Text>
-  </TouchableOpacity>
-);
-
-const StatItem = ({ label, value, color }) => (
-  <View style={{ alignItems: 'center' }}>
-    <Text style={{ fontSize: 24, fontWeight: 'bold', color: color }}>{value}</Text>
-    <Text style={{ fontSize: 12, color: '#64748B', marginTop: 4 }}>{label}</Text>
-  </View>
-);
