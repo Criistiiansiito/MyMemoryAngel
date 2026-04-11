@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Switch, TextInput, Image, ActivityIndicator, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -10,10 +10,10 @@ import { useAccesibilidad } from '../../services/accesibilidadContext';
 import { configuracionPerfil } from '../../services/configuracionPerfil';
 
 export default function ConfiguracionPaciente({ navigation }) {
-    const { aplicarEscala, textSizeLabel, setTextSizeLabel } = useAccesibilidad();
+    const { aplicarEscala, textSizeLabel, setTextSizeLabel, isDaltonic, setIsDaltonic, cargarDesdeServidor } = useAccesibilidad();
+
     const styles = getStyles(aplicarEscala);
     
-    // Estados
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
     const [fechaSQL, setFechaSQL] = useState(''); 
@@ -21,7 +21,6 @@ export default function ConfiguracionPaciente({ navigation }) {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [profilePhoto, setProfilePhoto] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [isDaltonic, setIsDaltonic] = useState(false);
 
     useEffect(() => { 
         cargarDatos(); 
@@ -33,15 +32,14 @@ export default function ConfiguracionPaciente({ navigation }) {
             if (data.ok && data.usuario) {
                 setNombre(data.usuario.nombre || '');
                 setEmail(data.usuario.correo || '');
-                
                 if (data.usuario.fecha_nacimiento) {
                     const fechaLimpia = data.usuario.fecha_nacimiento.split('T')[0];
                     setFechaSQL(fechaLimpia);
                     const [year, month, day] = fechaLimpia.split('-');
                     setDateText(`${day}/${month}/${year}`);
                 }
-                
                 if (data.usuario.foto_perfil) setProfilePhoto(data.usuario.foto_perfil);
+                cargarDesdeServidor(data.usuario);
             }
         } catch (error) {
             console.error("Error al cargar perfil:", error);
@@ -49,6 +47,31 @@ export default function ConfiguracionPaciente({ navigation }) {
         } finally {
             setLoading(false);
         }
+    };
+
+    // NUEVA FUNCIÓN PARA GUARDADO AUTOMÁTICO DE ACCESIBILIDAD 
+    const autoGuardarAccesibilidad = async (nuevoTamano, nuevoDaltonismo) => {
+        try {
+            // Llamamos a la API inmediatamente
+            await configuracionPerfil.actualizarAccesibilidad({
+                tamano_texto: nuevoTamano,
+                modo_daltonico: nuevoDaltonismo ? 1 : 0
+            });
+            console.log("Accesibilidad guardada automáticamente");
+        } catch (error) {
+            console.error("Error en el auto-guardado:", error);
+        }
+    };
+
+    // MANEJADORES DE CAMBIO INSTANTÁNEO
+    const manejarCambioTamano = (size) => {
+        setTextSizeLabel(size); 
+        autoGuardarAccesibilidad(size, isDaltonic); 
+    };
+
+    const manejarCambioDaltonismo = (val) => {
+        setIsDaltonic(val); 
+        autoGuardarAccesibilidad(textSizeLabel, val); 
     };
 
     const onDateChange = (event, selectedDate) => {
@@ -60,20 +83,19 @@ export default function ConfiguracionPaciente({ navigation }) {
         }
     };
 
-    // Función pickImage con Base64 
     const pickImage = async () => {
         let resultPermission = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (!resultPermission.granted) {
-            alert("Se necesitan permisos para acceder a la galería");
+            Alert.alert("Permisos", "Se necesitan permisos para acceder a la galería");
             return;
         }
 
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ImagePicker.MediaType.Images,
             allowsEditing: true,
             aspect: [1, 1],
             quality: 0.4,
-            base64: true, //Esto genera el texto de la imagen
+            base64: true,
         });
 
         if (!result.canceled) {
@@ -82,31 +104,25 @@ export default function ConfiguracionPaciente({ navigation }) {
         }
     };
 
-    const manejarGuardar = async () => {
+    // GUARDADO MANUAL (SOLO LOS DATOS DE LA CUENTA) 
+    const manejarGuardarPerfil = async () => {
         if (!nombre.trim()) {
-            alert("El nombre no puede estar vacío");
+            Alert.alert("Error", "El nombre es obligatorio");
             return;
         }
 
         try {
             setLoading(true);
-            const res = await configuracionPerfil.actualizarPerfil(nombre, profilePhoto, fechaSQL);
+            const resPerfil = await configuracionPerfil.actualizarPerfil(nombre, profilePhoto, fechaSQL);
             
-            if (res.ok) {
-                if (Platform.OS === 'web') {
-                    alert("Perfil actualizado");
-                    navigation.goBack();
-                } else {
-                    Alert.alert("Éxito", "Perfil actualizado correctamente", [
-                        { text: "OK", onPress: () => navigation.goBack() }
-                    ]);
-                }
+            if (resPerfil.ok) {
+                Alert.alert("Éxito", "Tus datos personales se han actualizado correctamente.");
             } else {
-                alert(res.msg || "Hubo un error al actualizar");
+                Alert.alert("Error", "No se pudieron guardar los datos personales.");
             }
         } catch (error) {
-            console.error("Error al guardar:", error);
-            alert("Error de conexión con el servidor");
+            console.error("Error al guardar perfil:", error);
+            Alert.alert("Error", "Hubo un problema al conectar con el servidor.");
         } finally {
             setLoading(false);
         }
@@ -136,11 +152,7 @@ export default function ConfiguracionPaciente({ navigation }) {
                 <View style={styles.profileSection}>
                     <TouchableOpacity style={styles.profilePhotoContainer} onPress={pickImage}>
                         <View style={styles.photoCircle}>
-                            {profilePhoto ? (
-                                <Image source={{ uri: profilePhoto }} style={{ width: 130, height: 130, borderRadius: 65 }} />
-                            ) : (
-                                <MaterialCommunityIcons name="account" size={80} color="#334155" />
-                            )}
+                          <Image source={{ uri: profilePhoto }} style={{ width: 130, height: 130, borderRadius: 65 }} />    
                         </View>
                         <View style={styles.editPhotoButton}>
                             <MaterialCommunityIcons name="camera" size={20} color="#FFFFFF" />
@@ -149,7 +161,7 @@ export default function ConfiguracionPaciente({ navigation }) {
 
                     <Text style={styles.label}>Nombre completo</Text>
                     <View style={styles.inputContainer}>
-                        <MaterialCommunityIcons name="account-outline" size={20} color="#A0AEC0" style={styles.inputIcon} />
+                        <MaterialCommunityIcons name="account-outline" style={styles.inputIcon} />
                         <TextInput 
                             style={styles.input} 
                             value={nombre} 
@@ -160,7 +172,7 @@ export default function ConfiguracionPaciente({ navigation }) {
 
                     <Text style={styles.label}>Correo electrónico</Text>
                     <View style={styles.inputContainer}>
-                        <MaterialCommunityIcons name="email-outline" size={20} color="#A0AEC0" style={styles.inputIcon} />
+                        <MaterialCommunityIcons name="email-outline" style={styles.inputIcon} />
                         <TextInput 
                             style={[styles.input, { color: "#94A3B8" }]} 
                             value={email} 
@@ -173,8 +185,8 @@ export default function ConfiguracionPaciente({ navigation }) {
                         style={styles.inputContainer} 
                         onPress={() => setShowDatePicker(true)}
                     >
-                        <MaterialCommunityIcons name="calendar-outline" size={20} color="#A0AEC0" style={styles.inputIcon} />
-                        <Text style={[styles.input, { textAlignVertical: 'center', paddingTop: 0, color: fechaSQL ? '#2D3748' : '#A0AEC0' }]}>
+                        <MaterialCommunityIcons name="calendar-outline" style={styles.inputIcon} />
+                        <Text style={styles.input}>
                             {dateText}
                         </Text>
                     </TouchableOpacity>
@@ -189,18 +201,18 @@ export default function ConfiguracionPaciente({ navigation }) {
                         />
                     )}
 
-                    <TouchableOpacity style={[styles.mainButton, { marginTop: 25 }]} onPress={manejarGuardar}>
-                        <Text style={styles.mainButtonText}>Guardar Cambios</Text>
+                    <TouchableOpacity style={[styles.mainButton, { marginTop: 25 }]} onPress={manejarGuardarPerfil}>
+                        <Text style={styles.mainButtonText}>Guardar Cambios de Perfil</Text>
                     </TouchableOpacity>
                 </View>
 
-                {/* Ajustes de Accesibilidad */}
                 <View style={styles.dividerContainer}>
                     <View style={styles.dividerLine} />
                     <Text style={styles.dividerText}>Ajustes de la App</Text>
                     <View style={styles.dividerLine} />
                 </View>
 
+                {/* Ajuste de Tamaño de Texto */}
                 <View style={styles.settingsCard}>
                     <View style={styles.sectionHeader}>
                         <MaterialCommunityIcons name="format-size" size={22} color="#4D6BFE" />
@@ -215,7 +227,7 @@ export default function ConfiguracionPaciente({ navigation }) {
                                     { flex: 1, marginHorizontal: 4 },
                                     textSizeLabel === size && styles.optionButtonActive
                                 ]}
-                                onPress={() => setTextSizeLabel(size)} 
+                                onPress={() => manejarCambioTamano(size)} 
                             >
                                 <Text style={[
                                     styles.optionText, 
@@ -226,6 +238,7 @@ export default function ConfiguracionPaciente({ navigation }) {
                     </View>
                 </View>
 
+                {/* Ajuste de Daltonismo */}
                 <View style={styles.settingsCard}>
                     <View style={styles.sectionHeader}>
                         <MaterialCommunityIcons name="eye-outline" size={22} color={isDaltonic ? "#000" : "#8B5CF6"} />
@@ -233,7 +246,10 @@ export default function ConfiguracionPaciente({ navigation }) {
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Text style={{ fontSize: aplicarEscala(16) }}>Activar filtros de color</Text>
-                        <Switch onValueChange={setIsDaltonic} value={isDaltonic} />
+                        <Switch 
+                            onValueChange={manejarCambioDaltonismo} 
+                            value={isDaltonic} 
+                        />
                     </View>
                 </View>
             </ScrollView>
