@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getStyles } from '../../style/styles';
@@ -23,8 +23,8 @@ import Trivia from './juegos/trivia';
 import Atencion from './juegos/atencion';
 
 export default function EstimulacionCognitiva() {
-  const { aplicarEscala } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
 
   const [view, setView] = useState('main'); 
   const [selectedGame, setSelectedGame] = useState(null);
@@ -43,7 +43,7 @@ export default function EstimulacionCognitiva() {
   }
 
   // 2. Lógica para mostrar la Actividad de Música
-  if (selectedActivity === 'Musica') { // <--- SI SE SELECCIONA MÚSICA
+  if (selectedActivity === 'Musica') {
     return <Musica onBack={() => setSelectedActivity(null)} />;
   }
 
@@ -53,11 +53,30 @@ export default function EstimulacionCognitiva() {
 
   const renderMainMenu = () => (
     <View style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.contentPadding}>
-        <Text style={[styles.brandName, { marginBottom: 30, textAlign: 'center', marginTop: 20 }]}>
-          Estimulación Cognitiva
-        </Text>
+      {/* CABECERA ESTILO RECORDATORIOS */}
+      <View style={styles.topBar}>
+        <View style={styles.headerActions}>
+          <Text style={styles.brandName}>Estimulación</Text>
+          <View style={styles.headerButtonsGroup}>
+            <View style={[styles.headerIconButton, { backgroundColor: '#E8F0FE' }]}>
+               <MaterialCommunityIcons name="brain" size={24} color="#4D6BFE" />
+            </View>
+          </View>
+        </View>
+      </View>
+
+      <ScrollView 
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 }]} 
+        showsVerticalScrollIndicator={false}
+      >
+        {/* CONTENEDOR DE FECHA */}
+        <View style={styles.dateHeaderContainer}>
+          <Text style={styles.dateText}>
+            {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+          </Text>
+        </View>
         
+        {/* CARDS ORIGINALES */}
         <TouchableOpacity 
           style={[styles.menuCard, { height: 120, borderLeftWidth: 6, borderLeftColor: '#F97316' }]}
           onPress={() => setView('actividades')}
@@ -65,7 +84,7 @@ export default function EstimulacionCognitiva() {
           <View style={[styles.menuIconContainer, { backgroundColor: '#FFEDD5' }]}>
             <MaterialCommunityIcons name="palette-outline" size={35} color="#F97316" />
           </View>
-          <View>
+          <View style={{ flex: 1, marginLeft: 15 }}>
             <Text style={styles.menuTitle}>Actividades</Text>
             <Text style={styles.menuSubtitle}>Arte, música y lectura</Text>
           </View>
@@ -78,11 +97,25 @@ export default function EstimulacionCognitiva() {
           <View style={[styles.menuIconContainer, { backgroundColor: '#E8F0FE' }]}>
             <MaterialCommunityIcons name="controller-classic-outline" size={35} color="#4D6BFE" />
           </View>
-          <View>
+          <View style={{ flex: 1, marginLeft: 15 }}>
             <Text style={styles.menuTitle}>Juegos</Text>
             <Text style={styles.menuSubtitle}>Memoria, lógica y atención</Text>
           </View>
         </TouchableOpacity>
+
+        {/* SECCIÓN INFERIOR: FRASE MOTIVADORA */}
+        <View style={styles.infoBox}>
+          <View style={styles.infoIconCircle}>
+            <MaterialCommunityIcons name="lightbulb-on" size={24} color="#F59E0B" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.infoTitle}>Consejo del día</Text>
+            <Text style={styles.infoText}>
+              "Mantener la mente activa es el mejor regalo para tu memoria. ¡Prueba un juego nuevo hoy!"
+            </Text>
+          </View>
+        </View>
+
       </ScrollView>
       <BottomTabBar />
     </View>
@@ -102,7 +135,7 @@ export default function EstimulacionCognitiva() {
       {view === 'actividades' && (
         <MenuEstimulacion
           onBack={() => setView('main')} 
-          onSelectActivity={(id) => setSelectedActivity(id)} // <--- PASA ESTA PROP
+          onSelectActivity={(id) => setSelectedActivity(id)} 
         />
       )}
     </SafeAreaView>
