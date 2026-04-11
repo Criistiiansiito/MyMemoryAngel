@@ -19,6 +19,7 @@ const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 app.use('/api/recordatorios', authRoutes);
 app.use('/api/chatbot', authRoutes);
+app.use('/api/musica', authRoutes);
 
 // Arrancar servidor en IP local
 const PORT = process.env.PORT || 5000;
