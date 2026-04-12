@@ -22,7 +22,7 @@ export default function MenuEstimulacion({ onBack, onSelectActivity }) {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#F8FAFC' }}>
+    <View style={styles.container}>
       {/* Header simple */}
       <View style={styles.topBar}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
