@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Switch, TextInput, Image, ActivityIndicator, Platform, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, TouchableOpacity, ScrollView, Switch, TextInput, Image, ActivityIndicator, Platform, Alert, StatusBar } from 'react-native';
+// Importamos useSafeAreaInsets y eliminamos SafeAreaView de la renderización
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker'; 
 import * as ImagePicker from 'expo-image-picker';
@@ -11,8 +12,10 @@ import { configuracionPerfil } from '../../services/configuracionPerfil';
 
 export default function ConfiguracionPaciente({ navigation }) {
     const { aplicarEscala, textSizeLabel, setTextSizeLabel, isDaltonic, setIsDaltonic, cargarDesdeServidor } = useAccesibilidad();
-
-    const styles = getStyles(aplicarEscala);
+    const styles = getStyles(aplicarEscala, isDaltonic);
+    
+    // Hook para manejar el área segura (Notch y Home Indicator)
+    const insets = useSafeAreaInsets();
     
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
@@ -70,7 +73,6 @@ export default function ConfiguracionPaciente({ navigation }) {
         autoGuardarAccesibilidad(textSizeLabel, val); 
     };
 
-    // CERRAR SESIÓN 
     const confirmarCerrarSesion = () => {
         Alert.alert(
             "Cerrar Sesión",
@@ -108,7 +110,7 @@ export default function ConfiguracionPaciente({ navigation }) {
         }
 
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaType.Images,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [1, 1],
             quality: 0.4,
@@ -130,12 +132,11 @@ export default function ConfiguracionPaciente({ navigation }) {
             setLoading(true);
             const resPerfil = await configuracionPerfil.actualizarPerfil(nombre, profilePhoto, fechaSQL);
             if (resPerfil.ok) {
-                Alert.alert("Éxito", "Tus datos personales se han actualizado correctamente.");
+                Alert.alert("¡Hecho!", "Tu perfil se ha actualizado correctamente.");
             } else {
-                Alert.alert("Error", "No se pudieron guardar los datos personales.");
+                Alert.alert("Error", "No se pudieron guardar los cambios.");
             }
         } catch (error) {
-            console.error("Error al guardar perfil:", error);
             Alert.alert("Error", "Hubo un problema al conectar con el servidor.");
         } finally {
             setLoading(false);
@@ -151,17 +152,26 @@ export default function ConfiguracionPaciente({ navigation }) {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.topBar}>
+        <View style={styles.container}>
+            <StatusBar barStyle="dark-content" />
+
+            {/* HEADER CON PADDING DINÁMICO */}
+            <View style={[
+                styles.topBar, 
+                { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+            ]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} size={24} />
+                        <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
                     </TouchableOpacity>
-                    <Text style={styles.brandName}>Configuración de mi perfil</Text>
+                    <Text style={styles.brandName}>Mi configuración</Text>
                 </View>
             </View>
             
-            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            <ScrollView 
+                contentContainerStyle={styles.scrollContent} 
+                showsVerticalScrollIndicator={false}
+            >
                 
                 <View style={styles.profileSection}>
                     <TouchableOpacity style={styles.profilePhotoContainer} onPress={pickImage}>
@@ -209,20 +219,20 @@ export default function ConfiguracionPaciente({ navigation }) {
                         <DateTimePicker 
                             value={fechaSQL ? new Date(fechaSQL) : new Date()} 
                             mode="date" 
-                            display="default" 
+                            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
                             maximumDate={new Date()}
                             onChange={onDateChange} 
                         />
                     )}
 
                     <TouchableOpacity style={[styles.mainButton, { marginTop: 25 }]} onPress={manejarGuardarPerfil}>
-                        <Text style={styles.mainButtonText}>Guardar Cambios de Perfil</Text>
+                        <Text style={styles.mainButtonText}>Guardar Perfil</Text>
                     </TouchableOpacity>
                 </View>
 
                 <View style={styles.dividerContainer}>
                     <View style={styles.dividerLine} />
-                    <Text style={styles.dividerText}>Ajustes de la App</Text>
+                    <Text style={styles.dividerText}>Personalización</Text>
                     <View style={styles.dividerLine} />
                 </View>
 
@@ -265,14 +275,10 @@ export default function ConfiguracionPaciente({ navigation }) {
                     </View>
                 </View>
 
-                {/* CERRAR SESIÓN */}
-                <View style={[styles.dividerContainer, { marginTop: 30 }]}>
-                    <View style={styles.dividerLine} />
-                    <Text style={styles.dividerText}>Sesión</Text>
-                    <View style={styles.dividerLine} />
-                </View>
-
-                <TouchableOpacity style={[styles.mainButton, { backgroundColor: '#EF4444', marginBottom: 40, shadowColor: '#EF4444' }]} onPress={confirmarCerrarSesion}>
+                <TouchableOpacity 
+                    style={[styles.mainButton, { backgroundColor: '#EF4444', marginTop: 30, marginBottom: 20 }]} 
+                    onPress={confirmarCerrarSesion}
+                >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <MaterialCommunityIcons name="logout" size={20} color="#FFF" style={{ marginRight: 10 }} />
                         <Text style={styles.mainButtonText}>Cerrar Sesión</Text>
@@ -280,6 +286,6 @@ export default function ConfiguracionPaciente({ navigation }) {
                 </TouchableOpacity>
 
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }

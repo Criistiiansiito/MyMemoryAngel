@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Platform, StatusBar } from 'react-native';
+// Importamos el hook y quitamos SafeAreaView
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -21,15 +22,17 @@ LocaleConfig.locales['es'] = {
 LocaleConfig.defaultLocale = 'es';
 
 export default function CalendarioView({ navigation }) {
-  const { aplicarEscala } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
+  
+  // Hook para el notch de iOS
+  const insets = useSafeAreaInsets();
 
   const [selected, setSelected] = useState(new Date().toISOString().split('T')[0]);
   const [reminders, setReminders] = useState([]);
   const [markedDates, setMarkedDates] = useState({});
   const [loading, setLoading] = useState(true);
 
-  // Cargar datos del backend
   const cargarDatos = async () => {
     try {
       setLoading(true);
@@ -45,7 +48,6 @@ export default function CalendarioView({ navigation }) {
     }
   };
 
-  // Puntos debajo de los días
   const actualizarMarcadores = (lista, diaSeleccionado) => {
     const marcas = {};
     lista.forEach(item => {
@@ -67,12 +69,10 @@ export default function CalendarioView({ navigation }) {
 
   useFocusEffect(useCallback(() => { cargarDatos(); }, []));
 
-  // Filtrar eventos por el día seleccionado
   const recordatoriosDelDia = reminders.filter(r => 
     r.fecha_hora && r.fecha_hora.substring(0, 10) === selected
   );
 
-  // Formatear el texto de la barra separadora
   const textoSeparador = () => {
     const d = new Date(selected + "T00:00:00");
     const opciones = { day: 'numeric', month: 'short' };
@@ -80,18 +80,26 @@ export default function CalendarioView({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header simple */}
-      <View style={styles.topBar}>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+
+      {/* HEADER CON PADDING DINÁMICO */}
+      <View style={[
+        styles.topBar, 
+        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+      ]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
           </TouchableOpacity>
-          <Text style={[styles.brandName]}>Mi calendario</Text>
+          <Text style={styles.brandName}>Mi calendario</Text>
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent} 
+        showsVerticalScrollIndicator={false}
+      >
         
         {/* Card del Calendario */}
         <View style={styles.calendarCard}>
@@ -153,6 +161,6 @@ export default function CalendarioView({ navigation }) {
           })
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

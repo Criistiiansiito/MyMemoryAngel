@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, TouchableOpacity, ScrollView, Platform, StatusBar } from 'react-native';
+// Importamos useSafeAreaInsets y eliminamos SafeAreaView de la renderización
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
@@ -26,6 +27,9 @@ import Atencion from './juegos/atencion';
 export default function EstimulacionCognitiva() {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
+  
+  // Hook para manejar los espacios seguros en iOS
+  const insets = useSafeAreaInsets();
 
   const [view, setView] = useState('main'); 
   const [selectedGame, setSelectedGame] = useState(null);
@@ -43,7 +47,7 @@ export default function EstimulacionCognitiva() {
     }
   }
 
-  // 2. Lógica para mostrar la Actividad de Música
+  // 2. Lógica para mostrar las Actividades
   if (selectedActivity === 'Musica') {
     return <Musica onBack={() => setSelectedActivity(null)} />;
   }
@@ -58,8 +62,11 @@ export default function EstimulacionCognitiva() {
 
   const renderMainMenu = () => (
     <View style={{ flex: 1 }}>
-      {/* CABECERA ESTILO RECORDATORIOS */}
-      <View style={styles.topBar}>
+      {/* CABECERA AJUSTADA AL NOTCH */}
+      <View style={[
+        styles.topBar, 
+        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+      ]}>
         <View style={styles.headerActions}>
           <Text style={styles.brandName}>Estimulación</Text>
           <View style={styles.headerButtonsGroup}>
@@ -74,14 +81,12 @@ export default function EstimulacionCognitiva() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 }]} 
         showsVerticalScrollIndicator={false}
       >
-        {/* CONTENEDOR DE FECHA */}
         <View style={styles.dateHeaderContainer}>
           <Text style={styles.dateText}>
             {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
           </Text>
         </View>
         
-        {/* CARDS ORIGINALES */}
         <TouchableOpacity 
           style={[styles.menuCard, { height: 120, borderLeftWidth: 6, borderLeftColor: '#F97316' }]}
           onPress={() => setView('actividades')}
@@ -108,7 +113,6 @@ export default function EstimulacionCognitiva() {
           </View>
         </TouchableOpacity>
 
-        {/* SECCIÓN INFERIOR: FRASE MOTIVADORA */}
         <View style={styles.infoBox}>
           <View style={styles.infoIconCircle}>
             <MaterialCommunityIcons name="lightbulb-on" size={24} color="#F59E0B" />
@@ -122,12 +126,17 @@ export default function EstimulacionCognitiva() {
         </View>
 
       </ScrollView>
-      <BottomTabBar />
+
+      <View>
+        <BottomTabBar />
+      </View>
     </View>
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      
       {view === 'main' && renderMainMenu()}
 
       {view === 'juegos' && (
@@ -143,6 +152,6 @@ export default function EstimulacionCognitiva() {
           onSelectActivity={(id) => setSelectedActivity(id)} 
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 }

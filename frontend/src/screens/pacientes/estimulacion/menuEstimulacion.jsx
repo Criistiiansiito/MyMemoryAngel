@@ -1,5 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Platform, StatusBar } from 'react-native';
+// Importamos los insets para manejar el notch y el espacio inferior
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import BottomTabBar from '../../../components/BottomTabBar';
 import { getStyles } from '../../../style/styles';
@@ -8,6 +10,9 @@ import { useAccesibilidad } from '../../../services/accesibilidadContext';
 export default function MenuEstimulacion({ onBack, onSelectActivity }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
+  
+  // Hook para obtener los espacios seguros del dispositivo
+  const insets = useSafeAreaInsets();
 
   const ActivityCard = ({ title, icon, color, iconColor, label, onPress }) => (
     <TouchableOpacity style={styles.typeCard} onPress={onPress}>
@@ -23,21 +28,26 @@ export default function MenuEstimulacion({ onBack, onSelectActivity }) {
 
   return (
     <View style={styles.container}>
-      {/* Header simple */}
-      <View style={styles.topBar}>
+      <StatusBar barStyle="dark-content" />
+
+      {/* CABECERA CON PADDING DINÁMICO SEGÚN EL NOTCH */}
+      <View style={[
+        styles.topBar, 
+        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+      ]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={onBack}>
               <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
           </TouchableOpacity>
-          <Text style={[styles.brandName]}>Actividades</Text>
+          <Text style={styles.brandName}>Actividades</Text>
         </View>
       </View>
 
       <ScrollView 
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 }]} 
+        contentContainerStyle={[ styles.scrollContent ]} 
         showsVerticalScrollIndicator={false}
       >
-        {/* REJILLA DE ACTIVIDADES (Usando tu clase styles.grid) */}
+        {/* REJILLA DE ACTIVIDADES */}
         <View style={styles.grid}>
           <ActivityCard 
             title="Arte" 
@@ -73,7 +83,7 @@ export default function MenuEstimulacion({ onBack, onSelectActivity }) {
           />
         </View>
 
-        {/* PANEL DE INFORMACIÓN CON TUS CLASES PREFERIDAS */}
+        {/* PANEL DE INFORMACIÓN */}
         <View style={styles.infoBox}>
           <View style={styles.infoIconCircle}>
             <MaterialCommunityIcons name="lightbulb-on" size={24} color="#F59E0B" />

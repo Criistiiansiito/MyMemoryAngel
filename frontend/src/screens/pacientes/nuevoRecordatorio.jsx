@@ -1,6 +1,7 @@
 import React, { useState } from 'react'; 
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch, Platform, Alert, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch, Platform, Alert, ActivityIndicator, StatusBar } from 'react-native';
+// Importamos useSafeAreaInsets y eliminamos SafeAreaView de la renderización
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker'; 
 import { getStyles } from '../../style/styles';
@@ -14,8 +15,11 @@ import {
 
 export default function NuevoRecordatorio({ navigation }) {
 
-  const { aplicarEscala } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
+  
+  // Hook para manejar espacios seguros (Notch y Home Indicator)
+  const insets = useSafeAreaInsets();
 
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
@@ -64,17 +68,26 @@ export default function NuevoRecordatorio({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.topBar}>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+
+      {/* CABECERA CON PADDING DINÁMICO */}
+      <View style={[
+        styles.topBar, 
+        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+      ]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
           </TouchableOpacity>
-          <Text style={[styles.brandName]}>Nuevo Recordatorio</Text>
+          <Text style={styles.brandName}>Nuevo Recordatorio</Text>
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent} 
+        showsVerticalScrollIndicator={false}
+      >
         
         <Text style={styles.label}>Título</Text>
         <View style={styles.inputContainer}>
@@ -111,9 +124,9 @@ export default function NuevoRecordatorio({ navigation }) {
                 style={[
                   styles.cardTipoRecordatorio, 
                   esSeleccionado && { 
-                    borderColor: '#4D6BFE', // Color azul del recuadro
-                    borderWidth: 2,         // Grosor para que se note
-                    backgroundColor: '#F0F4FF' // Opcional: un fondo muy clarito para resaltar
+                    borderColor: '#4D6BFE', 
+                    borderWidth: 2,         
+                    backgroundColor: '#F0F4FF' 
                   }
                 ]}
               >
@@ -212,6 +225,6 @@ export default function NuevoRecordatorio({ navigation }) {
           {enviando ? <ActivityIndicator color="#FFF" /> : <Text style={styles.mainButtonText}>Guardar Recordatorio</Text>}
         </TouchableOpacity>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

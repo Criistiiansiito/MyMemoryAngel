@@ -25,7 +25,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     backgroundColor: '#FFFFFF',
     width: '100%',
     paddingTop: Platform.OS === 'ios' ? 30 : 20, 
-    paddingBottom: 15,
+    paddingBottom: 20,
     paddingHorizontal: 25,
     borderBottomWidth: 1,
     borderBottomColor: '#E2E8F0',
@@ -271,6 +271,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 20, 
     paddingTop: 15,
+    paddingBottom:30,
   },
 messageWrapper: {
     marginBottom: 15,

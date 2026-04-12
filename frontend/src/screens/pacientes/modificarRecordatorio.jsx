@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Platform, Alert, ScrollView, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState } from 'react'; 
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Platform, Alert, ActivityIndicator, StatusBar } from 'react-native';
+// Importamos useSafeAreaInsets y eliminamos SafeAreaView de la renderización
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker'; 
 import axios from 'axios';
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
@@ -10,8 +11,11 @@ import { useAccesibilidad } from '../../services/accesibilidadContext';
 const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
 
 export default function ModificarRecordatorio({ route, navigation }) {
-  const { aplicarEscala } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
+  
+  // Hook para el área segura de iOS
+  const insets = useSafeAreaInsets();
     
   const { recordatorio } = route.params;
 
@@ -52,7 +56,7 @@ export default function ModificarRecordatorio({ route, navigation }) {
   };
 
   const handleEliminar = () => {
-    Alert.alert("Eliminar", "¿Estás seguro?", [
+    Alert.alert("Eliminar", "¿Estás seguro de borrar este recordatorio?", [
       { text: "Cancelar", style: "cancel" },
       { 
         text: "Borrar", 
@@ -70,18 +74,26 @@ export default function ModificarRecordatorio({ route, navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header Reutilizado */}
-      <View style={styles.topBar}>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+
+      {/* CABECERA CON PADDING DINÁMICO */}
+      <View style={[
+        styles.topBar, 
+        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+      ]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
           </TouchableOpacity>
-          <Text style={[styles.brandName]}>Editar Recordatorio</Text>
+          <Text style={styles.brandName}>Editar Recordatorio</Text>
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent} 
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.settingsCard}>
           
           <Text style={styles.inputLabel}>Título del recordatorio</Text>
@@ -153,6 +165,6 @@ export default function ModificarRecordatorio({ route, navigation }) {
           )}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
