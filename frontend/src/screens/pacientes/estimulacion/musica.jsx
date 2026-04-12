@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator, Alert, Image } from 'react-native';
+import { 
+  View, Text, TouchableOpacity, ScrollView, 
+  ActivityIndicator, Alert, Image, Platform, StatusBar 
+} from 'react-native';
+// Importamos useSafeAreaInsets para el manejo de áreas seguras
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import { getStyles } from '../../../style/styles';
@@ -9,6 +14,9 @@ import { musicaService } from '../../../services/musicaService';
 export default function Musica({ onBack }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
+  
+  // Hook para el área segura (iOS Notch / Home Indicator)
+  const insets = useSafeAreaInsets();
 
   const [vistaActual, setVistaActual] = useState('menu');
   const [canciones, setCanciones] = useState([]);
@@ -18,15 +26,27 @@ export default function Musica({ onBack }) {
   const [reproduciendoId, setReproduciendoId] = useState(null);
   const [progreso, setProgreso] = useState({ posicion: 0, duracion: 0 });
 
-  const categoriasMusica = [
-    { id: 1, titulo: 'Banda Sonora de Vida', tipo: 'personal', momento: 'Cualquier momento', descripcion: 'Canciones de tu juventud para evocar recuerdos.', icono: 'account-music', color: '#6366F1' },
-    { id: 2, titulo: 'Naturaleza', tipo: 'naturaleza', momento: 'Tarde o Relax', descripcion: 'Sonidos de lluvia u olas para un entorno tranquilo.', icono: 'sprout', color: '#10B981' },
-    { id: 3, titulo: 'Clásica', tipo: 'clasica', momento: 'Mañana', descripcion: 'Ritmos constantes para reducir la ansiedad.', icono: 'music-clef-treble', color: '#F59E0B' },
-    { id: 4, titulo: 'Terapia 40 Hz', tipo: 'frecuencias', momento: 'Sesión Diaria', descripcion: 'Frecuencias para la estimulación neuroprotectora.', icono: 'waveform', color: '#EC4899' },
-  ];
-
   useEffect(() => {
-    return () => { if (sonido) sonido.unloadAsync(); };
+    const configurarAudio = async () => {
+      try {
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: false,
+          playsInSilentModeIOS: true, 
+          shouldDuckAndroid: true,
+          staysActiveInBackground: true,
+          playThroughEarpieceAndroid: false,
+        });
+      } catch (e) {
+        console.error("Error en setAudioModeAsync:", e);
+      }
+    };
+    configurarAudio();
+
+    return () => {
+      if (sonido) {
+        sonido.unloadAsync();
+      }
+    };
   }, [sonido]);
 
   const onSelectCategoria = async (item) => {
@@ -37,7 +57,7 @@ export default function Musica({ onBack }) {
       setCanciones(data);
       setVistaActual('reproductor');
     } catch (error) {
-      Alert.alert("Error", "No se pudo conectar con la base de datos");
+      Alert.alert("Error", "No se pudo conectar con el servidor");
     } finally {
       setCargando(false);
     }
@@ -45,38 +65,53 @@ export default function Musica({ onBack }) {
 
   const controlarReproduccion = async (base64Data, id) => {
     try {
-      if (reproduciendoId === id) {
-        await sonido.pauseAsync();
-        setReproduciendoId(null);
+      if (reproduciendoId === id && sonido) {
+        const status = await sonido.getStatusAsync();
+        if (status.isPlaying) {
+          await sonido.pauseAsync();
+        } else {
+          await sonido.playAsync();
+        }
         return;
       }
-      if (sonido) await sonido.unloadAsync();
 
+      if (sonido) {
+        await sonido.unloadAsync();
+        setSonido(null);
+        setReproduciendoId(null);
+      }
+
+      const source = { uri: `data:audio/mpeg;base64,${base64Data}` };
       const { sound: nuevoSonido } = await Audio.Sound.createAsync(
-        { uri: `data:audio/mpeg;base64,${base64Data}` },
-        { shouldPlay: true }
+        source,
+        { shouldPlay: true, volume: 1.0 },
+        actualizarEstadoProgreso
       );
 
       setSonido(nuevoSonido);
       setReproduciendoId(id);
 
-      nuevoSonido.setOnPlaybackStatusUpdate((status) => {
-        if (status.isLoaded) {
-          setProgreso({
-            posicion: status.positionMillis,
-            duracion: status.durationMillis,
-          });
-          if (status.didJustFinish) setReproduciendoId(null);
-        }
-      });
     } catch (e) {
       Alert.alert("Error", "No se pudo reproducir el audio");
     }
   };
 
+  const actualizarEstadoProgreso = (status) => {
+    if (status.isLoaded) {
+      setProgreso({
+        posicion: status.positionMillis,
+        duracion: status.durationMillis,
+      });
+      if (status.didJustFinish) {
+        setReproduciendoId(null);
+      }
+    }
+  };
+
   const formatearTiempo = (millis) => {
+    if (!millis || isNaN(millis)) return "0:00";
     const minutos = Math.floor(millis / 60000);
-    const segundos = ((millis % 60000) / 1000).toFixed(0);
+    const segundos = Math.floor((millis % 60000) / 1000);
     return `${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
   };
 
@@ -86,11 +121,22 @@ export default function Musica({ onBack }) {
   };
 
   const volverAlMenu = async () => {
-    if (sonido) await sonido.stopAsync();
+    if (sonido) {
+      await sonido.stopAsync();
+      await sonido.unloadAsync();
+      setSonido(null);
+    }
     setVistaActual('menu');
     setReproduciendoId(null);
     setProgreso({ posicion: 0, duracion: 0 });
   };
+
+  const categoriasMusica = [
+    { id: 1, titulo: 'Mis Recuerdos', tipo: 'personal', momento: 'Cualquier momento', descripcion: 'Canciones de tu juventud para evocar recuerdos.', icono: 'account-music', color: '#6366F1' },
+    { id: 2, titulo: 'Naturaleza', tipo: 'naturaleza', momento: 'Tarde o Relax', descripcion: 'Sonidos de lluvia u olas para un entorno tranquilo.', icono: 'sprout', color: '#10B981' },
+    { id: 3, titulo: 'Clásica', tipo: 'clasica', momento: 'Mañana', descripcion: 'Ritmos constantes para reducir la ansiedad.', icono: 'music-clef-treble', color: '#F59E0B' },
+    { id: 4, titulo: 'Terapia 40 Hz', tipo: 'frecuencias', momento: 'Sesión Diaria', descripcion: 'Frecuencias para la estimulación neuroprotectora.', icono: 'waveform', color: '#EC4899' },
+  ];
 
   const renderMenu = () => (
     <ScrollView contentContainerStyle={{ padding: 20 }}>
@@ -101,20 +147,13 @@ export default function Musica({ onBack }) {
           </View>
           <View style={styles.musicTextContainer}>
             <Text style={styles.musicCardTitle}>{item.titulo}</Text>
-            
-            <Text style={styles.musicCardDescription} numberOfLines={2}>
-              {item.descripcion}
-            </Text>
-            
-            {/* Badge Unificado: Escuchar | Momento */}
+            <Text style={styles.musicCardDescription} numberOfLines={2}>{item.descripcion}</Text>
             <View style={styles.musicBadge}>
               <View style={styles.musicBadgePlaySection}>
                 <MaterialCommunityIcons name="play-circle" size={16} color={item.color} />
                 <Text style={[styles.musicBadgeText, { color: item.color }]}>Escuchar</Text>
               </View>
-              
               <Text style={styles.musicSeparator}>|</Text>
-              
               <View style={styles.musicBadgeMomentSection}>
                 <MaterialCommunityIcons name="clock-outline" size={13} color="#64748B" />
                 <Text style={styles.momentoTextInline}>{item.momento}</Text>
@@ -146,10 +185,8 @@ export default function Musica({ onBack }) {
               </View>
 
               <View style={styles.musicTextContainer}>
-                <Text 
-                  style={[styles.musicCardTitle, { color: reproduciendoId === pista.id ? categoriaActiva.color : '#334155' }]} 
-                  numberOfLines={1}
-                >
+                
+                <Text style={[styles.musicCardTitle, { color: reproduciendoId === pista.id ? categoriaActiva.color : '#334155' }]} numberOfLines={1}>
                   {pista.titulo}
                 </Text>
                 <Text style={styles.musicCardDescription}>
@@ -162,7 +199,6 @@ export default function Musica({ onBack }) {
                   styles.musicPlayButtonCircle, 
                   { backgroundColor: reproduciendoId === pista.id ? categoriaActiva.color : '#F1F5F9' }
                 ]}
-                onPress={() => controlarReproduccion(pista.audio, pista.id)}
               >
                 <MaterialCommunityIcons 
                   name={reproduciendoId === pista.id ? "pause" : "play"} 
@@ -196,7 +232,13 @@ export default function Musica({ onBack }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.topBar}>
+      <StatusBar barStyle="dark-content" />
+
+      {/* CABECERA CON PADDING DINÁMICO */}
+      <View style={[
+        styles.topBar, 
+        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+      ]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={vistaActual === 'menu' ? onBack : volverAlMenu}>
             <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
