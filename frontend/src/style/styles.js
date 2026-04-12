@@ -1,6 +1,8 @@
 import { StyleSheet, Platform, Dimensions } from 'react-native';
 
 const { height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
+const CANVAS_SIZE = width - 20;
 
 export const getStyles = (aplicarEscala) => StyleSheet.create({
   // --- ESTILOS GENERALES Y CONTENEDORES ---
@@ -1051,5 +1053,75 @@ writingIndicator: {
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 40,
+  },
+  canvasDeleteButton: {
+    padding: 8,
+    backgroundColor: '#FFF1F2',
+    borderRadius: 12,
+  },
+  canvasWrapper: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  canvasContainer: {
+    width: CANVAS_SIZE, 
+    height: CANVAS_SIZE + 120, 
+    backgroundColor: 'white', 
+    borderRadius: 25, 
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 15,
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: '#E2E8F0',
+  },
+  canvasFooter: {
+    marginHorizontal: 0,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    paddingTop: 10,
+    marginBottom: 0,
+    paddingHorizontal: 15,
+    shadowOffset: { width: 0, height: -10 },
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 20,
+  },
+  canvasTools: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  canvasTool: {
+    width: 45,
+    height: 45,
+    borderRadius: 15,
+    backgroundColor: '#F1F5F9',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  canvasColorCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  canvasActiveColorCircle: {
+    borderWidth: 3,
+    borderColor: '#334155',
+    
+  },
+  canvasStatusText: {
+    textAlign: 'center',
+    color: '#94A3B8',
+    fontWeight: 'bold',
+    fontSize: 12,
+    letterSpacing: 1.5,
   }
 });
