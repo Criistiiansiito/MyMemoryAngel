@@ -3,7 +3,6 @@ import {
   View, Text, TouchableOpacity, ScrollView, 
   ActivityIndicator, Alert, Image, Platform, StatusBar 
 } from 'react-native';
-// Importamos useSafeAreaInsets para el manejo de áreas seguras
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
@@ -14,8 +13,6 @@ import { musicaService } from '../../../services/musicaService';
 export default function Musica({ onBack }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
-  
-  // Hook para el área segura (iOS Notch / Home Indicator)
   const insets = useSafeAreaInsets();
 
   const [vistaActual, setVistaActual] = useState('menu');
@@ -31,7 +28,7 @@ export default function Musica({ onBack }) {
       try {
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: false,
-          playsInSilentModeIOS: true, 
+          playsInSilentModeIOS: true, // Vital para iOS
           shouldDuckAndroid: true,
           staysActiveInBackground: true,
           playThroughEarpieceAndroid: false,
@@ -65,25 +62,34 @@ export default function Musica({ onBack }) {
 
   const controlarReproduccion = async (base64Data, id) => {
     try {
+      // 1. Si es la misma canción, alternar Play/Pause
       if (reproduciendoId === id && sonido) {
         const status = await sonido.getStatusAsync();
-        if (status.isPlaying) {
-          await sonido.pauseAsync();
-        } else {
-          await sonido.playAsync();
+        if (status.isLoaded) {
+          if (status.isPlaying) {
+            await sonido.pauseAsync();
+          } else {
+            await sonido.playAsync();
+          }
+          return;
         }
-        return;
       }
 
+      // 2. Limpiar sonido previo (Importante en iOS liberar el buffer)
       if (sonido) {
+        await sonido.stopAsync();
         await sonido.unloadAsync();
         setSonido(null);
         setReproduciendoId(null);
       }
 
-      const source = { uri: `data:audio/mpeg;base64,${base64Data}` };
+      // 3. Preparar la URI correctamente para iOS
+      const uri = base64Data.startsWith('data:') 
+        ? base64Data 
+        : `data:audio/mpeg;base64,${base64Data}`;
+
       const { sound: nuevoSonido } = await Audio.Sound.createAsync(
-        source,
+        { uri },
         { shouldPlay: true, volume: 1.0 },
         actualizarEstadoProgreso
       );
@@ -92,6 +98,7 @@ export default function Musica({ onBack }) {
       setReproduciendoId(id);
 
     } catch (e) {
+      console.error("Error Audio iOS/Android:", e);
       Alert.alert("Error", "No se pudo reproducir el audio");
     }
   };
@@ -139,7 +146,10 @@ export default function Musica({ onBack }) {
   ];
 
   const renderMenu = () => (
-    <ScrollView contentContainerStyle={{ padding: 20 }}>
+    <ScrollView 
+      contentContainerStyle={{ padding: 20 }}
+      showsVerticalScrollIndicator={false}
+    >
       {categoriasMusica.map((item) => (
         <TouchableOpacity key={item.id} style={styles.musicCard} onPress={() => onSelectCategoria(item)}>
           <View style={[styles.musicIconContainer, { backgroundColor: item.color }]}>
@@ -166,17 +176,18 @@ export default function Musica({ onBack }) {
   );
 
   const renderReproductor = () => (
-    <ScrollView style={styles.container} contentContainerStyle={styles.musicScrollContainer}>
+    <ScrollView 
+      style={{ flex: 1 }} 
+      contentContainerStyle={styles.musicScrollContainer}
+      showsVerticalScrollIndicator={false}
+    >
       {canciones.length > 0 ? (
         canciones.map((pista) => (
           <View key={pista.id} style={styles.musicCardContainer}>
             <View style={styles.musicCardRow}>
               <View style={styles.musicImageContainer}>
                 {pista.imagen ? (
-                  <Image 
-                    source={{ uri: `data:image/jpeg;base64,${pista.imagen}` }} 
-                    style={styles.musicImageThumb} 
-                  />
+                  <Image source={{ uri: `data:image/jpeg;base64,${pista.imagen}` }} style={styles.musicImageThumb} />
                 ) : (
                   <View style={[styles.musicImagePlaceholder, { backgroundColor: categoriaActiva.color + '20' }]}>
                     <MaterialCommunityIcons name="music" size={24} color={categoriaActiva.color} />
@@ -185,7 +196,6 @@ export default function Musica({ onBack }) {
               </View>
 
               <View style={styles.musicTextContainer}>
-                
                 <Text style={[styles.musicCardTitle, { color: reproduciendoId === pista.id ? categoriaActiva.color : '#334155' }]} numberOfLines={1}>
                   {pista.titulo}
                 </Text>
@@ -199,6 +209,7 @@ export default function Musica({ onBack }) {
                   styles.musicPlayButtonCircle, 
                   { backgroundColor: reproduciendoId === pista.id ? categoriaActiva.color : '#F1F5F9' }
                 ]}
+                onPress={() => controlarReproduccion(pista.audio, pista.id)}
               >
                 <MaterialCommunityIcons 
                   name={reproduciendoId === pista.id ? "pause" : "play"} 
@@ -234,7 +245,6 @@ export default function Musica({ onBack }) {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
 
-      {/* CABECERA CON PADDING DINÁMICO */}
       <View style={[
         styles.topBar, 
         { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
@@ -250,7 +260,9 @@ export default function Musica({ onBack }) {
       </View>
       
       {cargando ? (
-        <ActivityIndicator size="large" color="#6366F1" style={{ flex: 1 }} />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color="#6366F1" />
+        </View>
       ) : (
         vistaActual === 'menu' ? renderMenu() : renderReproductor()
       )}
