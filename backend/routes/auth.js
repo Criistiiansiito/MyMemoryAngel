@@ -194,4 +194,23 @@ router.get('/get-musica', async (req, res) => {
   }
 });
 
+router.get('/get-lecturas', async (req, res) => {
+  try {
+    const { tipo } = req.query;
+    const [rows] = await db.query(
+      'SELECT id, titulo, tipo, contenido, imagenPrincipal FROM lecturas WHERE tipo = ?', 
+      [tipo]
+    );
+
+    const respuesta = rows.map(lectura => ({
+      ...lectura,
+      imagenPrincipal: lectura.imagenPrincipal ? Buffer.from(lectura.imagenPrincipal).toString('base64') : null
+    }));
+
+    res.json(respuesta);
+  } catch (error) {
+    res.status(500).send("Error en el servidor");
+  }
+});
+
 module.exports = router;

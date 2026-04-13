@@ -17,6 +17,7 @@ import MenuJuegos from './juegos/menuJuegos';
 import Musica from './estimulacion/musica'; 
 import Arte from './estimulacion/arte';
 import Lectura from './estimulacion/lectura';
+import Escritura from './estimulacion/escritura';
 
 // Mini-juegos
 import Memoria from './juegos/memoria';
@@ -58,6 +59,10 @@ export default function EstimulacionCognitiva() {
 
   if (selectedActivity === 'Lectura') {
     return <Lectura onBack={() => setSelectedActivity(null)} />;
+  } 
+
+  if (selectedActivity === 'Escritura') {
+    return <Escritura onBack={() => setSelectedActivity(null)} />;
   } 
 
   const renderMainMenu = () => (

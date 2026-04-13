@@ -20,6 +20,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/recordatorios', authRoutes);
 app.use('/api/chatbot', authRoutes);
 app.use('/api/musica', authRoutes);
+app.use('/api/lecturas', authRoutes);
 
 // Arrancar servidor en IP local
 const PORT = process.env.PORT || 5000;
