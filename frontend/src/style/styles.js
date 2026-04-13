@@ -1123,5 +1123,166 @@ writingIndicator: {
     fontWeight: 'bold',
     fontSize: 12,
     letterSpacing: 1.5,
+  },
+    tarjetaLectura: {
+    width: '100%',
+    height: 220,
+    backgroundColor: 'white',
+    borderRadius: 25,
+    marginBottom: 20,
+    overflow: 'hidden',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+  },
+  contenedorImagenCorteLectura: {
+    width: '100%',
+    height: '100%',
+    position: 'relative',
+  },
+  imagenLectura: {
+    width: '100%',
+    height: '100%',
+  },
+  corteOblicuoLectura: {
+    position: 'absolute',
+    bottom: -1,
+    left: 0,
+    right: -5,
+    height: 120,
+    backgroundColor: 'white',
+    transform: [{ skewY: '-5deg' }, { translateY: 30 }],
+  },
+  infoCapaLectura: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  tituloListaLectura: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1E293B',
+    lineHeight: 28,
+  },
+  badgeListaLectura: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+    gap: 5,
+  },
+  tiempoListaLectura: {
+    color: '#64748B',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  circuloLectura: {
+    width: 35,
+    height: 35,
+    borderRadius: 27,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 4,
+  },
+  portadaLecturaContainer: {
+    width: '100%',
+    height: 220,
+    backgroundColor: '#000',
+    position: 'relative',
+  },
+  imagenLecturaPortada: {
+    width: '100%',
+    height: '100%',
+    opacity: 0.8,
+  },
+  imagenLecturaPlaceholder: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  overlayLecturaTitulo: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 20,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+  },
+  tituloTextoLectura: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#1E293B',
+    textAlign: 'center',
+  },
+  divisorLectura: {
+    height: 4,
+    width: 50,
+    alignSelf: 'center',
+    marginTop: 8,
+    borderRadius: 2,
+  },
+  controlesInferioresLectura: { 
+    position: 'absolute', 
+    bottom: 0, 
+    left: 0, 
+    right: 0, 
+    backgroundColor: 'white', 
+    borderTopLeftRadius: 30, 
+    borderTopRightRadius: 30, 
+    paddingTop: 10, 
+    paddingHorizontal: 20, 
+    elevation: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+  },
+  containerProgresoLectura: { 
+    height: 6, 
+    backgroundColor: '#E2E8F0', 
+    borderRadius: 3, 
+    width: '100%', 
+    marginBottom: 15, 
+    overflow: 'hidden' 
+  },
+  barraProgresoLectura: { 
+    height: '100%', 
+    borderRadius: 3 
+  },
+  botonesRowLectura: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center' 
+  },
+  grupoBotonesLectura: { 
+    flexDirection: 'row', 
+    backgroundColor: '#F1F5F9', 
+    borderRadius: 15, 
+    padding: 5 
+  },
+  botonControlLectura: { 
+    padding: 12, 
+    marginHorizontal: 2 
+  },
+  botonVozLectura: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    paddingHorizontal: 20, 
+    paddingVertical: 12, 
+    borderRadius: 20, 
+    gap: 8 
+  },
+  textVozLectura: { 
+    color: 'white', 
+    fontWeight: '700', 
+    fontSize: 16 
   }
 });
