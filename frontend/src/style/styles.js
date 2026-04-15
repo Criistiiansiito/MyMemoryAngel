@@ -1284,5 +1284,25 @@ writingIndicator: {
     color: 'white', 
     fontWeight: '700', 
     fontSize: 16 
+  },
+  musicaUploadButton: {
+    flexDirection: 'row',
+    backgroundColor: '#6366F1',
+    padding: 15,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+    gap: 10,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  musicaUploadButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16
   }
 });
