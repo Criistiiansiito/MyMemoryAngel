@@ -24,6 +24,7 @@ export default function Musica({ onBack }) {
   const [categoriaActiva, setCategoriaActiva] = useState(null);
   const [cargando, setCargando] = useState(false);
   const [sonido, setSonido] = useState(null);
+  const [estaReproduciendo, setEstaReproduciendo] = useState(false);
   const [reproduciendoId, setReproduciendoId] = useState(null);
   const [progreso, setProgreso] = useState({ posicion: 0, duracion: 0 });
   const [userId, setUserId] = useState(null);
@@ -71,74 +72,97 @@ export default function Musica({ onBack }) {
     }
   };
 
-const seleccionarYSubirAudio = async () => {
-  try {
-    const result = await DocumentPicker.getDocumentAsync({
-      type: 'audio/mpeg', 
-      copyToCacheDirectory: true
-    });
+  const seleccionarYSubirAudio = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: 'audio/mpeg', 
+        copyToCacheDirectory: true
+      });
 
-    if (!result.canceled) {
-      const { uri, name, size } = result.assets[0];
+      if (!result.canceled) {
+        const { uri, name, size } = result.assets[0];
 
-      const extension = name.split('.').pop().toLowerCase();
-      if (extension !== 'mp3') {
-        Alert.alert(
-          "Archivo no permitido", 
-          "Solo se permiten archivos con extensión .mp3"
-        );
-        return;
+        const extension = name.split('.').pop().toLowerCase();
+        if (extension !== 'mp3') {
+          Alert.alert(
+            "Archivo no permitido", 
+            "Solo se permiten archivos con extensión .mp3"
+          );
+          return;
+        }
+
+        if (size > 10 * 1024 * 1024) {
+          Alert.alert("Error", "El archivo MP3 es demasiado grande (máx 10MB).");
+          return;
+        }
+
+        setCargando(true);
+        const titulo = name.split('.')[0];
+
+        await musicaService.insertarMusicaPersonal(uri, titulo, userId);
+
+        Alert.alert("¡Éxito!", "MP3 guardado en tus recuerdos.");
+        const data = await musicaService.obtenerMusicaPorTipo('personal', userId);
+        setCanciones(data);
       }
-      
-      if (size > 10 * 1024 * 1024) {
-        Alert.alert("Error", "El archivo MP3 es demasiado grande (máx 10MB).");
-        return;
-      }
-
-      setCargando(true);
-      const titulo = name.split('.')[0];
-
-      await musicaService.insertarMusicaPersonal(uri, titulo, userId);
-
-      Alert.alert("¡Éxito!", "MP3 guardado en tus recuerdos.");
-      const data = await musicaService.obtenerMusicaPorTipo('personal', userId);
-      setCanciones(data);
+    } catch (error) {
+      Alert.alert("Error", "No se pudo procesar el archivo.");
+    } finally {
+      setCargando(false);
     }
-  } catch (error) {
-    Alert.alert("Error", "No se pudo procesar el archivo.");
-  } finally {
-    setCargando(false);
-  }
-};
+  };
 
   const controlarReproduccion = async (base64Data, id) => {
     try {
-      if (reproduciendoId === id && sonido) {
+      if (sonido && reproduciendoId === id) {
         const status = await sonido.getStatusAsync();
         if (status.isLoaded) {
-          status.isPlaying ? await sonido.pauseAsync() : await sonido.playAsync();
+          if (status.isPlaying) {
+            await sonido.pauseAsync();
+            setEstaReproduciendo(false);
+          } else {
+            await sonido.playAsync();
+            setEstaReproduciendo(true); 
+          }
           return;
         }
       }
+
       if (sonido) {
         await sonido.stopAsync();
         await sonido.unloadAsync();
+        setSonido(null);
       }
-      const uri = base64Data.startsWith('data:') ? base64Data : `data:audio/mpeg;base64,${base64Data}`;
+
+      setProgreso({ posicion: 0, duracion: 0 }); // Reiniciamos progreso solo aquí
+      setReproduciendoId(id);
+      setEstaReproduciendo(true);
+
+      const cleanBase64 = base64Data.replace(/(\r\n|\n|\r)/gm, "");
+      const uri = cleanBase64.startsWith('data:') ? cleanBase64 : `data:audio/mpeg;base64,${cleanBase64}`;
+
       const { sound: nuevoSonido } = await Audio.Sound.createAsync(
         { uri },
         { shouldPlay: true, volume: 1.0 },
         actualizarEstadoProgreso
       );
+
       setSonido(nuevoSonido);
-      setReproduciendoId(id);
-    } catch (e) { Alert.alert("Error", "No se pudo reproducir"); }
+    } catch (e) {
+      console.error(e);
+      Alert.alert("Error", "No se pudo reproducir");
+    }
   };
 
   const actualizarEstadoProgreso = (status) => {
     if (status.isLoaded) {
       setProgreso({ posicion: status.positionMillis, duracion: status.durationMillis });
-      if (status.didJustFinish) setReproduciendoId(null);
+      
+      if (status.didJustFinish) {
+        setEstaReproduciendo(false);
+        setReproduciendoId(null);
+        setProgreso({ posicion: 0, duracion: 0 });
+      }
     }
   };
 
@@ -232,17 +256,18 @@ const seleccionarYSubirAudio = async () => {
                 </View>
 
                 <TouchableOpacity 
-                    style={[
+                  style={[
                     styles.musicPlayButtonCircle, 
-                    { backgroundColor: reproduciendoId === pista.id ? categoriaActiva.color : '#F1F5F9' }
-                    ]}
-                    onPress={() => controlarReproduccion(pista.audio, pista.id)}
+                    { backgroundColor: (reproduciendoId === pista.id && estaReproduciendo) ? categoriaActiva.color : '#F1F5F9' }
+                  ]}
+                  onPress={() => controlarReproduccion(pista.audio, pista.id)}
                 >
-                    <MaterialCommunityIcons 
-                    name={reproduciendoId === pista.id ? "pause" : "play"} 
+                  <MaterialCommunityIcons 
+                    // La clave es esta condición:
+                    name={(reproduciendoId === pista.id && estaReproduciendo) ? "pause" : "play"} 
                     size={28} 
-                    color={reproduciendoId === pista.id ? "white" : categoriaActiva.color} 
-                    />
+                    color={(reproduciendoId === pista.id && estaReproduciendo) ? "white" : categoriaActiva.color} 
+                  />
                 </TouchableOpacity>
                 </View>
 
