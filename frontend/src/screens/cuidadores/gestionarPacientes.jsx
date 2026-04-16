@@ -11,6 +11,7 @@ import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
 import { vinculacionesService } from '../../services/vinculacionesService';
 import { gestionPacientesService } from '../../services/gestionPacientesService';
+import InformacionPaciente from './informacionPaciente';
 import BottomTabBar from '../../components/BottomTabBarCuidador';
 
 export default function GestionPacientes() {
@@ -24,6 +25,12 @@ export default function GestionPacientes() {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const isScanningRef = useRef(false);
+
+  const [pacienteSeleccionado, setPacienteSeleccionado] = useState(null);
+  const seleccionarPaciente = (paciente) => {
+    setPacienteSeleccionado(paciente);
+    setView('detalle');
+  };
 
   useEffect(() => {
     cargarPacientes();
@@ -161,7 +168,7 @@ export default function GestionPacientes() {
           <ActivityIndicator size="large" color="#A855F7" style={{ marginTop: 50 }} />
         ) : pacientes.length > 0 ? (
                   pacientes.map((paciente) => (
-                    <TouchableOpacity key={paciente.uid} style={styles.menuCard}onPress={() => {}}>
+                    <TouchableOpacity key={paciente.uid} style={styles.menuCard}onPress={() => seleccionarPaciente(paciente)}>
                       <View style={styles.menuIconContainer}>
                         {paciente.foto_perfil ? (
                           <Image source={{ uri: paciente.foto_perfil }} style={styles.avatarImage} />
@@ -208,7 +215,15 @@ export default function GestionPacientes() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
-      {view === 'main' ? renderMainMenu() : renderScanner()}
+      {view === 'main' && renderMainMenu()}
+      {view === 'vincular' && renderScanner()}
+      {view === 'detalle' && (
+        <InformacionPaciente 
+          paciente={pacienteSeleccionado} 
+          onBack={() => setView('main')} 
+          styles={styles}
+        />
+      )}
     </View>
   );
 }
