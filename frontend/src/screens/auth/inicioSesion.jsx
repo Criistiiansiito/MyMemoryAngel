@@ -63,7 +63,7 @@ export default function InicioSesion({ navigation }) {
         if (perfil.tipo_usuario === 'paciente') {
           navigation.replace('DashboardPaciente');
         } else {
-          navigation.replace('DashboardCuidador');
+          navigation.replace('DashboardResponsable');
         }
       }, 800);
 

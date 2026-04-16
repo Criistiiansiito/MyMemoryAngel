@@ -1334,5 +1334,10 @@ writingIndicator: {
   },
   escrituraFechaHistorial: { fontSize: 13, fontWeight: 'bold', color: '#6366F1', marginBottom: 2 },
   escrituraTextoHistorial: { fontSize: 16, color: '#475569' },
-  escrituraBotonAccionHistorial: { padding: 8 }
+  escrituraBotonAccionHistorial: { padding: 8 },
+  nombreResponsable: {
+    fontSize: aplicarEscala(18),  
+    color: '#64748B',
+    marginLeft: 10
+  }
 });
