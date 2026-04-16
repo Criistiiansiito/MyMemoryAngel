@@ -1304,5 +1304,35 @@ writingIndicator: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16
-  }
+  },
+  escrituraInput: {
+    backgroundColor: '#F1F5F9',
+    borderRadius: 20,
+    padding: 20,
+    fontSize: 22,
+    color: '#334155',
+    borderWidth: 2,
+    borderColor: '#E2E8F0',
+    textAlign: 'center',
+  },
+  escrituraBotonMain: {
+    paddingVertical: 18,
+    borderRadius: 20,
+    marginTop: 15,
+    alignItems: 'center',
+  },
+  escrituraTextoBotonMain: { color: 'white', fontSize: 20, fontWeight: 'bold' },
+  escrituraItemHistorial: {
+    backgroundColor: 'white',
+    padding: 15,
+    borderRadius: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  escrituraFechaHistorial: { fontSize: 13, fontWeight: 'bold', color: '#6366F1', marginBottom: 2 },
+  escrituraTextoHistorial: { fontSize: 16, color: '#475569' },
+  escrituraBotonAccionHistorial: { padding: 8 }
 });
