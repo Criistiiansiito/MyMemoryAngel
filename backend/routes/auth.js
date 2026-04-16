@@ -1,8 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const admin = require('../firebaseAdmin'); 
+const admin = require('../firebaseAdmin');
+const multer = require('multer'); 
 const db = require('../db'); 
 
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+    fileFilter: (req, file, cb) => {
+        // Solo aceptar archivos con el MIME type de MP3
+        if (file.mimetype === 'audio/mpeg' || file.mimetype === 'audio/mp3') {
+            cb(null, true);
+        } else {
+            cb(new Error('Solo se permiten archivos MP3'), false);
+        }
+    }
+});
 // ==========================================
 // 1. SINCRONIZACIÓN (REGISTRO / LOGIN)
 // ==========================================
@@ -178,20 +191,54 @@ router.post('/preguntar', async (req, res) => {
 });
 
 router.get('/get-musica', async (req, res) => {
-  try {
-    const { tipo } = req.query;
-    const [rows] = await db.query('SELECT id, titulo, tipo, audio, imagen FROM musica WHERE tipo = ?', [tipo]);
+    try {
+        const { tipo, id_usuario } = req.query;
+        
+        let sql = 'SELECT id, titulo, tipo, audio, imagen FROM musica WHERE tipo = ?';
+        let params = [tipo];
 
-    const respuesta = rows.map(cancion => ({
-      ...cancion,
-      audio: cancion.audio ? Buffer.from(cancion.audio).toString('base64') : null,
-      imagen: cancion.imagen ? Buffer.from(cancion.imagen).toString('base64') : null
-    }));
+        if (tipo === 'personal') {
+            // Buscamos donde el id_usuario coincida O sea NULL (canciones generales)
+            sql += ' AND (id_usuario = ? OR id_usuario IS NULL)';
+            params.push(id_usuario);
+        }
 
-    res.json(respuesta);
-  } catch (error) {
-    res.status(500).send("Error en el servidor");
-  }
+        const [rows] = await db.query(sql, params);
+
+        const respuesta = rows.map(pista => ({
+            id: pista.id,
+            titulo: pista.titulo,
+            tipo: pista.tipo,
+            audio: pista.audio ? pista.audio.toString('base64') : null,
+            imagen: pista.imagen ? pista.imagen.toString('base64') : null
+        }));
+
+        res.json(respuesta);
+    } catch (error) {
+        console.error("Error al obtener:", error);
+        res.status(500).send("Error en el servidor");
+    }
+});
+
+router.post('/insert-musica', (req, res) => {
+    upload.single('audio')(req, res, async (err) => {
+        if (err) {
+            return res.status(400).json({ res: "error", msg: err.message });
+        }
+        
+        try {
+            const { titulo, tipo, id_usuario } = req.body;
+            if (!req.file) return res.status(400).send("No hay archivo");
+
+            const audioBuffer = req.file.buffer;
+            const query = 'INSERT INTO musica (titulo, tipo, audio, id_usuario) VALUES (?, ?, ?, ?)';
+            await db.query(query, [titulo, tipo, audioBuffer, id_usuario]);
+
+            res.json({ res: "ok" });
+        } catch (error) {
+            res.status(500).send("Error interno");
+        }
+    });
 });
 
 router.get('/get-lecturas', async (req, res) => {
@@ -210,6 +257,55 @@ router.get('/get-lecturas', async (req, res) => {
     res.json(respuesta);
   } catch (error) {
     res.status(500).send("Error en el servidor");
+  }
+});
+
+// OBTENER ESCRITURAS DE UN USUARIO ESPECÍFICO
+router.get('/get-escrituras', async (req, res) => {
+  try {
+    // Si usas middleware de auth, el id viene en req.user.id
+    // Si no, lo pasamos por query de momento
+    const { id_usuario } = req.query; 
+    
+    const [rows] = await db.query(
+      'SELECT id, dia, texto FROM escrituras WHERE id_usuario = ? ORDER BY id DESC',
+      [id_usuario]
+    );
+    res.json(rows);
+  } catch (error) {
+    res.status(500).send("Error en el servidor");
+  }
+});
+
+// Ruta para añadir: Verifica que el log imprima el UID correctamente
+router.post('/add-escritura', async (req, res) => {
+  try {
+    const { id_usuario, dia, texto } = req.body;
+    console.log("Recibiendo UID para guardar:", id_usuario); // Verás algo como "abc123XYZ..."
+
+    if (!id_usuario || !texto) {
+      return res.status(400).json({ error: "Faltan datos (uid o texto)" });
+    }
+
+    await db.query(
+      'INSERT INTO escrituras (id_usuario, dia, texto) VALUES (?, ?, ?)',
+      [id_usuario, dia, texto]
+    );
+    res.json({ ok: true, message: "Guardado correctamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al guardar");
+  }
+});
+
+router.delete('/delete-escritura/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.query('DELETE FROM escrituras WHERE id = ?', [id]);
+    res.json({ message: "Entrada eliminada" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al eliminar");
   }
 });
 
