@@ -6,10 +6,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
 import { configuracionPerfil } from '../../services/configuracionPerfil';
-import BottomTabBar from '../../components/BottomTabBarResponsables'; 
+import BottomTabBar from '../../components/BottomTabBarCuidador'; 
 
-export default function DashboardResponsable({ navigation }) {
-  const [nombreUsuario, setNombreUsuario] = useState('Responsable');
+export default function DashboardCuidador({ navigation }) {
+  const [nombreUsuario, setNombreUsuario] = useState('Cuidador');
   const [fotoPerfil, setFotoPerfil] = useState(null);
   const [loading, setLoading] = useState(true);
   const [numPacientes, setNumPacientes] = useState(0); 
@@ -34,7 +34,7 @@ export default function DashboardResponsable({ navigation }) {
       const res = await configuracionPerfil.obtenerPerfil();
       if (res.ok) {
         const usuario = res.data?.usuario || res.usuario;
-        setNombreUsuario(usuario.nombre || 'Responsable');
+        setNombreUsuario(usuario.nombre || 'Cuidador');
         if (usuario.foto_perfil) setFotoPerfil(usuario.foto_perfil);
         
         // Suponiendo que el perfil trae una lista de pacientes vinculados
@@ -73,11 +73,11 @@ export default function DashboardResponsable({ navigation }) {
                 <MaterialCommunityIcons name="account-tie" size={30} color="#6B21A8" />
               )}
             </View>
-                <Text style={styles.nombreResponsable } numberOfLines={1} ellipsizeMode="tail">Perfil de Responsable</Text>
+                <Text style={styles.nombreCuidador } numberOfLines={1} ellipsizeMode="tail">Perfil de Cuidador</Text>
           </View>
 
           <View style={{ flexDirection: 'row', flexShrink: 0}}> 
-            <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('ConfiguracionResponsable')}>
+            <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('ConfiguracionCuidador')}>
               <MaterialCommunityIcons name="cog-outline" size={24} color="#334155" />
             </TouchableOpacity>
           </View>
@@ -103,7 +103,7 @@ export default function DashboardResponsable({ navigation }) {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('RecordatoriosResponsables')}>
+        <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('RecordatoriosCuidador')}>
           <View style={[styles.menuIconContainer, { backgroundColor: '#E1E7FF' }]}>
             <MaterialCommunityIcons name="bell-outline" size={28} color="#4D6BFE" />
           </View>
@@ -113,7 +113,7 @@ export default function DashboardResponsable({ navigation }) {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('CalendarioResponsable')}>
+        <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('CalendarioCuidador')}>
           <View style={[styles.menuIconContainer, { backgroundColor: '#F3E8FF' }]}>
             <MaterialCommunityIcons name="calendar-month-outline" size={28} color="#A855F7" />
           </View>
@@ -123,7 +123,7 @@ export default function DashboardResponsable({ navigation }) {
           </View>
         </TouchableOpacity>        
 
-        <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('ChatBotResponsables')}>
+        <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('ChatBotCuidador')}>
           <View style={[styles.menuIconContainer, { backgroundColor: '#FEF3C7' }]}>
             <Image source={require('../../../assets/icons/bot-icon.png')} style={{ width: 35, height: 35 }} resizeMode="contain" />
           </View>

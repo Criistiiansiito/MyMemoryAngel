@@ -6,7 +6,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { getStyles } from '../../style/styles'; 
 import { useAccesibilidad } from '../../services/accesibilidadContext';
-import BottomTabBar from '../../components/BottomTabBarResponsables';
+import BottomTabBar from '../../components/BottomTabBarCuidador';
 
 import { 
   fetchRecordatorios, 

@@ -51,7 +51,7 @@ export default function RegistroCuidador({ navigation }) {
         nombre: nombre,
         email: email,
         fecha_nacimiento: fechaSQL,
-        tipo_usuario: 'responsable'
+        tipo_usuario: 'cuidador'
       }, {
         headers: { Authorization: `Bearer ${idToken}` }
       });

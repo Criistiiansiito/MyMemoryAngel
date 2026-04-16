@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
-import BottomTabBar from '../../components/BottomTabBarResponsables';
+import BottomTabBar from '../../components/BottomTabBarCuidador';
 
 const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
 
