@@ -1,91 +1,139 @@
-import { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState, useRef } from 'react';
+import { 
+  View, Text, TouchableOpacity, ScrollView, PanResponder, 
+  Dimensions, StyleSheet, Platform, StatusBar 
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Svg, { Path } from 'react-native-svg';
 import { getStyles } from '../../../style/styles';
 import { useAccesibilidad } from '../../../services/accesibilidadContext';
 
 export default function ArteActividad({ onBack }) {
-  const { aplicarEscala } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
+  const insets = useSafeAreaInsets();
 
+  const [paths, setPaths] = useState([]);             
+  const [currentPath, setCurrentPath] = useState(''); 
   const [selectedColor, setSelectedColor] = useState('#EF4444');
-  
-  const colors = [
-    '#EF4444', '#F97316', '#F59E0B', '#10B981', 
-    '#3B82F6', '#6366F1', '#8B5CF6', '#EC4899', '#000000'
-  ];
+  const [isEraser, setIsEraser] = useState(false);
+
+  const colorRef = useRef('#EF4444');
+  const eraserRef = useRef(false);
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: (evt) => {
+        const { locationX, locationY } = evt.nativeEvent;
+        setCurrentPath(`M${locationX.toFixed(1)},${locationY.toFixed(1)}`);
+      },
+      onPanResponderMove: (evt) => {
+        const { locationX, locationY } = evt.nativeEvent;
+        setCurrentPath((prev) => `${prev} L${locationX.toFixed(1)},${locationY.toFixed(1)}`);
+      },
+      onPanResponderRelease: () => {
+        setCurrentPath((finalPath) => {
+          if (finalPath) {
+            const nuevoTrazo = {
+              d: finalPath,
+              color: eraserRef.current ? '#FFFFFF' : colorRef.current,
+              width: eraserRef.current ? 30 : 6 
+            };
+            setPaths((prev) => [...prev, nuevoTrazo]);
+          }
+          return ''; 
+        });
+      },
+    })
+  ).current;
+
+  const colors = ['#EF4444', '#F97316', '#F59E0B', '#10B981', '#3B82F6', '#6366F1', '#000000'];
+
+  const activarModoLapiz = (color = colorRef.current) => {
+    setSelectedColor(color);
+    colorRef.current = color;
+    setIsEraser(false);
+    eraserRef.current = false;
+  };
+
+  const activarGoma = () => {
+    setIsEraser(true);
+    eraserRef.current = true;
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={{ paddingHorizontal: 20, paddingVertical: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#fff' }}>
+    <View style={[styles.container, { flex: 1 }]}>
+      <StatusBar barStyle="dark-content" />
+      
+      {/* HEADER CORREGIDO*/}
+      <View style={[styles.topBar, { paddingTop: Platform.OS === 'ios' ? insets.top : 20,flexDirection: 'row',justifyContent: 'space-between',alignItems: 'center'
+      }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={onBack}>
-            <MaterialCommunityIcons name="arrow-left" size={28} color="#334155" />
+            <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
           </TouchableOpacity>
           <Text style={[styles.brandName, { marginLeft: 10 }]}>Taller de Arte</Text>
         </View>
-        <TouchableOpacity onPress={() => alert('¡Obra guardada!')}>
-          <MaterialCommunityIcons name="content-save-outline" size={28} color="#6366F1" />
+        
+        <TouchableOpacity onPress={() => setPaths([])} style={styles.canvasDeleteButton}>
+          <MaterialCommunityIcons name="delete-sweep" size={26} color="#F43F5E" />
         </TouchableOpacity>
       </View>
 
-      {/* Área del Lienzo */}
-      <View style={{ flex: 1, padding: 20 }}>
-        <View style={{ 
-          flex: 1, 
-          backgroundColor: 'white', 
-          borderRadius: 20, 
-          borderWidth: 2, 
-          borderColor: '#E2E8F0', 
-          borderStyle: 'dashed',
-          justifyContent: 'center', 
-          alignItems: 'center' 
-        }}>
-          <MaterialCommunityIcons name="image-outline" size={100} color="#CBD5E1" />
-          <Text style={{ color: '#94A3B8', marginTop: 10, fontSize: 16, fontFamily: 'System' }}>
-            Toca para empezar a dibujar
-          </Text>
+      {/* ÁREA DEL LIENZO */}
+      <View style={styles.canvasWrapper}>
+        <View style={styles.canvasContainer} {...panResponder.panHandlers}>
+          <Svg height="100%" width="100%">
+            {paths.map((item, index) => (
+              <Path key={index} d={item.d} stroke={item.color} strokeWidth={item.width} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            ))}
+            {currentPath ? (
+              <Path d={currentPath} stroke={isEraser ? '#F1F5F9' : selectedColor} strokeWidth={isEraser ? 30 : 6} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            ) : null}
+          </Svg>
         </View>
       </View>
 
-      {/* Panel Inferior */}
-      <View style={[styles.settingsCard, { margin: 0, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, paddingTop: 20 }]}>
-        <Text style={[styles.sectionTitle, { marginBottom: 15 }]}>Selecciona un color</Text>
-        
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 20 }}>
-          {colors.map((color) => (
-            <TouchableOpacity
-              key={color}
-              style={{ 
-                width: 45, 
-                height: 45, 
-                borderRadius: 25, 
-                backgroundColor: color, 
-                marginRight: 12,
-                borderWidth: selectedColor === color ? 3 : 0,
-                borderColor: '#334155'
-              }}
-              onPress={() => setSelectedColor(color)}
-            />
-          ))}
-        </ScrollView>
+      {/* BARRA DE HERRAMIENTAS */}
+      <View style={[styles.settingsCard, styles.canvasFooter, { paddingBottom: insets.bottom + 15 }]}>
+        <View style={styles.canvasTools}>
+          
+          {/* Botón Lápiz */}
+          <TouchableOpacity onPress={() => activarModoLapiz()}style={[styles.canvasTool, !isEraser && { backgroundColor: '#334155' }]}>
+            <MaterialCommunityIcons name="pencil" size={28} color={!isEraser ? "white" : "#64748B"} />
+          </TouchableOpacity>
 
-        {/* Herramientas*/}
-        <View style={[styles.rowSpace, { justifyContent: 'center', gap: 20, marginBottom: 10 }]}>
-          <TouchableOpacity style={[styles.typeIconCircle, { backgroundColor: '#6366F1' }]}>
-            <MaterialCommunityIcons name="brush" size={28} color="white" />
+          {/* Botón Goma */}
+          <TouchableOpacity  onPress={activarGoma}style={[styles.canvasTool, isEraser && { backgroundColor: '#334155' }, { marginRight: 15 }]}>
+            <MaterialCommunityIcons  name="eraser" size={28} color={isEraser ? "white" : "#64748B"} />
           </TouchableOpacity>
-          
-          <TouchableOpacity style={[styles.typeIconCircle, { backgroundColor: '#94A3B8' }]}>
-            <MaterialCommunityIcons name="eraser" size={28} color="white" />
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={[styles.typeIconCircle, { backgroundColor: '#F43F5E' }]}>
-            <MaterialCommunityIcons name="delete-outline" size={28} color="white" />
-          </TouchableOpacity>
+
+          {/* Colores */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {colors.map((c) => {
+              const isActive = selectedColor === c && !isEraser;
+              return (
+                <TouchableOpacity
+                  key={c}
+                  onPress={() => activarModoLapiz(c)}
+                  style={[
+                    styles.canvasColorCircle, 
+                    { backgroundColor: c },
+                    isActive && styles.canvasActiveColorCircle
+                  ]}
+                />
+              );
+            })}
+          </ScrollView>
         </View>
+
+        <Text style={[styles.canvasStatusText, isEraser && { color: '#334155' }]}>
+          {isEraser ? "MODO GOMA" : "MODO LÁPIZ"}
+        </Text>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

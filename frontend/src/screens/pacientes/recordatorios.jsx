@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Platform, StatusBar } from 'react-native';
+// Importamos el hook y quitamos el componente SafeAreaView de la renderización
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { getStyles } from '../../style/styles'; 
@@ -14,8 +15,11 @@ import {
 } from '../../services/recordatoriosService';
 
 export default function Recordatorios({ navigation }) {
-  const { aplicarEscala } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
+  
+  // Hook para los espacios seguros (Notch de iOS)
+  const insets = useSafeAreaInsets();
 
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,8 +44,14 @@ export default function Recordatorios({ navigation }) {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.topBar}>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+
+      {/* CABECERA CON PADDING DINÁMICO */}
+      <View style={[
+        styles.topBar, 
+        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+      ]}>
         <View style={styles.headerActions}>
           <Text style={styles.brandName}>Recordatorios</Text>
           <View style={styles.headerButtonsGroup}>
@@ -93,7 +103,6 @@ export default function Recordatorios({ navigation }) {
                       <MaterialCommunityIcons name="clock-outline" size={14} color="#4D6BFE" />
                       <Text style={styles.timeBadgeText}>{fecha} | {hora}</Text>
                     </View>
-                    {/* Cambiado && por ternario con null para evitar errores de texto */}
                     {item.cumplido ? (
                       <View style={styles.completedBadge}>
                         <Text style={styles.completedCheck}>✓</Text>
@@ -103,7 +112,6 @@ export default function Recordatorios({ navigation }) {
 
                   <Text style={styles.menuTitle}>{item.titulo}</Text>
                   
-                  {/* Aseguramos que la descripción sea un string válido antes de renderizar */}
                   {item.descripcion && item.descripcion.trim().length > 0 ? (
                     <Text style={styles.menuSubtitle}>{item.descripcion}</Text>
                   ) : null}
@@ -118,7 +126,10 @@ export default function Recordatorios({ navigation }) {
           })
         )}
       </ScrollView>
-      <BottomTabBar />
-    </SafeAreaView>
+
+      <View>
+        <BottomTabBar />
+      </View>
+    </View>
   );
 }

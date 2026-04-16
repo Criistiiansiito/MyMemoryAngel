@@ -8,8 +8,9 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import * as SecureStore from 'expo-secure-store';
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://172.20.10.5:5000/api';
+const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
 
 const setToken = async (key, value) => {
   if (Platform.OS === 'web') localStorage.setItem(key, value);
@@ -42,11 +43,11 @@ export default function RegistroPaciente({ navigation }) {
       const user = userCredential.user;
       const idToken = await user.getIdToken();
 
-      // 2. Guardar token localmente (igual que en login)
+      // 2. Guardar token localmente
       await setToken('userToken', idToken);
 
-      // 3. Sincronizar con MySQL usando AXIOS (igual que en login)
-      await axios.post(`${API}/auth/sync`, {
+      // 3. Sincronizar con MySQL
+      const res = await axios.post(`${API}/auth/sync`, {
         nombre: nombre,
         email: email,
         fecha_nacimiento: fechaSQL,
@@ -54,6 +55,17 @@ export default function RegistroPaciente({ navigation }) {
       }, {
         headers: { Authorization: `Bearer ${idToken}` }
       });
+
+      // --- CAMBIO AQUÍ: GUARDAR PERFIL PARA PERSISTENCIA ---
+      const perfilUsuario = {
+        uid: user.uid,
+        nombre: nombre,
+        correo: email,
+        tipo_usuario: 'paciente'
+      };
+
+      await AsyncStorage.setItem('user', JSON.stringify(perfilUsuario));
+      // -----------------------------------------------------
 
       setLoading(false);
       Alert.alert("Éxito", "Cuenta creada correctamente", [

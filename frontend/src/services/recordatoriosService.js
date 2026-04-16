@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://172.20.10.5:5000/api';
+const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
 
 // 1. Lógica de obtener datos del Backend
 export const fetchRecordatorios = async () => {
@@ -11,7 +11,9 @@ export const fetchRecordatorios = async () => {
     if (!userJSON) return { ok: false, data: [] };
 
     const user = JSON.parse(userJSON);
-    const response = await axios.get(`${API}/auth/recordatorios/${user.id_usuario}`);
+    const userId = user.uid; 
+
+    const response = await axios.get(`${API}/auth/recordatorios/${userId}`);
     
     return { ok: true, data: response.data.recordatorios || [] };
   } catch (error) {
@@ -74,10 +76,10 @@ export const crearRecordatorio = async (datos) => {
     if (!userJSON) throw new Error("No hay sesión de usuario");
     
     const user = JSON.parse(userJSON);
-    const body = { ...datos, id_usuario: user.id_usuario };
+    const body = { ...datos, id_usuario: user.uid }; 
     
-    // Usamos la misma constante API que ya tienes definida en el service
-    const response = await axios.post(`${API}/recordatorios/crear`, body);
+    // Verifica si tu ruta de creación es /auth/crear o /recordatorios/crear
+    const response = await axios.post(`${API}/auth/crear`, body);
     return response;
   } catch (error) {
     console.error("Error en crearRecordatorio:", error);

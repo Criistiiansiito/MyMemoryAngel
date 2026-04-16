@@ -1,5 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Platform, StatusBar } from 'react-native';
+// Importamos los insets para manejar el notch y el espacio inferior
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import BottomTabBar from '../../../components/BottomTabBar';
 import { getStyles } from '../../../style/styles';
@@ -8,30 +10,49 @@ import { useAccesibilidad } from '../../../services/accesibilidadContext';
 export default function MenuEstimulacion({ onBack, onSelectActivity }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
+  
+  // Hook para obtener los espacios seguros del dispositivo
+  const insets = useSafeAreaInsets();
 
-  const ActivityCard = ({ title, icon, color, iconColor, onPress }) => (
+  const ActivityCard = ({ title, icon, color, iconColor, label, onPress }) => (
     <TouchableOpacity style={styles.typeCard} onPress={onPress}>
       <View style={[styles.typeIconCircle, { backgroundColor: color }]}>
-        <MaterialCommunityIcons name={icon} size={32} color={iconColor} />
+        <MaterialCommunityIcons name={icon} size={36} color={iconColor} />
       </View>
-      <Text style={styles.typeText}>{title}</Text>
+      <View>
+        <Text style={[styles.badgeText, { color: iconColor }]}>{label}</Text>
+      </View>
+      <Text style={[styles.typeText, { marginTop: 10, fontWeight: '700' }]}>{title}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
-          <TouchableOpacity onPress={onBack}>
-            <MaterialCommunityIcons name="arrow-left" size={28} color="#334155" />
-          </TouchableOpacity>
-          <Text style={[styles.brandName, { marginLeft: 10 }]}>Actividades</Text>
-        </View>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" />
 
+      {/* CABECERA CON PADDING DINÁMICO SEGÚN EL NOTCH */}
+      <View style={[
+        styles.topBar, 
+        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+      ]}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity onPress={onBack}>
+              <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
+          </TouchableOpacity>
+          <Text style={styles.brandName}>Actividades</Text>
+        </View>
+      </View>
+
+      <ScrollView 
+        contentContainerStyle={[ styles.scrollContent ]} 
+        showsVerticalScrollIndicator={false}
+      >
+        {/* REJILLA DE ACTIVIDADES */}
         <View style={styles.grid}>
           <ActivityCard 
             title="Arte" 
             icon="palette" 
+            label="Creativo"
             color="#FEE2E2" 
             iconColor="#EF4444" 
             onPress={() => onSelectActivity('Arte')} 
@@ -39,6 +60,7 @@ export default function MenuEstimulacion({ onBack, onSelectActivity }) {
           <ActivityCard 
             title="Música" 
             icon="music-note" 
+            label="Relajante"
             color="#E0E7FF" 
             iconColor="#6366F1" 
             onPress={() => onSelectActivity('Musica')} 
@@ -46,6 +68,7 @@ export default function MenuEstimulacion({ onBack, onSelectActivity }) {
           <ActivityCard 
             title="Escritura" 
             icon="pencil-box-outline" 
+            label="Mental"
             color="#FEF3C7" 
             iconColor="#D97706" 
             onPress={() => onSelectActivity('Escritura')} 
@@ -53,25 +76,27 @@ export default function MenuEstimulacion({ onBack, onSelectActivity }) {
           <ActivityCard 
             title="Lectura" 
             icon="book-open-variant" 
+            label="Foco"
             color="#D1FAE5" 
             iconColor="#10B981" 
             onPress={() => onSelectActivity('Lectura')} 
           />
         </View>
 
-        {/* Panel de información */}
-        <View style={[styles.settingsCard, { marginTop: 10 }]}>
-          <Text style={styles.sectionTitle}>Sugerencia del día</Text>
-          <Text style={{ 
-            color: '#64748B', 
-            marginTop: 10, 
-            lineHeight: 20,
-            fontSize: aplicarEscala(14)
-          }}>
-            Escuchar música suave ayuda a mejorar el estado de ánimo y la relajación.
-          </Text>
+        {/* PANEL DE INFORMACIÓN */}
+        <View style={styles.infoBox}>
+          <View style={styles.infoIconCircle}>
+            <MaterialCommunityIcons name="lightbulb-on" size={24} color="#F59E0B" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.infoTitle}>Sugerencia del día</Text>
+            <Text style={styles.infoText}>
+              "Escuchar música suave ayuda a mejorar el estado de ánimo y la relajación profunda."
+            </Text>
+          </View>
         </View>
       </ScrollView>
+
       <BottomTabBar />
     </View>
   );

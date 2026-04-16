@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, KeyboardAvoidingView, Platform, Animated } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, KeyboardAvoidingView, Platform, Animated, StatusBar } from 'react-native';
+// Importamos useSafeAreaInsets y eliminamos el uso del componente SafeAreaView
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
 import BottomTabBar from '../../components/BottomTabBar';
 
-const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : 'http://172.20.10.5:5000/api';
+const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
 
 const CATEGORIAS_COMPLETA = [
   { id: 1, titulo: 'Cuidados', pregunta: 'Cuidados Diarios', subtemas: ['Vestimenta', 'Dentadura', 'Piel y Escaras', 'Incontinencia', 'Corte de Uñas'] },
@@ -18,8 +19,11 @@ const CATEGORIAS_COMPLETA = [
 ];
 
 export default function ChatbotScreen({ navigation }) {
-  const { aplicarEscala } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
+  
+  // Hook para el espacio seguro del Notch e inicio inferior
+  const insets = useSafeAreaInsets();
 
   const [mensaje, setMensaje] = useState('');
   const [chatLog, setChatLog] = useState([
@@ -87,9 +91,14 @@ export default function ChatbotScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.chatContainer}>
-      {/* CABECERA */}
-      <View style={styles.topBar}>
+    <View style={styles.chatContainer}>
+      <StatusBar barStyle="dark-content" />
+
+      {/* CABECERA CON PADDING DINÁMICO */}
+      <View style={[
+        styles.topBar, 
+        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+      ]}>
         <View style={styles.headerInfo}>
           <View style={styles.avatarContainer}>
             <Image source={require('../../../assets/icons/bot-icon.png')} style={styles.botIcon} />
@@ -121,7 +130,7 @@ export default function ChatbotScreen({ navigation }) {
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
         style={{ flex: 1 }}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
       >
         <ScrollView 
           ref={scrollViewRef} 
@@ -175,7 +184,9 @@ export default function ChatbotScreen({ navigation }) {
         </View>
       </KeyboardAvoidingView>
 
-      <BottomTabBar />
-    </SafeAreaView>
+      <View>
+        <BottomTabBar />
+      </View>
+    </View>
   );
 }

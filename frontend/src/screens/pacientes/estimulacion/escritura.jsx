@@ -1,0 +1,232 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  View, Text, TouchableOpacity, TextInput, ScrollView, 
+  KeyboardAvoidingView, Platform, StatusBar, Alert, StyleSheet 
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import * as SecureStore from 'expo-secure-store'; 
+import { getStyles } from '../../../style/styles';
+import { useAccesibilidad } from '../../../services/accesibilidadContext';
+import { escrituraService } from '../../../services/escrituraService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export default function Escritura({ onBack }) {
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
+  const insets = useSafeAreaInsets();
+
+  const [vista, setVista] = useState('menu'); 
+  const [entrada, setEntrada] = useState('');
+  const [completado, setCompletado] = useState(false);
+  const [historial, setHistorial] = useState([]);
+  const [userId, setUserId] = useState(null);
+  const [expandedId, setExpandedId] = useState(null); // Estado para controlar el despliegue
+
+  const refranes = [
+    { id: 1, inicio: "A caballo regalado, no le mires el...", respuesta: "diente" },
+    { id: 2, inicio: "Al que madruga, Dios le...", respuesta: "ayuda" },
+  ];
+  const [indiceRefran, setIndiceRefran] = useState(0);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+        try {
+        const userData = await AsyncStorage.getItem('user');
+
+        if (userData) {
+            const perfil = JSON.parse(userData);
+            if (perfil && perfil.uid) {
+            setUserId(perfil.uid);
+            } else {
+            console.warn("El objeto 'user' existe pero no tiene uid");
+            }
+        } else {
+            console.warn("No se encontró la clave 'user' en AsyncStorage");
+        }
+        } catch (error) {
+        console.error("Error al leer AsyncStorage:", error);
+        }
+    };
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    if (vista === 'menu' && userId) {
+      cargarHistorial();
+    }
+  }, [vista, userId]);
+
+  const cargarHistorial = async () => {
+    try {
+      const data = await escrituraService.obtenerEscrituras(userId);
+      setHistorial(data);
+    } catch (error) {
+      console.error("Error al cargar historial", error);
+    }
+  };
+
+  const guardarDiario = async () => {
+    if (!entrada.trim()) return Alert.alert("Aviso", "El texto está vacío.");
+    if (!userId) return Alert.alert("Error", "No se detectó el usuario.");
+    
+    try {
+      const hoy = new Date().toLocaleDateString('es-ES');
+      await escrituraService.insertarEscritura(userId, hoy, entrada);
+      Alert.alert("¡Guardado!", "Se ha guardado en tu diario.");
+      setVista('menu');
+      setEntrada('');
+    } catch (error) {
+      Alert.alert("Error", "No se pudo conectar con el servidor.");
+    }
+  };
+
+  const borrarEntrada = (id) => {
+    Alert.alert("Borrar", "¿Deseas eliminar este recuerdo?", [
+      { text: "No" },
+      { text: "Sí", style: 'destructive', onPress: async () => {
+          try {
+            await escrituraService.eliminarEscritura(id);
+            cargarHistorial();
+          } catch (e) { Alert.alert("Error", "No se pudo borrar."); }
+      }}
+    ]);
+  };
+
+  const renderMenuPrincipal = () => (
+    <View>
+      <View>
+        <TouchableOpacity style={styles.musicCard} onPress={() => { setVista('refranes'); setEntrada(''); setCompletado(false); }}>
+          <View style={[styles.musicIconContainer, { backgroundColor: '#6366F1' }]}>
+            <MaterialCommunityIcons name="comment-quote-outline" size={32} color="white" />
+          </View>
+          <View style={styles.musicTextContainer}>
+            <Text style={styles.musicCardTitle}>Completar Refranes</Text>
+            <Text style={styles.musicCardDescription}>Entrena tu mente terminando frases clásicas.</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.musicCard} onPress={() => { setVista('diario'); setEntrada(''); }}>
+          <View style={[styles.musicIconContainer, { backgroundColor: '#10B981' }]}>
+            <MaterialCommunityIcons name="book-open-variant" size={32} color="white" />
+          </View>
+          <View style={styles.musicTextContainer}>
+            <Text style={styles.musicCardTitle}>Mi Diario</Text>
+            <Text style={styles.musicCardDescription}>Escribe lo que sientes.</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.dividerContainer}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>Mi diario</Text>
+          <View style={styles.dividerLine} />
+      </View>
+
+      <View>
+        {historial.length > 0 ? historial.map((item) => (
+          <View key={item.id} style={[styles.escrituraItemHistorial, { flexDirection: 'column', alignItems: 'stretch' }]}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.escrituraFechaHistorial}>{item.dia}</Text>
+                {/* Ocultamos el texto corto si está expandido para mostrar el largo abajo */}
+                {expandedId !== item.id && (
+                  <Text style={styles.escrituraTextoHistorial} numberOfLines={1}>{item.texto}</Text>
+                )}
+              </View>
+              <View style={{ flexDirection: 'row', gap: 5 }}>
+                  <TouchableOpacity 
+                    onPress={() => setExpandedId(expandedId === item.id ? null : item.id)} 
+                    style={styles.escrituraBotonAccionHistorial}
+                  >
+                      <MaterialCommunityIcons 
+                        name={expandedId === item.id ? "eye-off-outline" : "eye-outline"} 
+                        size={24} 
+                        color={expandedId === item.id ? "#6366F1" : "#64748B"} 
+                      />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => borrarEntrada(item.id)} style={styles.escrituraBotonAccionHistorial}>
+                      <MaterialCommunityIcons name="delete-outline" size={24} color="#EF4444" />
+                  </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Texto desplegado hacia abajo */}
+            {expandedId === item.id && (
+              <View style={{ marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#F1F5F9' }}>
+                <Text style={[styles.escrituraTextoHistorial, { color: '#334155', lineHeight: 22 }]}>
+                  {item.texto}
+                </Text>
+              </View>
+            )}
+          </View>
+        )) : (
+          <Text style={{ textAlign: 'center', color: '#94A3B8', marginTop: 20 }}>Aún no hay nada escrito en el diario.</Text>
+        )}
+      </View>
+    </View>
+  );
+
+  const renderRefranes = () => (
+    <View style={{ flex: 1 }}>
+      <View style={styles.settingsCard}>
+        <Text style={[styles.musicCardTitle, { fontSize: 22, marginBottom: 15, textAlign: 'center' }]}>
+          "{refranes[indiceRefran].inicio}"
+        </Text>
+        <TextInput
+          style={[styles.escrituraInput, completado && { borderColor: '#10B981', backgroundColor: '#F0FDF4' }]}
+          placeholder="Escribe..."
+          value={entrada}
+          onChangeText={setEntrada}
+          editable={!completado}
+          autoFocus
+        />
+      </View>
+      <TouchableOpacity 
+        onPress={completado ? () => { setIndiceRefran((indiceRefran + 1) % refranes.length); setEntrada(''); setCompletado(false); } : () => {
+          if (entrada.toLowerCase().trim() === refranes[indiceRefran].respuesta.toLowerCase()) setCompletado(true);
+          else Alert.alert("Casi", "Inténtalo de nuevo.");
+        }}
+        style={[styles.escrituraBotonMain, { backgroundColor: completado ? '#10B981' : '#6366F1' }]}
+      >
+        <Text style={styles.escrituraTextoBotonMain}>{completado ? "¡Siguiente!" : "Comprobar"}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const renderDiario = () => (
+    <View>
+      <TextInput
+        style={[styles.escrituraInput, { height: 250, textAlignVertical: 'top' }]}
+        multiline
+        placeholder="Hoy me siento..."
+        value={entrada}
+        onChangeText={setEntrada}
+        autoFocus
+      />
+      <TouchableOpacity onPress={guardarDiario} style={[styles.escrituraBotonMain, { backgroundColor: '#10B981' }]}>
+        <Text style={styles.escrituraTextoBotonMain}>Guardar en mi diario</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  return (
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={[styles.container, { flex: 1 }]}>
+      <StatusBar barStyle="dark-content" />
+      <View style={[styles.topBar, { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }]}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity onPress={() => vista === 'menu' ? onBack() : setVista('menu')}>
+            <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
+          </TouchableOpacity>
+          <Text style={styles.brandName}>{vista === 'menu' ? 'Escritura' : (vista === 'refranes' ? 'Refranes' : 'Diario')}</Text>
+        </View>
+      </View>
+
+      <ScrollView contentContainerStyle={{ padding: 20 }}>
+        {vista === 'menu' && renderMenuPrincipal()}
+        {vista === 'refranes' && renderRefranes()}
+        {vista === 'diario' && renderDiario()}
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}

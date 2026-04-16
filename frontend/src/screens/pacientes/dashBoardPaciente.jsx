@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Platform, Image } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Platform, Image, StatusBar } from 'react-native';
+// Importamos useSafeAreaInsets para control total sobre los espacios de iOS
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
-import { configuracionPerfil } from '../../services/configuracionPerfil'; // Usamos tu servicio
+import { configuracionPerfil } from '../../services/configuracionPerfil';
 import BottomTabBar from '../../components/BottomTabBar';
 
 export default function DashboardPaciente({ navigation }) {
@@ -13,7 +14,9 @@ export default function DashboardPaciente({ navigation }) {
   const [fotoPerfil, setFotoPerfil] = useState(null); 
   const [loading, setLoading] = useState(true);
   
-  // Fecha dinámica (opcional, para que no sea siempre martes 3 de marzo)
+  // Hook para obtener los tamaños de los bordes (notch, barra de estado)
+  const insets = useSafeAreaInsets();
+
   const fechaHoy = new Date().toLocaleDateString('es-ES', { 
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' 
   });
@@ -22,8 +25,6 @@ export default function DashboardPaciente({ navigation }) {
   const styles = getStyles(aplicarEscala, isDaltonic);
 
   useEffect(() => {
-    // Usamos focus para que si cambias algo en Configuración, 
-    // al volver al Dashboard se refresquen los datos.
     const unsubscribe = navigation.addListener('focus', () => {
       obtenerPerfil();
     });
@@ -32,28 +33,16 @@ export default function DashboardPaciente({ navigation }) {
 
   const obtenerPerfil = async () => {
     try {
-      // Usamos el método centralizado de tu servicio
       const res = await configuracionPerfil.obtenerPerfil();
-
       if (res.ok) {
         const usuario = res.data?.usuario || res.usuario;
-        
         setNombreUsuario(usuario.nombre || 'Paciente');
-        if (usuario.foto_perfil) {
-          setFotoPerfil(usuario.foto_perfil);
-        }
-
-        // SINCRONIZAR ACCESIBILIDAD
-        // Le pasamos el objeto usuario completo, 
-        // tu función cargarDesdeServidor ya sabe qué campos usar.
+        if (usuario.foto_perfil) setFotoPerfil(usuario.foto_perfil);
         cargarDesdeServidor(usuario);
       }
     } catch (error) {
       console.error("Error al obtener perfil:", error);
-      // Si el error es por token inválido, redirigir
-      if (error.response?.status === 401) {
-        navigation.replace('InicioSesion');
-      }
+      if (error.response?.status === 401) navigation.replace('InicioSesion');
     } finally {
       setLoading(false);
     }
@@ -68,11 +57,14 @@ export default function DashboardPaciente({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.topBar}>
+    // Quitamos el SafeAreaView de afuera para que el color de fondo llegue hasta arriba
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      
+      {/* HEADER PERSONALIZADO */}
+      <View style={[
+        styles.topBar, { paddingTop: Platform.OS === 'ios' ? insets.top : 20}]}>
         <View style={styles.logoRow}>
-          
           <View style={styles.headerUserInfo}>
             <View style={[styles.iconCircle, { backgroundColor: '#E8F0FE', marginRight: 10, overflow: 'hidden' }]}>
               {fotoPerfil ? (
@@ -127,9 +119,9 @@ export default function DashboardPaciente({ navigation }) {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('Juegos')}>
+        <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('Actividades')}>
           <View style={[styles.menuIconContainer, { backgroundColor: '#DCFCE7' }]}>
-            <MaterialCommunityIcons name="brain" size={28} color="#22C55E" />
+            <MaterialCommunityIcons name="head-heart" size={28} color="#22C55E" />
           </View>
           <View>
             <Text style={styles.menuTitle}>Estimulación</Text>
@@ -153,8 +145,10 @@ export default function DashboardPaciente({ navigation }) {
 
       </ScrollView>
       
-      <BottomTabBar />
+      <View >
+        <BottomTabBar/>
+      </View>
 
-    </SafeAreaView>
+    </View>
   );
 }
