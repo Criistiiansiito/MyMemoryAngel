@@ -84,7 +84,7 @@ export default function DashboardPaciente({ navigation }) {
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.headerIconButton} 
-              onPress={() => navigation.navigate('Configuracion')}
+              onPress={() => navigation.navigate('ConfiguracionPaciente')}
             >
               <MaterialCommunityIcons name="cog-outline" size={24} color="#334155" />
             </TouchableOpacity>

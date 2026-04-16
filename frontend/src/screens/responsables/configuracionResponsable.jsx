@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Switch, TextInput, Image, ActivityIndicator, Platform, Alert, StatusBar, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Switch, TextInput, Image, ActivityIndicator, Platform, Alert, StatusBar } from 'react-native';
+// Importamos useSafeAreaInsets y eliminamos SafeAreaView de la renderización
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker'; 
 import * as ImagePicker from 'expo-image-picker';
-import QRCode from 'react-native-qrcode-svg';
 
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext'; 
@@ -14,9 +14,9 @@ export default function ConfiguracionPaciente({ navigation }) {
     const { aplicarEscala, textSizeLabel, setTextSizeLabel, isDaltonic, setIsDaltonic, cargarDesdeServidor } = useAccesibilidad();
     const styles = getStyles(aplicarEscala, isDaltonic);
     
+    // Hook para manejar el área segura (Notch y Home Indicator)
     const insets = useSafeAreaInsets();
     
-    // Estados actuales
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
     const [fechaSQL, setFechaSQL] = useState(''); 
@@ -24,7 +24,6 @@ export default function ConfiguracionPaciente({ navigation }) {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [profilePhoto, setProfilePhoto] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [uid, setUid] = useState(null);
 
     useEffect(() => { 
         cargarDatos(); 
@@ -36,9 +35,6 @@ export default function ConfiguracionPaciente({ navigation }) {
             if (data.ok && data.usuario) {
                 setNombre(data.usuario.nombre || '');
                 setEmail(data.usuario.correo || '');
-                // Guardamos el ID del usuario para generar el QR
-                setUid(data.usuario.id || data.usuario.uid || 'Sin ID');
-                
                 if (data.usuario.fecha_nacimiento) {
                     const fechaLimpia = data.usuario.fecha_nacimiento.split('T')[0];
                     setFechaSQL(fechaLimpia);
@@ -159,7 +155,7 @@ export default function ConfiguracionPaciente({ navigation }) {
         <View style={styles.container}>
             <StatusBar barStyle="dark-content" />
 
-            {/* HEADER */}
+            {/* HEADER CON PADDING DINÁMICO */}
             <View style={[
                 styles.topBar, 
                 { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
@@ -176,15 +172,14 @@ export default function ConfiguracionPaciente({ navigation }) {
                 contentContainerStyle={styles.scrollContent} 
                 showsVerticalScrollIndicator={false}
             >
-                {/* SECCIÓN PERFIL */}
+                
                 <View style={styles.profileSection}>
                     <TouchableOpacity style={styles.profilePhotoContainer} onPress={pickImage}>
                         <View style={styles.photoCircle}>
                             <Image 
                                 source={profilePhoto ? { uri: profilePhoto } : require('../../../assets/icons/bot-icon.png')} 
                                 style={{ width: 130, height: 130, borderRadius: 65 }} 
-                            />    
-                        </View>
+                            />                         </View>
                         <View style={styles.editPhotoButton}>
                             <MaterialCommunityIcons name="camera" size={20} color="#FFFFFF" />
                         </View>
@@ -217,7 +212,9 @@ export default function ConfiguracionPaciente({ navigation }) {
                         onPress={() => setShowDatePicker(true)}
                     >
                         <MaterialCommunityIcons name="calendar-outline" style={styles.inputIcon} />
-                        <Text style={styles.input}>{dateText}</Text>
+                        <Text style={styles.input}>
+                            {dateText}
+                        </Text>
                     </TouchableOpacity>
 
                     {showDatePicker && (
@@ -235,7 +232,6 @@ export default function ConfiguracionPaciente({ navigation }) {
                     </TouchableOpacity>
                 </View>
 
-                {/* SECCIÓN PERSONALIZACIÓN */}
                 <View style={styles.dividerContainer}>
                     <View style={styles.dividerLine} />
                     <Text style={styles.dividerText}>Personalización</Text>
@@ -281,32 +277,8 @@ export default function ConfiguracionPaciente({ navigation }) {
                     </View>
                 </View>
 
-                {/* SECCIÓN VINCULACIÓN (QR) */}
-                <View style={styles.dividerContainer}>
-                    <View style={styles.dividerLine} />
-                    <Text style={styles.dividerText}>Vinculación</Text>
-                    <View style={styles.dividerLine} />
-                </View>
-
-                <View style={styles.qrCard}>
-                    <Text style={[styles.qrDescription, { fontSize: aplicarEscala(13) }]}>
-                        Muestra este código a tu responsable para que pueda ayudarte con tu cuenta.
-                    </Text>
-                    <View style={{paddingTop:5}}>
-                        {uid ? (
-                            <QRCode value={uid.toString()} size={190} color="black" backgroundColor="white" />
-                        ) : (
-                            <ActivityIndicator color="#4D6BFE" />
-                        )}
-                    </View>
-                    <Text style={[styles.uidText, { fontSize: aplicarEscala(10) }]}>
-                        ID: {uid}
-                    </Text>
-                </View>
-
-                {/* BOTÓN CERRAR SESIÓN */}
                 <TouchableOpacity 
-                    style={[styles.mainButton, { backgroundColor: '#EF4444', marginTop: 30, marginBottom: 50 }]} 
+                    style={[styles.mainButton, { backgroundColor: '#EF4444', marginTop: 30, marginBottom: 20 }]} 
                     onPress={confirmarCerrarSesion}
                 >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>

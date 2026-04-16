@@ -1341,5 +1341,29 @@ writingIndicator: {
     fontSize: aplicarEscala(17),  
     color: '#1e293b',
     marginLeft: 5
-  }
+  },
+  qrCard: {
+    backgroundColor: '#FFF',
+    borderRadius: 20,
+    padding: 20,
+    marginHorizontal: 20,
+    alignItems: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+  },
+  qrDescription: {
+    color: '#475569',
+    textAlign: 'center',
+    marginBottom: 20,
+    lineHeight: 20
+  },
+  uidText: {
+    marginTop: 15,
+    fontWeight: 'bold',
+    color: '#94A3B8',
+    letterSpacing: 1
+  }  
 });

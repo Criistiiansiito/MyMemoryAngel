@@ -77,7 +77,7 @@ export default function DashboardResponsable({ navigation }) {
           </View>
 
           <View style={{ flexDirection: 'row', flexShrink: 0}}> 
-            <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('Configuracion')}>
+            <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('ConfiguracionResponsable')}>
               <MaterialCommunityIcons name="cog-outline" size={24} color="#334155" />
             </TouchableOpacity>
           </View>

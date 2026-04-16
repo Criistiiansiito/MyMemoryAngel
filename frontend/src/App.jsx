@@ -14,6 +14,7 @@ import ModificarRecordatorio from './screens/pacientes/modificarRecordatorio';
 import ChatBot from './screens/common/chatBot';
 import Actividades from './screens/pacientes/actividades';
 import ConfiguracionPaciente from './screens/pacientes/configuracionPaciente';
+import ConfiguracionResponsable from './screens/responsables/configuracionResponsable';
 import NuevoRecordatorio from './screens/pacientes/nuevoRecordatorio';
 import Calendario from './screens/pacientes/calendario';
 import GestionarPacientes from './screens/responsables/gestionarPacientes';
@@ -33,7 +34,8 @@ export default function App() {
         <Stack.Screen name="InicioSesion" component={InicioSesion} />
         <Stack.Screen name="DashboardPaciente" component={DashboardPaciente} options={{ headerShown: false }} />
         <Stack.Screen name="DashboardResponsable" component={DashboardResponsable} options={{ headerShown: false }} />
-        <Stack.Screen name="Configuracion" component={ConfiguracionPaciente} options={{ headerShown: false }} />
+        <Stack.Screen name="ConfiguracionPaciente" component={ConfiguracionPaciente} options={{ headerShown: false }} />
+        <Stack.Screen name="ConfiguracionResponsable" component={ConfiguracionResponsable} options={{ headerShown: false }} />
         <Stack.Screen name="NuevoRecordatorio" component={NuevoRecordatorio} options={{ headerShown: false }} />
         <Stack.Screen name="ModificarRecordatorio" component={ModificarRecordatorio} options={{ headerShown: false }} />
         <Stack.Screen name="Calendario" component={Calendario} options={{ headerShown: false }} />
