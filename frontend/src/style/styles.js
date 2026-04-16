@@ -1337,9 +1337,83 @@ writingIndicator: {
   escrituraFechaHistorial: { fontSize: 13, fontWeight: 'bold', color: '#6366F1', marginBottom: 2 },
   escrituraTextoHistorial: { fontSize: 16, color: '#475569' },
   escrituraBotonAccionHistorial: { padding: 8 },
-  nombreResponsable: {
+  nombreCuidador: {
     fontSize: aplicarEscala(17),  
     color: '#1e293b',
     marginLeft: 5
+  },
+  qrCard: {
+    backgroundColor: '#FFF',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+  },
+  qrDescription: {
+    color: '#475569',
+    textAlign: 'center',
+    marginBottom: 20,
+    lineHeight: 20
+  },
+  uidText: {
+    marginTop: 15,
+    fontWeight: 'bold',
+    color: '#94A3B8',
+    letterSpacing: 1
+  },
+  scanBtn: { 
+    backgroundColor: '#334155', 
+    padding: 15, 
+    borderRadius: 12, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    width: '100%' 
+  },
+  scanBtnText: { 
+    color: '#FFF', 
+    fontWeight: 'bold', 
+    fontSize: 16 
+  },
+  scanCameraContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  scanMarker: {
+    width: 260,
+    height: 260,
+    borderWidth: 2,
+    borderColor: '#FFF', 
+    borderRadius: 20,
+    backgroundColor: 'transparent',
+  },
+  scanMarkerText: {
+    color: '#FFF',
+    marginTop: 20,
+    fontSize: 16,
+    fontWeight: '600',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    borderRadius: 10
+  },
+  scanCloseModal: { 
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 10,
+    borderRadius: 30
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 35
   }
 });

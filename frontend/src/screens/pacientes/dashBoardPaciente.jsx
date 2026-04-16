@@ -74,7 +74,7 @@ export default function DashboardPaciente({ navigation }) {
               )}
             </View>
 
-            <Text style={styles.nombreResponsable} numberOfLines={1} ellipsizeMode="tail">{nombreUsuario}</Text> 
+            <Text style={styles.nombreCuidador} numberOfLines={1} ellipsizeMode="tail">{nombreUsuario}</Text> 
           </View>
 
           {/* Contenedor de botones: Con flexShrink: 0 evitamos que se compriman */}
@@ -84,7 +84,7 @@ export default function DashboardPaciente({ navigation }) {
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.headerIconButton} 
-              onPress={() => navigation.navigate('Configuracion')}
+              onPress={() => navigation.navigate('ConfiguracionPaciente')}
             >
               <MaterialCommunityIcons name="cog-outline" size={24} color="#334155" />
             </TouchableOpacity>

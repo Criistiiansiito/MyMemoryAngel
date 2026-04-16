@@ -13,9 +13,9 @@ export default function BottomTabBar() {
   const route = useRoute();
 
   const tabs = [
-    { name: 'DashboardResponsable', label: 'Inicio', icon: 'home-outline', activeIcon: 'home' },
-    { name: 'RecordatoriosResponsables', label: 'Recordatorios', icon: 'bell-outline', activeIcon: 'bell' },
-    { name: 'ChatBotResponsables', label: 'Asistente', icon: 'chat-outline', activeIcon: 'chat' },
+    { name: 'DashboardCuidador', label: 'Inicio', icon: 'home-outline', activeIcon: 'home' },
+    { name: 'RecordatoriosCuidador', label: 'Recordatorios', icon: 'bell-outline', activeIcon: 'bell' },
+    { name: 'ChatBotCuidador', label: 'Asistente', icon: 'chat-outline', activeIcon: 'chat' },
     { name: 'GestionarPacientes', label: 'Gestionar', icon: 'account-group-outline', activeIcon: 'account-group-outline' },
   ];
 

@@ -1,22 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Switch, TextInput, Image, ActivityIndicator, Platform, Alert, StatusBar, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Switch, TextInput, Image, ActivityIndicator, Platform, Alert, StatusBar, StyleSheet, Modal } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker'; 
 import * as ImagePicker from 'expo-image-picker';
-import QRCode from 'react-native-qrcode-svg';
+import { CameraView, useCameraPermissions } from 'expo-camera'; 
 
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext'; 
 import { configuracionPerfil } from '../../services/configuracionPerfil';
+import { vinculacionesService } from '../../services/vinculacionesService';
 
 export default function ConfiguracionPaciente({ navigation }) {
     const { aplicarEscala, textSizeLabel, setTextSizeLabel, isDaltonic, setIsDaltonic, cargarDesdeServidor } = useAccesibilidad();
     const styles = getStyles(aplicarEscala, isDaltonic);
-    
     const insets = useSafeAreaInsets();
     
-    // Estados actuales
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
     const [fechaSQL, setFechaSQL] = useState(''); 
@@ -24,7 +23,10 @@ export default function ConfiguracionPaciente({ navigation }) {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [profilePhoto, setProfilePhoto] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [uid, setUid] = useState(null);
+    const [permission, requestPermission] = useCameraPermissions();
+    const [scanned, setScanned] = useState(false);
+    const isScanningRef = useRef(false);
+    const [showScanner, setShowScanner] = useState(false);
 
     useEffect(() => { 
         cargarDatos(); 
@@ -36,9 +38,6 @@ export default function ConfiguracionPaciente({ navigation }) {
             if (data.ok && data.usuario) {
                 setNombre(data.usuario.nombre || '');
                 setEmail(data.usuario.correo || '');
-                // Guardamos el ID del usuario para generar el QR
-                setUid(data.usuario.id || data.usuario.uid || 'Sin ID');
-                
                 if (data.usuario.fecha_nacimiento) {
                     const fechaLimpia = data.usuario.fecha_nacimiento.split('T')[0];
                     setFechaSQL(fechaLimpia);
@@ -53,6 +52,63 @@ export default function ConfiguracionPaciente({ navigation }) {
             Alert.alert("Error", "No se pudo conectar con el servidor.");
         } finally {
             setLoading(false);
+        }
+    };
+
+    // LÓGICA DE ESCÁNER
+    const iniciarEscaneo = async () => {
+        const { granted } = await requestPermission();
+        if (!granted) {
+            Alert.alert("Permisos", "Se requiere acceso a la cámara para escanear.");
+            return;
+        }
+        setScanned(false);
+        setShowScanner(true);
+    };
+
+    const handleBarCodeScanned = async ({ data }) => {
+        if (isScanningRef.current) return; 
+        isScanningRef.current = true;
+        setScanned(true); 
+        setShowScanner(false);
+
+        try {
+            const res = await vinculacionesService.obtenerPacientePorId(data);
+
+            if (res.ok && res.paciente) {
+                Alert.alert(
+                    "Paciente Detectado",
+                    `¿Quieres vincularte con ${res.paciente.nombre}?`,
+                    [
+                        { 
+                            text: "Cancelar", 
+                            style: "cancel",
+                            // Si cancela, reseteamos para que pueda volver a escanear luego
+                            onPress: () => {
+                                setScanned(false);
+                                isScanningRef.current = false; // Liberamos referencia
+                            }
+                        },
+                        { 
+                            text: "Sí, vincular", 
+                            onPress: async () => {
+                                const vinculo = await vinculacionesService.vincularPaciente(data);
+                                if (vinculo.ok) Alert.alert("Éxito", "Vinculación completada");
+                                setScanned(false);
+                                isScanningRef.current = false; // Liberamos referencia
+                            }
+                        }
+                    ]
+                );
+            } else {
+                Alert.alert("Error", "No se encontró al paciente.", [
+                    { text: "OK", onPress: () => { isScanningRef.current = false; setScanned(false); } }
+                ]);
+            }
+        } catch (error) {
+            Alert.alert("Error", "Problema de conexión.", [
+                { text: "OK", onPress: () => { isScanningRef.current = false; setScanned(false); } }
+            ]);
         }
     };
 
@@ -176,15 +232,15 @@ export default function ConfiguracionPaciente({ navigation }) {
                 contentContainerStyle={styles.scrollContent} 
                 showsVerticalScrollIndicator={false}
             >
-                {/* SECCIÓN PERFIL */}
+                {/* PERFIL */}
                 <View style={styles.profileSection}>
                     <TouchableOpacity style={styles.profilePhotoContainer} onPress={pickImage}>
                         <View style={styles.photoCircle}>
-                           {profilePhoto ? (
-                                <Image source={{ uri: profilePhoto }} style={{ width: 130, height: 130, borderRadius: 65 }} />
-                            ) : (
-                                <MaterialCommunityIcons name="account" size={80} color="#334155" />
-                            )}    
+                            {profilePhoto ? (
+                                    <Image source={{ uri: profilePhoto }} style={{ width: 130, height: 130, borderRadius: 65 }} />
+                                ) : (
+                                    <MaterialCommunityIcons name="account-tie" size={80} color="#334155" />
+                                )}                            
                         </View>
                         <View style={styles.editPhotoButton}>
                             <MaterialCommunityIcons name="camera" size={20} color="#FFFFFF" />
@@ -236,7 +292,7 @@ export default function ConfiguracionPaciente({ navigation }) {
                     </TouchableOpacity>
                 </View>
 
-                {/* SECCIÓN PERSONALIZACIÓN */}
+                {/* ACCESIBILIDAD */}
                 <View style={styles.dividerContainer}>
                     <View style={styles.dividerLine} />
                     <Text style={styles.dividerText}>Personalización</Text>
@@ -282,30 +338,22 @@ export default function ConfiguracionPaciente({ navigation }) {
                     </View>
                 </View>
 
-                {/* SECCIÓN VINCULACIÓN (QR) */}
+                {/* VINCULACIÓN QR */}
                 <View style={styles.dividerContainer}>
                     <View style={styles.dividerLine} />
-                    <Text style={styles.dividerText}>Vinculación</Text>
+                       <Text style={styles.dividerText}>Vinculación</Text>
                     <View style={styles.dividerLine} />
                 </View>
 
                 <View style={styles.qrCard}>
-                    <Text style={[styles.qrDescription, { fontSize: aplicarEscala(13) }]}>
-                        Muestra este código a tu cuidador para que pueda ayudarte con tu cuenta.
-                    </Text>
-                    <View style={{paddingTop:5}}>
-                        {uid ? ( //El value es el valor que le pasamos para que lo convierta en qr
-                            <QRCode value={uid.toString()} size={190} color="black" backgroundColor="white" />
-                        ) : (
-                            <ActivityIndicator color="#4D6BFE" />
-                        )}
-                    </View>
-                    <Text style={[styles.uidText, { fontSize: aplicarEscala(10) }]}>
-                        ID: {uid}
-                    </Text>
-                </View>
+                    <Text style={[styles.qrDescription, { fontSize: aplicarEscala(13) }]}>Escanea el código del paciente para supervisar su actividad.</Text>
+                    <TouchableOpacity style={styles.scanBtn} onPress={iniciarEscaneo}>
+                        <MaterialCommunityIcons name="qrcode-scan" size={22} color="#FFF" style={{ marginRight: 10 }} />
+                        <Text style={styles.scanBtnText}>Abrir Cámara</Text>
+                    </TouchableOpacity>
+                </View>                 
 
-                {/* BOTÓN CERRAR SESIÓN */}
+                {/* BOTÓN SALIR */}
                 <TouchableOpacity 
                     style={[styles.mainButton, { backgroundColor: '#EF4444', marginTop: 30, marginBottom: 50 }]} 
                     onPress={confirmarCerrarSesion}
@@ -317,6 +365,32 @@ export default function ConfiguracionPaciente({ navigation }) {
                 </TouchableOpacity>
 
             </ScrollView>
+
+            {/* MODAL DEL ESCÁNER */}
+            <Modal visible={showScanner} animationType="slide">
+                <View style={{ flex: 1, backgroundColor: '#000' }}>
+                    <CameraView 
+                        style={StyleSheet.absoluteFillObject} 
+                        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned} 
+                    />
+                    
+                    <View style={styles.scanCameraContainer}>
+                        <View style={styles.scanMarker} />
+                        <Text style={styles.scanMarkerText}>Coloca el QR aquí</Text>
+                    </View>
+
+                    <TouchableOpacity 
+                        style={[styles.scanCloseModal, {top: 15}] } 
+                        onPress={() => {
+                            setShowScanner(false);
+                            setScanned(false);
+                            isScanningRef.current = false;
+                        }}
+                    >
+                    <MaterialCommunityIcons name="close" size={28} color="#FFF" />
+                    </TouchableOpacity>
+                </View>
+            </Modal>
         </View>
     );
 }

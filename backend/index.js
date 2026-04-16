@@ -13,7 +13,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Middleware para log de headers (debug)
 app.use((req, res, next) => {
-  console.log('Headers recibidos:', req.headers);
   next();
 });
 
@@ -25,6 +24,7 @@ app.use('/api/chatbot', authRoutes);
 app.use('/api/musica', authRoutes);
 app.use('/api/lecturas', authRoutes);
 app.use('/api/escritura', authRoutes);
+app.use('/api/vinculaciones', authRoutes);
 
 // Arrancar servidor en IP local
 const PORT = process.env.PORT || 5000;
