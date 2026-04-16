@@ -68,7 +68,7 @@ export default function Recordatorios({ navigation }) {
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={[styles.scrollContent, {paddingTop: 0,}]} showsVerticalScrollIndicator={false}>
         <View style={styles.dateHeaderContainer}>
           <Text style={styles.dateText}>
             {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}

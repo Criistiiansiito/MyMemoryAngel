@@ -16,7 +16,7 @@ export default function BottomTabBar() {
     { name: 'DashboardPaciente', label: 'Inicio', icon: 'home-outline', activeIcon: 'home' },
     { name: 'Recordatorios', label: 'Recordatorios', icon: 'bell-outline', activeIcon: 'bell' },
     { name: 'ChatBot', label: 'Asistente', icon: 'chat-outline', activeIcon: 'chat' },
-    { name: 'Actividades', label: 'Cerebro', icon: 'head-heart', activeIcon: 'brain' },
+    { name: 'Actividades', label: 'Cerebro', icon: 'head-heart', activeIcon: 'head-heart' },
   ];
 
   return (

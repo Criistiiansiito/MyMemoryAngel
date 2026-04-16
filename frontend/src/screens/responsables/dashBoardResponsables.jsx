@@ -66,19 +66,17 @@ export default function DashboardResponsable({ navigation }) {
       <View style={[styles.topBar, { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }]}>
         <View style={styles.logoRow}>
           <View style={styles.headerUserInfo}>
-            <View style={[styles.iconCircle, { backgroundColor: '#F3E8FF', marginRight: 10, overflow: 'hidden' }]}>
+            <View style={[styles.iconCircle, { backgroundColor: '#F3E8FF', marginRight: 10, overflow: 'hidden', flexShrink: 0 }]}>
               {fotoPerfil ? (
                 <Image source={{ uri: fotoPerfil }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
               ) : (
                 <MaterialCommunityIcons name="account-tie" size={30} color="#6B21A8" />
               )}
             </View>
-            <View>
-                <Text style={styles.nombreResponsable } >Perfil de Responsable</Text>
-            </View>
+                <Text style={styles.nombreResponsable } numberOfLines={1} ellipsizeMode="tail">Perfil de Responsable</Text>
           </View>
 
-          <View style={{ flexDirection: 'row' }}> 
+          <View style={{ flexDirection: 'row', flexShrink: 0}}> 
             <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('Configuracion')}>
               <MaterialCommunityIcons name="cog-outline" size={24} color="#334155" />
             </TouchableOpacity>
