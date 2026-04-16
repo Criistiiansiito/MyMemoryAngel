@@ -71,9 +71,9 @@ export default function Recordatorios({ navigation }) {
       <ScrollView contentContainerStyle={[styles.scrollContent, { paddingTop: 0,}]} showsVerticalScrollIndicator={false}>
         <View style={styles.dateHeaderContainer}>
           <Text style={styles.dateText}>
-            {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+            {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
           </Text>
-        </View>
+        </View>  
 
         {loading ? (
           <ActivityIndicator size="large" color="#4D6BFE" style={styles.centeredLoader} />

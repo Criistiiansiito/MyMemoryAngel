@@ -381,4 +381,17 @@ router.post('/vincular-paciente', async (req, res) => {
     }
 });
 
+router.get('/mis-pacientes', async (req, res) => {
+    try {
+        const decoded = await admin.auth().verifyIdToken(req.headers.authorization.split(' ')[1]);
+        const sql = `
+            SELECT u.nombre, u.uid, u.foto_perfil, u.correo, u.fecha_nacimiento 
+            FROM usuarios u
+            JOIN vinculaciones v ON u.uid = v.id_paciente
+            WHERE v.id_cuidador = ?`;
+        const [rows] = await db.query(sql, [decoded.uid]);
+        res.json({ ok: true, pacientes: rows });
+    } catch (error) { res.status(500).json({ error: 'Error al obtener pacientes' }); }
+});
+
 module.exports = router;

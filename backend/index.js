@@ -24,6 +24,7 @@ app.use('/api/chatbot', authRoutes);
 app.use('/api/musica', authRoutes);
 app.use('/api/lecturas', authRoutes);
 app.use('/api/escritura', authRoutes);
+app.use('/api/vinculaciones', authRoutes);
 
 // Arrancar servidor en IP local
 const PORT = process.env.PORT || 5000;

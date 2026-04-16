@@ -380,14 +380,14 @@ export default function ConfiguracionPaciente({ navigation }) {
                     </View>
 
                     <TouchableOpacity 
-                        style={styles.scanCloseModal} 
+                        style={[styles.scanCloseModal, {top: 15}] } 
                         onPress={() => {
                             setShowScanner(false);
                             setScanned(false);
                             isScanningRef.current = false;
                         }}
                     >
-                        <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Volver</Text>
+                    <MaterialCommunityIcons name="close" size={28} color="#FFF" />
                     </TouchableOpacity>
                 </View>
             </Modal>
