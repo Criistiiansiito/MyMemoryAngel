@@ -13,7 +13,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Middleware para log de headers (debug)
 app.use((req, res, next) => {
-  console.log('Headers recibidos:', req.headers);
   next();
 });
 
