@@ -1395,18 +1395,25 @@ writingIndicator: {
   },
   scanMarkerText: {
     color: '#FFF',
-    marginTop: 15,
-    fontSize: 14,
+    marginTop: 20,
+    fontSize: 16,
     fontWeight: '600',
-    textShadowRadius: 10
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    borderRadius: 10
   },
   scanCloseModal: { 
-    position: 'absolute', 
-    bottom: 50, 
-    alignSelf: 'center', 
-    backgroundColor: '#EF4444', 
-    paddingHorizontal: 30, 
-    paddingVertical: 15, 
-    borderRadius: 30 
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 10,
+    borderRadius: 30
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 35
   }
 });
