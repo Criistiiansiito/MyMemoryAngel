@@ -62,25 +62,23 @@ export default function DashboardPaciente({ navigation }) {
       <StatusBar barStyle="dark-content" />
       
       {/* HEADER PERSONALIZADO */}
-      <View style={[
-        styles.topBar, { paddingTop: Platform.OS === 'ios' ? insets.top : 20}]}>
-        <View style={styles.logoRow}>
-          <View style={styles.headerUserInfo}>
-            <View style={[styles.iconCircle, { backgroundColor: '#E8F0FE', marginRight: 10, overflow: 'hidden' }]}>
+      <View style={[styles.topBar, { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }]}>
+        <View style={[styles.logoRow]}>
+          {/* Contenedor del nombre: Usamos flex: 1 para que ocupe solo el espacio disponible */}
+          <View style={[styles.headerUserInfo]}>
+            <View style={[styles.iconCircle, { backgroundColor: '#E8F0FE', marginRight: 10, overflow: 'hidden', flexShrink: 0 }]}>
               {fotoPerfil ? (
-                <Image 
-                  source={{ uri: fotoPerfil }} 
-                  style={{ width: '100%', height: '100%' }} 
-                  resizeMode="cover"
-                />
+                <Image source={{ uri: fotoPerfil }} style={{ width: '100%', height: '100%' }} resizeMode="cover"/>
               ) : (
                 <MaterialCommunityIcons name="account" size={30} color="#334155" />
               )}
             </View>
-            <Text style={styles.brandName}>Hola, {nombreUsuario}</Text> 
+
+            <Text style={styles.nombreResponsable} numberOfLines={1} ellipsizeMode="tail">{nombreUsuario}</Text> 
           </View>
 
-          <View style={{ flexDirection: 'row' }}> 
+          {/* Contenedor de botones: Con flexShrink: 0 evitamos que se compriman */}
+          <View style={{ flexDirection: 'row', flexShrink: 0 }}> 
             <TouchableOpacity style={styles.headerIconButton}>
               <MaterialCommunityIcons name="volume-high" size={24} color="#334155" />
             </TouchableOpacity>
@@ -91,14 +89,19 @@ export default function DashboardPaciente({ navigation }) {
               <MaterialCommunityIcons name="cog-outline" size={24} color="#334155" />
             </TouchableOpacity>
           </View>
-        </View>
 
-        <Text style={styles.dateText}>{fechaHoy}</Text>
+        </View>
       </View>
 
       {/* CUERPO */}
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 20 }}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 20}}>
         
+        <View style={styles.dateHeaderContainer}>
+          <Text style={styles.dateText}>
+            {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+          </Text>
+        </View>          
+
         <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('Recordatorios')}>
           <View style={[styles.menuIconContainer, { backgroundColor: '#E1E7FF' }]}>
             <MaterialCommunityIcons name="bell-outline" size={28} color="#4D6BFE" />

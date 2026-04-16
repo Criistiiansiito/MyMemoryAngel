@@ -6,7 +6,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { getStyles } from '../../style/styles'; 
 import { useAccesibilidad } from '../../services/accesibilidadContext';
-import BottomTabBar from '../../components/BottomTabBar';
+import BottomTabBar from '../../components/BottomTabBarResponsables';
 
 import { 
   fetchRecordatorios, 
@@ -68,7 +68,7 @@ export default function Recordatorios({ navigation }) {
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={[styles.scrollContent, {paddingTop: 0,}]} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={[styles.scrollContent, { paddingTop: 0,}]} showsVerticalScrollIndicator={false}>
         <View style={styles.dateHeaderContainer}>
           <Text style={styles.dateText}>
             {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}

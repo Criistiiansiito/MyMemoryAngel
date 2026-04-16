@@ -83,7 +83,7 @@ export default function EstimulacionCognitiva() {
       </View>
 
       <ScrollView 
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 }]} 
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 100, paddingTop: 0, }]} 
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.dateHeaderContainer}>

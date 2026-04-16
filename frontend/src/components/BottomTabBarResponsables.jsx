@@ -13,10 +13,10 @@ export default function BottomTabBar() {
   const route = useRoute();
 
   const tabs = [
-    { name: 'DashboardPaciente', label: 'Inicio', icon: 'home-outline', activeIcon: 'home' },
-    { name: 'Recordatorios', label: 'Recordatorios', icon: 'bell-outline', activeIcon: 'bell' },
-    { name: 'ChatBot', label: 'Asistente', icon: 'chat-outline', activeIcon: 'chat' },
-    { name: 'Actividades', label: 'Cerebro', icon: 'head-heart', activeIcon: 'head-heart' },
+    { name: 'DashboardResponsable', label: 'Inicio', icon: 'home-outline', activeIcon: 'home' },
+    { name: 'RecordatoriosResponsables', label: 'Recordatorios', icon: 'bell-outline', activeIcon: 'bell' },
+    { name: 'ChatBotResponsables', label: 'Asistente', icon: 'chat-outline', activeIcon: 'chat' },
+    { name: 'GestionarPacientes', label: 'Gestionar', icon: 'account-group-outline', activeIcon: 'account-group-outline' },
   ];
 
   return (

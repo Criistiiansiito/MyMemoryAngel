@@ -200,6 +200,8 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
   headerUserInfo: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1, 
+    marginRight: 10,
   },
   dateContainer: {
     backgroundColor: '#FFFFFF',
@@ -1334,5 +1336,10 @@ writingIndicator: {
   },
   escrituraFechaHistorial: { fontSize: 13, fontWeight: 'bold', color: '#6366F1', marginBottom: 2 },
   escrituraTextoHistorial: { fontSize: 16, color: '#475569' },
-  escrituraBotonAccionHistorial: { padding: 8 }
+  escrituraBotonAccionHistorial: { padding: 8 },
+  nombreResponsable: {
+    fontSize: aplicarEscala(17),  
+    color: '#1e293b',
+    marginLeft: 5
+  }
 });
