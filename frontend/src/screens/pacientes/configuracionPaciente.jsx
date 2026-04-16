@@ -290,10 +290,10 @@ export default function ConfiguracionPaciente({ navigation }) {
 
                 <View style={styles.qrCard}>
                     <Text style={[styles.qrDescription, { fontSize: aplicarEscala(13) }]}>
-                        Muestra este código a tu responsable para que pueda ayudarte con tu cuenta.
+                        Muestra este código a tu cuidador para que pueda ayudarte con tu cuenta.
                     </Text>
                     <View style={{paddingTop:5}}>
-                        {uid ? (
+                        {uid ? ( //El value es el valor que le pasamos para que lo convierta en qr
                             <QRCode value={uid.toString()} size={190} color="black" backgroundColor="white" />
                         ) : (
                             <ActivityIndicator color="#4D6BFE" />

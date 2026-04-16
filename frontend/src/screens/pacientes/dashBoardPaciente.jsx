@@ -74,7 +74,7 @@ export default function DashboardPaciente({ navigation }) {
               )}
             </View>
 
-            <Text style={styles.nombreResponsable} numberOfLines={1} ellipsizeMode="tail">{nombreUsuario}</Text> 
+            <Text style={styles.nombreCuidador} numberOfLines={1} ellipsizeMode="tail">{nombreUsuario}</Text> 
           </View>
 
           {/* Contenedor de botones: Con flexShrink: 0 evitamos que se compriman */}
