@@ -1337,7 +1337,7 @@ writingIndicator: {
   escrituraFechaHistorial: { fontSize: 13, fontWeight: 'bold', color: '#6366F1', marginBottom: 2 },
   escrituraTextoHistorial: { fontSize: 16, color: '#475569' },
   escrituraBotonAccionHistorial: { padding: 8 },
-  nombreResponsable: {
+  nombreCuidador: {
     fontSize: aplicarEscala(17),  
     color: '#1e293b',
     marginLeft: 5
@@ -1346,7 +1346,6 @@ writingIndicator: {
     backgroundColor: '#FFF',
     borderRadius: 20,
     padding: 20,
-    marginHorizontal: 20,
     alignItems: 'center',
     elevation: 4,
     shadowColor: '#000',
@@ -1365,5 +1364,49 @@ writingIndicator: {
     fontWeight: 'bold',
     color: '#94A3B8',
     letterSpacing: 1
-  }  
+  },
+  scanBtn: { 
+    backgroundColor: '#334155', 
+    padding: 15, 
+    borderRadius: 12, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    width: '100%' 
+  },
+  scanBtnText: { 
+    color: '#FFF', 
+    fontWeight: 'bold', 
+    fontSize: 16 
+  },
+  scanCameraContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  scanMarker: {
+    width: 260,
+    height: 260,
+    borderWidth: 2,
+    borderColor: '#FFF', 
+    borderRadius: 20,
+    backgroundColor: 'transparent',
+  },
+  scanMarkerText: {
+    color: '#FFF',
+    marginTop: 15,
+    fontSize: 14,
+    fontWeight: '600',
+    textShadowRadius: 10
+  },
+  scanCloseModal: { 
+    position: 'absolute', 
+    bottom: 50, 
+    alignSelf: 'center', 
+    backgroundColor: '#EF4444', 
+    paddingHorizontal: 30, 
+    paddingVertical: 15, 
+    borderRadius: 30 
+  }
 });

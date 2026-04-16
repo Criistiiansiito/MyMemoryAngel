@@ -180,10 +180,11 @@ export default function ConfiguracionPaciente({ navigation }) {
                 <View style={styles.profileSection}>
                     <TouchableOpacity style={styles.profilePhotoContainer} onPress={pickImage}>
                         <View style={styles.photoCircle}>
-                            <Image 
-                                source={profilePhoto ? { uri: profilePhoto } : require('../../../assets/icons/bot-icon.png')} 
-                                style={{ width: 130, height: 130, borderRadius: 65 }} 
-                            />    
+                           {profilePhoto ? (
+                                <Image source={{ uri: profilePhoto }} style={{ width: 130, height: 130, borderRadius: 65 }} />
+                            ) : (
+                                <MaterialCommunityIcons name="account" size={80} color="#334155" />
+                            )}    
                         </View>
                         <View style={styles.editPhotoButton}>
                             <MaterialCommunityIcons name="camera" size={20} color="#FFFFFF" />

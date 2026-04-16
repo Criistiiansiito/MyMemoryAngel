@@ -1,20 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Switch, TextInput, Image, ActivityIndicator, Platform, Alert, StatusBar } from 'react-native';
-// Importamos useSafeAreaInsets y eliminamos SafeAreaView de la renderización
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Switch, TextInput, Image, ActivityIndicator, Platform, Alert, StatusBar, StyleSheet, Modal } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker'; 
 import * as ImagePicker from 'expo-image-picker';
+import { CameraView, useCameraPermissions } from 'expo-camera'; 
 
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext'; 
 import { configuracionPerfil } from '../../services/configuracionPerfil';
+import { vinculacionesService } from '../../services/vinculacionesService';
 
 export default function ConfiguracionPaciente({ navigation }) {
     const { aplicarEscala, textSizeLabel, setTextSizeLabel, isDaltonic, setIsDaltonic, cargarDesdeServidor } = useAccesibilidad();
     const styles = getStyles(aplicarEscala, isDaltonic);
-    
-    // Hook para manejar el área segura (Notch y Home Indicator)
     const insets = useSafeAreaInsets();
     
     const [nombre, setNombre] = useState('');
@@ -24,6 +23,10 @@ export default function ConfiguracionPaciente({ navigation }) {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [profilePhoto, setProfilePhoto] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [permission, requestPermission] = useCameraPermissions();
+    const [scanned, setScanned] = useState(false);
+    const isScanningRef = useRef(false);
+    const [showScanner, setShowScanner] = useState(false);
 
     useEffect(() => { 
         cargarDatos(); 
@@ -49,6 +52,63 @@ export default function ConfiguracionPaciente({ navigation }) {
             Alert.alert("Error", "No se pudo conectar con el servidor.");
         } finally {
             setLoading(false);
+        }
+    };
+
+    // LÓGICA DE ESCÁNER
+    const iniciarEscaneo = async () => {
+        const { granted } = await requestPermission();
+        if (!granted) {
+            Alert.alert("Permisos", "Se requiere acceso a la cámara para escanear.");
+            return;
+        }
+        setScanned(false);
+        setShowScanner(true);
+    };
+
+    const handleBarCodeScanned = async ({ data }) => {
+        if (isScanningRef.current) return; 
+        isScanningRef.current = true;
+        setScanned(true); 
+        setShowScanner(false);
+
+        try {
+            const res = await vinculacionesService.obtenerPacientePorId(data);
+
+            if (res.ok && res.paciente) {
+                Alert.alert(
+                    "Paciente Detectado",
+                    `¿Quieres vincularte con ${res.paciente.nombre}?`,
+                    [
+                        { 
+                            text: "Cancelar", 
+                            style: "cancel",
+                            // Si cancela, reseteamos para que pueda volver a escanear luego
+                            onPress: () => {
+                                setScanned(false);
+                                isScanningRef.current = false; // Liberamos referencia
+                            }
+                        },
+                        { 
+                            text: "Sí, vincular", 
+                            onPress: async () => {
+                                const vinculo = await vinculacionesService.vincularPaciente(data);
+                                if (vinculo.ok) Alert.alert("Éxito", "Vinculación completada");
+                                setScanned(false);
+                                isScanningRef.current = false; // Liberamos referencia
+                            }
+                        }
+                    ]
+                );
+            } else {
+                Alert.alert("Error", "No se encontró al paciente.", [
+                    { text: "OK", onPress: () => { isScanningRef.current = false; setScanned(false); } }
+                ]);
+            }
+        } catch (error) {
+            Alert.alert("Error", "Problema de conexión.", [
+                { text: "OK", onPress: () => { isScanningRef.current = false; setScanned(false); } }
+            ]);
         }
     };
 
@@ -155,7 +215,7 @@ export default function ConfiguracionPaciente({ navigation }) {
         <View style={styles.container}>
             <StatusBar barStyle="dark-content" />
 
-            {/* HEADER CON PADDING DINÁMICO */}
+            {/* HEADER */}
             <View style={[
                 styles.topBar, 
                 { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
@@ -172,14 +232,16 @@ export default function ConfiguracionPaciente({ navigation }) {
                 contentContainerStyle={styles.scrollContent} 
                 showsVerticalScrollIndicator={false}
             >
-                
+                {/* PERFIL */}
                 <View style={styles.profileSection}>
                     <TouchableOpacity style={styles.profilePhotoContainer} onPress={pickImage}>
                         <View style={styles.photoCircle}>
-                            <Image 
-                                source={profilePhoto ? { uri: profilePhoto } : require('../../../assets/icons/bot-icon.png')} 
-                                style={{ width: 130, height: 130, borderRadius: 65 }} 
-                            />                         </View>
+                            {profilePhoto ? (
+                                    <Image source={{ uri: profilePhoto }} style={{ width: 130, height: 130, borderRadius: 65 }} />
+                                ) : (
+                                    <MaterialCommunityIcons name="account-tie" size={80} color="#334155" />
+                                )}                            
+                        </View>
                         <View style={styles.editPhotoButton}>
                             <MaterialCommunityIcons name="camera" size={20} color="#FFFFFF" />
                         </View>
@@ -212,9 +274,7 @@ export default function ConfiguracionPaciente({ navigation }) {
                         onPress={() => setShowDatePicker(true)}
                     >
                         <MaterialCommunityIcons name="calendar-outline" style={styles.inputIcon} />
-                        <Text style={styles.input}>
-                            {dateText}
-                        </Text>
+                        <Text style={styles.input}>{dateText}</Text>
                     </TouchableOpacity>
 
                     {showDatePicker && (
@@ -232,6 +292,7 @@ export default function ConfiguracionPaciente({ navigation }) {
                     </TouchableOpacity>
                 </View>
 
+                {/* ACCESIBILIDAD */}
                 <View style={styles.dividerContainer}>
                     <View style={styles.dividerLine} />
                     <Text style={styles.dividerText}>Personalización</Text>
@@ -277,8 +338,24 @@ export default function ConfiguracionPaciente({ navigation }) {
                     </View>
                 </View>
 
+                {/* VINCULACIÓN QR */}
+                <View style={styles.dividerContainer}>
+                    <View style={styles.dividerLine} />
+                       <Text style={styles.dividerText}>Vinculación</Text>
+                    <View style={styles.dividerLine} />
+                </View>
+
+                <View style={styles.qrCard}>
+                    <Text style={[styles.qrDescription, { fontSize: aplicarEscala(13) }]}>Escanea el código del paciente para supervisar su actividad.</Text>
+                    <TouchableOpacity style={styles.scanBtn} onPress={iniciarEscaneo}>
+                        <MaterialCommunityIcons name="qrcode-scan" size={22} color="#FFF" style={{ marginRight: 10 }} />
+                        <Text style={styles.scanBtnText}>Abrir Cámara</Text>
+                    </TouchableOpacity>
+                </View>                 
+
+                {/* BOTÓN SALIR */}
                 <TouchableOpacity 
-                    style={[styles.mainButton, { backgroundColor: '#EF4444', marginTop: 30, marginBottom: 20 }]} 
+                    style={[styles.mainButton, { backgroundColor: '#EF4444', marginTop: 30, marginBottom: 50 }]} 
                     onPress={confirmarCerrarSesion}
                 >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -288,6 +365,32 @@ export default function ConfiguracionPaciente({ navigation }) {
                 </TouchableOpacity>
 
             </ScrollView>
+
+            {/* MODAL DEL ESCÁNER */}
+            <Modal visible={showScanner} animationType="slide">
+                <View style={{ flex: 1, backgroundColor: '#000' }}>
+                    <CameraView 
+                        style={StyleSheet.absoluteFillObject} 
+                        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned} 
+                    />
+                    
+                    <View style={styles.scanCameraContainer}>
+                        <View style={styles.scanMarker} />
+                        <Text style={styles.scanMarkerText}>Coloca el QR aquí</Text>
+                    </View>
+
+                    <TouchableOpacity 
+                        style={styles.scanCloseModal} 
+                        onPress={() => {
+                            setShowScanner(false);
+                            setScanned(false);
+                            isScanningRef.current = false;
+                        }}
+                    >
+                        <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Volver</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
         </View>
     );
 }
