@@ -65,7 +65,7 @@ export default function DashboardPaciente({ navigation }) {
       <View style={[styles.topBar, { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }]}>
         <View style={[styles.logoRow]}>
           {/* Contenedor del nombre: Usamos flex: 1 para que ocupe solo el espacio disponible */}
-          <View style={[styles.headerUserInfo, { flex: 1, marginRight: 10 }]}>
+          <View style={[styles.headerUserInfo]}>
             <View style={[styles.iconCircle, { backgroundColor: '#E8F0FE', marginRight: 10, overflow: 'hidden', flexShrink: 0 }]}>
               {fotoPerfil ? (
                 <Image source={{ uri: fotoPerfil }} style={{ width: '100%', height: '100%' }} resizeMode="cover"/>
