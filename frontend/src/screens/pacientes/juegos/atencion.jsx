@@ -1,12 +1,18 @@
-import { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  View, Text, TouchableOpacity, StyleSheet, Animated, 
+  Platform, StatusBar, ScrollView 
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getStyles } from '../../../style/styles';
 import { useAccesibilidad } from '../../../services/accesibilidadContext';
 
-export default function Memoria({ onBack }) {
-  const { aplicarEscala } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala);
-  
+export default function Atencion({ onBack }) {
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
+  const insets = useSafeAreaInsets();
+
   const simbolos = ['★', '▲', '●', '■', '♥'];
   const [objetivo, setObjetivo] = useState('');
   const [lista, setLista] = useState([]);
@@ -14,18 +20,23 @@ export default function Memoria({ onBack }) {
   const [aciertos, setAciertos] = useState(0);
   const [mensaje, setMensaje] = useState('');
 
-  const fadeAnim = useRef(new Animated.Value(0)).current; // control de opacidad
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  // Genera una nueva ronda
   const nuevaRonda = () => {
     const nuevoObjetivo = simbolos[Math.floor(Math.random() * simbolos.length)];
-    const nuevaLista = Array.from({ length: 20 }, () =>
+    const nuevaLista = Array.from({ length: 12 }, () => // 12 elementos para que quepa bien en el grid
       simbolos[Math.floor(Math.random() * simbolos.length)]
     );
+    
+    // Aseguramos que al menos uno sea el objetivo
+    if (!nuevaLista.includes(nuevoObjetivo)) {
+        nuevaLista[Math.floor(Math.random() * nuevaLista.length)] = nuevoObjetivo;
+    }
+
     setObjetivo(nuevoObjetivo);
     setLista(nuevaLista);
     setMensaje('');
-    fadeAnim.setValue(0); // resetea animación
+    fadeAnim.setValue(0);
   };
 
   useEffect(() => {
@@ -39,95 +50,152 @@ export default function Memoria({ onBack }) {
       toValue: 0,
       duration: 1500,
       useNativeDriver: true,
-    }).start(() => setMensaje('')); // se borra al terminar
+    }).start();
   };
 
   const handlePress = (simbolo, index) => {
     if (simbolo === objetivo) {
       setAciertos((prev) => prev + 1);
       const nuevaLista = [...lista];
-      nuevaLista[index] = ''; // eliminar el símbolo acertado
+      nuevaLista[index] = ''; 
       setLista(nuevaLista);
 
-      // Si ya no quedan más objetivos visibles, pasa de ronda
       const quedan = nuevaLista.filter((s) => s === objetivo).length;
       if (quedan === 0) {
         if (ronda < 5) {
           setRonda(ronda + 1);
-          mostrarMensaje('✅ ¡Bien hecho!');
+          mostrarMensaje('✅ ¡Ronda superada!');
           setTimeout(() => nuevaRonda(), 800);
         } else {
-          setMensaje(`🎉 Fin del juego. Aciertos totales: ${aciertos + 1}`);
+          setMensaje(`🎉 ¡Fin del juego!`);
+          setRonda(6); // Estado para mostrar fin
         }
       } else {
-        mostrarMensaje('✅ Correcto');
+        mostrarMensaje('✅ ¡Encontrado!');
       }
     } else {
-      mostrarMensaje('❌ No es el símbolo correcto');
+      mostrarMensaje('❌ Ese no es');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Ronda {ronda} / 5</Text>
-      <Text style={styles.subtitle}>Encuentra todos los símbolos {objetivo}</Text>
+      <StatusBar barStyle="dark-content" />
 
-      <View style={styles.grid}>
-        {lista.map((s, i) => (
-          <TouchableOpacity
-            key={i}
-            style={[styles.cell, !s && styles.cellEmpty]}
-            onPress={() => s && handlePress(s, i)}
-          >
-            <Text style={styles.symbol}>{s}</Text>
+      {/* CABECERA DINÁMICA */}
+      <View style={[
+        styles.topBar, 
+        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+      ]}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity onPress={onBack}>
+            <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
           </TouchableOpacity>
-        ))}
+          <Text style={styles.brandName}>Atención Visual</Text>
+        </View>
       </View>
 
-      {mensaje ? (
-        <Animated.Text style={[styles.msg, { opacity: fadeAnim }]}>
-          {mensaje}
-        </Animated.Text>
-      ) : null}
+      <ScrollView contentContainerStyle={{ padding: 20, alignItems: 'center' }}>
+        
+        {/* INDICADOR DE OBJETIVO */}
+        <View style={[styles.settingsCard, { width: '100%', alignItems: 'center', paddingVertical: 20 }]}>
+          <Text style={{ fontSize: aplicarEscala(16), color: '#64748B', marginBottom: 10 }}>
+            {ronda <= 5 ? `Ronda ${ronda} de 5` : 'Juego Completado'}
+          </Text>
+          
+          {ronda <= 5 ? (
+            <View style={{ alignItems: 'center' }}>
+                <Text style={{ fontSize: aplicarEscala(20), fontWeight: '700', color: '#1E293B', marginBottom: 10 }}>
+                    Busca todos los:
+                </Text>
+                <View style={[localStyles.objetivoCircle]}>
+                    <Text style={{ fontSize: 40, color: '#10B981' }}>{objetivo}</Text>
+                </View>
+            </View>
+          ) : (
+            <View style={{ alignItems: 'center' }}>
+                <MaterialCommunityIcons name="trophy" size={60} color="#F59E0B" />
+                <Text style={{ fontSize: aplicarEscala(22), fontWeight: 'bold', color: '#1E293B', marginTop: 10 }}>
+                    ¡Excelente atención!
+                </Text>
+                <Text style={{ color: '#64748B' }}>Aciertos totales: {aciertos}</Text>
+            </View>
+          )}
+        </View>
 
-      {ronda > 5 ? (
-        <TouchableOpacity style={styles.button} onPress={onBack}>
-          <Text style={styles.buttonText}>Volver</Text>
+        {/* REJILLA DE SÍMBOLOS */}
+        {ronda <= 5 && (
+            <View style={localStyles.grid}>
+                {lista.map((s, i) => (
+                <TouchableOpacity
+                    key={i}
+                    disabled={!s}
+                    style={[
+                        localStyles.cell, 
+                        !s && { backgroundColor: 'transparent', borderColor: 'transparent' }
+                    ]}
+                    onPress={() => s && handlePress(s, i)}
+                >
+                    <Text style={{ fontSize: 32, color: '#334155' }}>{s}</Text>
+                </TouchableOpacity>
+                ))}
+            </View>
+        )}
+
+        {/* MENSAJE FLOTANTE */}
+        {mensaje ? (
+          <Animated.View style={{ opacity: fadeAnim, marginTop: 20 }}>
+            <Text style={{ fontSize: aplicarEscala(18), fontWeight: '600', color: mensaje.includes('❌') ? '#EF4444' : '#10B981' }}>
+              {mensaje}
+            </Text>
+          </Animated.View>
+        ) : null}
+
+        {/* BOTÓN FINAL O SALIR */}
+        <TouchableOpacity 
+          style={[styles.mainButton, { marginTop: 30, width: '100%', backgroundColor: ronda > 5 ? '#10B981' : '#64748B' }]} 
+          onPress={onBack}
+        >
+          <Text style={styles.mainButtonText}>{ronda > 5 ? 'Finalizar' : 'Salir del juego'}</Text>
         </TouchableOpacity>
-      ) : (
-        <TouchableOpacity style={styles.back} onPress={onBack}>
-          <Text style={styles.backText}>Salir</Text>
-        </TouchableOpacity>
-      )}
+
+      </ScrollView>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
-  subtitle: { fontSize: 18, marginBottom: 20 },
+const localStyles = StyleSheet.create({
+  objetivoCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#ECFDF5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#10B981',
+  },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    width: 360,
     justifyContent: 'center',
-    marginBottom: 20,
+    gap: 15,
+    marginTop: 25,
   },
   cell: {
-    width: 80,
-    height: 80,
+    width: 75,
+    height: 75,
+    backgroundColor: 'white',
+    borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 5,
-    backgroundColor: '#007bff33',
-    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    // Sombra para darle profundidad
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
-  cellEmpty: { backgroundColor: 'transparent' },
-  symbol: { fontSize: 24 },
-  msg: { fontSize: 18, marginTop: 10, textAlign: 'center' },
-  back: { marginTop: 10 },
-  backText: { color: '#007bff', fontSize: 16 },
-  button: { backgroundColor: '#007bff', padding: 12, borderRadius: 8 },
-  buttonText: { color: '#fff', fontWeight: 'bold' },
 });
