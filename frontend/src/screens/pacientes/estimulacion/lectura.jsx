@@ -61,7 +61,7 @@ export default function Lectura({ onBack }) {
       Speech.speak(textoSeleccionado?.contenido, {
         language: 'es',
         pitch: 1.0,
-        rate: 0.8,
+        rate: 0.5,
         onDone: () => setIsTalking(false),
         onStopped: () => setIsTalking(false),
         onError: () => {
