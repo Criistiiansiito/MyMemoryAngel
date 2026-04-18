@@ -18,9 +18,10 @@ import ConfiguracionCuidador from './screens/cuidadores/configuracionCuidador';
 import NuevoRecordatorio from './screens/pacientes/nuevoRecordatorio';
 import Calendario from './screens/pacientes/calendario';
 import GestionarPacientes from './screens/cuidadores/gestionarPacientes';
-import InformacionPaciente from './screens/cuidadores/informacionPaciente';
+import InformacionPaciente from './screens/cuidadores/informacion/informacionPaciente';
 import RecordatoriosCuidador from './screens/cuidadores/recordatoriosCuidador';
 import ChatBotCuidador from './screens/common/chatBotCuidador';
+import GestionarMusicaPaciente from './screens/cuidadores/informacion/gestionarMusicaPaciente';
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +48,7 @@ export default function App() {
         <Stack.Screen name="InformacionPaciente" component={InformacionPaciente} options={{ headerShown: false }} />
         <Stack.Screen name="RecordatoriosCuidador" component={RecordatoriosCuidador} options={{ headerShown: false }} />
         <Stack.Screen name="ChatBotCuidador" component={ChatBotCuidador} options={{ headerShown: false }} />
+        <Stack.Screen name="GestionarMusicaPaciente" component={GestionarMusicaPaciente} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
     </AccesibilidadProvider>
