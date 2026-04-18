@@ -2,9 +2,11 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Platform, StatusBar, Image } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 export default function InformacionPaciente({ paciente, onBack, styles }) {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
@@ -53,10 +55,10 @@ export default function InformacionPaciente({ paciente, onBack, styles }) {
         </TouchableOpacity>
 
         {/* MÚSICA */}
-        <TouchableOpacity 
-          style={styles.menuCard} 
-          onPress={() => console.log("Ir a Música")}
-        >
+          <TouchableOpacity 
+            style={styles.menuCard} 
+            onPress={() => navigation.navigate('GestionarMusicaPaciente', { paciente: paciente })}
+          >
           <View style={[styles.menuIconContainer, { backgroundColor: '#E1E7FF' }]}>
             <MaterialCommunityIcons name="music-note-outline" size={28} color="#4D6BFE" />
           </View>
