@@ -9,7 +9,7 @@ import * as SecureStore from 'expo-secure-store';
 import { getStyles } from '../../../style/styles';
 import { useAccesibilidad } from '../../../services/accesibilidadContext';
 import { escrituraService } from '../../../services/escrituraService';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useStoredUser } from '../../../hooks/storedUser';
 
 export default function Escritura({ onBack }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
@@ -20,7 +20,7 @@ export default function Escritura({ onBack }) {
   const [entrada, setEntrada] = useState('');
   const [completado, setCompletado] = useState(false);
   const [historial, setHistorial] = useState([]);
-  const [userId, setUserId] = useState(null);
+  const user = useStoredUser();
   const [expandedId, setExpandedId] = useState(null); // Estado para controlar el despliegue
 
   const refranes = [
@@ -30,49 +30,27 @@ export default function Escritura({ onBack }) {
   const [indiceRefran, setIndiceRefran] = useState(0);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    if (vista === 'menu' && user.uid) {
+      const obtenerHistorial = async () => {
         try {
-        const userData = await AsyncStorage.getItem('user');
-
-        if (userData) {
-            const perfil = JSON.parse(userData);
-            if (perfil && perfil.uid) {
-            setUserId(perfil.uid);
-            } else {
-            console.warn("El objeto 'user' existe pero no tiene uid");
-            }
-        } else {
-            console.warn("No se encontró la clave 'user' en AsyncStorage");
-        }
+          const data = await escrituraService.obtenerEscrituras(user.uid);
+          setHistorial(data);
         } catch (error) {
-        console.error("Error al leer AsyncStorage:", error);
+          console.error("Error al cargar historial", error);
         }
-    };
-    fetchUser();
-  }, []);
+      };
 
-  useEffect(() => {
-    if (vista === 'menu' && userId) {
-      cargarHistorial();
+      obtenerHistorial();
     }
-  }, [vista, userId]);
-
-  const cargarHistorial = async () => {
-    try {
-      const data = await escrituraService.obtenerEscrituras(userId);
-      setHistorial(data);
-    } catch (error) {
-      console.error("Error al cargar historial", error);
-    }
-  };
+  }, [vista, user.uid]);
 
   const guardarDiario = async () => {
     if (!entrada.trim()) return Alert.alert("Aviso", "El texto está vacío.");
-    if (!userId) return Alert.alert("Error", "No se detectó el usuario.");
+    if (!user.uid) return Alert.alert("Error", "No se detectó el usuario.");
     
     try {
       const hoy = new Date().toLocaleDateString('es-ES');
-      await escrituraService.insertarEscritura(userId, hoy, entrada);
+      await escrituraService.insertarEscritura(user.uid, hoy, entrada);
       Alert.alert("¡Guardado!", "Se ha guardado en tu diario.");
       setVista('menu');
       setEntrada('');
@@ -87,7 +65,8 @@ export default function Escritura({ onBack }) {
       { text: "Sí", style: 'destructive', onPress: async () => {
           try {
             await escrituraService.eliminarEscritura(id);
-            cargarHistorial();
+            const data = await escrituraService.obtenerEscrituras(user.uid);
+            setHistorial(data);
           } catch (e) { Alert.alert("Error", "No se pudo borrar."); }
       }}
     ]);

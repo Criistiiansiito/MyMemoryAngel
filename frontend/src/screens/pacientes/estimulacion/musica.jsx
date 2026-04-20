@@ -9,10 +9,10 @@ import { Audio } from 'expo-av';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import { File } from 'expo-file-system';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getStyles } from '../../../style/styles';
 import { useAccesibilidad } from '../../../services/accesibilidadContext';
 import { musicaService } from '../../../services/musicaService';
+import { useStoredUser } from '../../../hooks/storedUser';
 
 export default function Musica({ onBack }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
@@ -27,19 +27,7 @@ export default function Musica({ onBack }) {
   const [estaReproduciendo, setEstaReproduciendo] = useState(false);
   const [reproduciendoId, setReproduciendoId] = useState(null);
   const [progreso, setProgreso] = useState({ posicion: 0, duracion: 0 });
-  const [userId, setUserId] = useState(null);
-
-  // Obtener el ID del usuario al iniciar
-  useEffect(() => {
-    const getUserId = async () => {
-      const userData = await AsyncStorage.getItem('user');
-      if (userData) {
-        const { uid } = JSON.parse(userData);
-        setUserId(uid);
-      }
-    };
-    getUserId();
-  }, []);
+  const user = useStoredUser();
 
   useEffect(() => {
     const configurarAudio = async () => {
@@ -62,7 +50,7 @@ export default function Musica({ onBack }) {
     setCategoriaActiva(item);
     try {
       // Si es personal, enviamos el userId para filtrar sus canciones
-      const data = await musicaService.obtenerMusicaPorTipo(item.tipo, item.tipo === 'personal' ? userId : null);
+      const data = await musicaService.obtenerMusicaPorTipo(item.tipo, item.tipo === 'personal' ? user.uid : null);
       setCanciones(data);
       setVistaActual('reproductor');
     } catch (error) {
@@ -99,10 +87,10 @@ export default function Musica({ onBack }) {
         setCargando(true);
         const titulo = name.split('.')[0];
 
-        await musicaService.insertarMusicaPersonal(uri, titulo, userId);
+        await musicaService.insertarMusicaPersonal(uri, titulo, user.uid);
 
         Alert.alert("¡Éxito!", "MP3 guardado en tus recuerdos.");
-        const data = await musicaService.obtenerMusicaPorTipo('personal', userId);
+        const data = await musicaService.obtenerMusicaPorTipo('personal', user.uid);
         setCanciones(data);
       }
     } catch (error) {
