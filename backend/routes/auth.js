@@ -3,6 +3,7 @@ const router = express.Router();
 const admin = require('../firebaseAdmin');
 const multer = require('multer'); 
 const db = require('../db'); 
+const { sendPushNotifications } = require('../pushNotifications');
 
 const upload = multer({ 
     storage: multer.memoryStorage(),
@@ -65,7 +66,6 @@ router.post('/sync', async (req, res) => {
         
     } catch (err) {
         if (connection) await connection.rollback();
-        console.error('Sync error:', err);
         return res.status(500).json({ error: 'Error al sincronizar datos del usuario' });
     } finally {
         connection.release();
@@ -220,7 +220,6 @@ router.get('/get-musica', async (req, res) => {
 
         res.json(respuesta);
     } catch (error) {
-        console.error("Error al obtener:", error);
         res.status(500).send("Error en el servidor");
     }
 });
@@ -315,7 +314,6 @@ router.delete('/delete-escritura/:id', async (req, res) => {
     await db.query('DELETE FROM escrituras WHERE id = ?', [id]);
     res.json({ message: "Entrada eliminada" });
   } catch (error) {
-    console.error(error);
     res.status(500).send("Error al eliminar");
   }
 });
@@ -348,7 +346,6 @@ router.get('/paciente/:id', async (req, res) => {
         return res.json({ ok: true, paciente: { nombre: paciente.nombre } });
 
     } catch (err) {
-        console.error("Error al buscar paciente:", err);
         return res.status(401).json({ error: 'Token inválido o error de servidor' });
     }
 });
@@ -387,7 +384,6 @@ router.post('/vincular-paciente', async (req, res) => {
         }
 
     } catch (err) {
-        console.error("Error en vinculación:", err);
         return res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
@@ -403,6 +399,72 @@ router.get('/mis-pacientes', async (req, res) => {
         const [rows] = await db.query(sql, [decoded.uid]);
         res.json({ ok: true, pacientes: rows });
     } catch (error) { res.status(500).json({ error: 'Error al obtener pacientes' }); }
+});
+
+router.post('/push-token', async (req, res) => {
+      const authHeader = req.headers.authorization || '';
+      const token = authHeader.split(' ')[1];
+
+      if (!token) {
+          return res.status(401).json({ error: 'Token faltante' });
+      }
+
+      try {
+          const decoded = await admin.auth().verifyIdToken(token);
+          const { expo_push_token, platform } = req.body;
+
+          if (!expo_push_token || !platform) {
+              return res.status(400).json({ error: 'Faltan datos del dispositivo' });
+          }
+
+          const sql = `
+              INSERT INTO device_tokens (user_uid, expo_push_token, platform, activo)
+              VALUES (?, ?, ?, 1)
+              ON DUPLICATE KEY UPDATE
+                  user_uid = VALUES(user_uid),
+                  platform = VALUES(platform),
+                  activo = 1,
+                  updated_at = CURRENT_TIMESTAMP
+          `;
+
+          await db.query(sql, [decoded.uid, expo_push_token, platform]);
+
+          return res.json({ ok: true });
+      } catch (err) {
+          console.error('Error guardando push token:', err);
+          return res.status(500).json({ error: 'No se pudo guardar el token push' });
+      }
+});
+
+router.post('/test-push', async (req, res) => {
+      const authHeader = req.headers.authorization || '';
+      const token = authHeader.split(' ')[1];
+
+      if (!token) {
+          return res.status(401).json({ error: 'Token faltante' });
+      }
+
+      try {
+          const decoded = await admin.auth().verifyIdToken(token);
+
+          const [rows] = await db.query(
+              'SELECT expo_push_token FROM device_tokens WHERE user_uid = ? AND activo = 1',
+              [decoded.uid]
+          );
+
+          const tokens = rows.map((row) => row.expo_push_token);
+
+          const result = await sendPushNotifications(tokens, {
+              title: 'Prueba MyMemoryAngel',
+              body: 'Esta es una notificación push de prueba',
+              data: { tipo: 'test' },
+          });
+
+          return res.json({ ok: true, result });
+      } catch (err) {
+          console.error('Error en test push:', err);
+          return res.status(500).json({ error: 'No se pudo enviar la push' });
+      }
 });
 
 module.exports = router;
