@@ -22,11 +22,11 @@ export default function InformacionPaciente({ paciente, onBack, styles }) {
             </View>
       </View>
 
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 15}}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 20}}>
 
         {/* RECUADRO DE PERFIL DEL PACIENTE */}
         <View style={{ alignItems: 'center', marginVertical: 20 }}>
-          <View style={[ styles.iconCircle, { backgroundColor: '#F3E8FF', width: 120, height: 120, borderRadius: 60, overflow: 'hidden', justifyContent: 'center', alignItems: 'center', marginBottom: 10 }]}>
+          <View style={[ styles.iconCircle, { backgroundColor: '#F3E8FF', width: 100, height: 100, borderRadius: 60, overflow: 'hidden', justifyContent: 'center', alignItems: 'center', marginBottom: 10 }]}>
             {paciente?.foto_perfil ? (
               <Image source={{ uri: paciente.foto_perfil }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
             ) : (
@@ -34,7 +34,7 @@ export default function InformacionPaciente({ paciente, onBack, styles }) {
             )}
           </View>
 
-          <Text style={[styles.menuTitle, { fontSize: 22, textAlign: 'center' }]}>
+          <Text style={[styles.menuTitle, { fontSize: 18, textAlign: 'center' }]}>
             {paciente?.nombre || 'Paciente'}
           </Text>
         </View>
