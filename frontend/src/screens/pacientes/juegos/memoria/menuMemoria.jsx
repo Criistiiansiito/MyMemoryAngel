@@ -1,5 +1,5 @@
 import React from 'react';
-import MenuCategoriaJuegos from './menuCategoriaJuegos';
+import MenuCategoriaJuegos from '../../../../components/juegos/MenuCategoriaJuegos';
 
 export default function MenuMemoria({ onBack, onSelectGame }) {
   return (

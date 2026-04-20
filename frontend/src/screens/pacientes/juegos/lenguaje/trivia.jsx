@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { 
-  View, Text, TouchableOpacity, StyleSheet, 
-  Alert, Platform, StatusBar, ScrollView 
+import {
+  View, Text, TouchableOpacity,
+  Alert, Platform, StatusBar, ScrollView
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { getStyles } from '../../../style/styles';
-import { useAccesibilidad } from '../../../services/accesibilidadContext';
+import { getStyles } from '../../../../style/styles';
+import { useAccesibilidad } from '../../../../services/accesibilidadContext';
 
 const questions = [
   { question: '¿El Alzheimer afecta la memoria?', answer: 'Sí' },
@@ -27,13 +27,13 @@ export default function Trivia({ onBack }) {
 
   const handleAnswer = (ans) => {
     const esCorrecto = ans === questions[current].answer;
-    
+
     if (esCorrecto) {
-      setPuntuacion(prev => prev + 1);
+      setPuntuacion((prev) => prev + 1);
     }
 
-    const mensaje = esCorrecto 
-      ? '¡Excelente! Esa es la respuesta correcta. ✅' 
+    const mensaje = esCorrecto
+      ? '¡Excelente! Esa es la respuesta correcta. ✅'
       : `No exactamente. La respuesta era: ${questions[current].answer}. ❌`;
 
     Alert.alert('Resultado', mensaje, [
@@ -41,7 +41,7 @@ export default function Trivia({ onBack }) {
         text: 'Continuar',
         onPress: () => {
           if (current < questions.length - 1) {
-            setCurrent(prev => prev + 1);
+            setCurrent((prev) => prev + 1);
           } else {
             setFinalizado(true);
           }
@@ -54,9 +54,8 @@ export default function Trivia({ onBack }) {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
 
-      {/* CABECERA DINÁMICA */}
       <View style={[
-        styles.topBar, 
+        styles.topBar,
         { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
       ]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -68,8 +67,6 @@ export default function Trivia({ onBack }) {
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 20, alignItems: 'center' }}>
-        
-        {/* INDICADOR DE PROGRESO */}
         <View style={{ width: '100%', marginBottom: 20 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
             <Text style={{ color: '#64748B', fontWeight: '600' }}>
@@ -80,24 +77,23 @@ export default function Trivia({ onBack }) {
             </Text>
           </View>
           <View style={{ height: 8, backgroundColor: '#E2E8F0', borderRadius: 4 }}>
-            <View style={{ 
-              height: '100%', 
-              backgroundColor: '#F59E0B', 
-              borderRadius: 4, 
-              width: `${((current + 1) / questions.length) * 100}%` 
+            <View style={{
+              height: '100%',
+              backgroundColor: '#F59E0B',
+              borderRadius: 4,
+              width: `${((current + 1) / questions.length) * 100}%`
             }} />
           </View>
         </View>
 
-        {/* TARJETA DE PREGUNTA */}
         <View style={[styles.settingsCard, { width: '100%', alignItems: 'center', paddingVertical: 40, paddingHorizontal: 20 }]}>
           {!finalizado ? (
             <>
               <MaterialCommunityIcons name="help-circle-outline" size={50} color="#F59E0B" />
-              <Text style={{ 
-                fontSize: aplicarEscala(22), 
-                fontWeight: '700', 
-                color: '#1E293B', 
+              <Text style={{
+                fontSize: aplicarEscala(22),
+                fontWeight: '700',
+                color: '#1E293B',
                 textAlign: 'center',
                 marginTop: 20,
                 lineHeight: 30
@@ -118,19 +114,18 @@ export default function Trivia({ onBack }) {
           )}
         </View>
 
-        {/* BOTONES DE RESPUESTA */}
         {!finalizado ? (
           <View style={{ width: '100%', marginTop: 20, gap: 15 }}>
-            <TouchableOpacity 
-              style={[styles.mainButton, { backgroundColor: '#3B82F6', flexDirection: 'row', justifyContent: 'center', gap: 10 }]} 
+            <TouchableOpacity
+              style={[styles.mainButton, { backgroundColor: '#3B82F6', flexDirection: 'row', justifyContent: 'center', gap: 10 }]}
               onPress={() => handleAnswer('Sí')}
             >
               <MaterialCommunityIcons name="check-circle-outline" size={24} color="white" />
               <Text style={styles.mainButtonText}>Sí</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
-              style={[styles.mainButton, { backgroundColor: '#EF4444', flexDirection: 'row', justifyContent: 'center', gap: 10 }]} 
+            <TouchableOpacity
+              style={[styles.mainButton, { backgroundColor: '#EF4444', flexDirection: 'row', justifyContent: 'center', gap: 10 }]}
               onPress={() => handleAnswer('No')}
             >
               <MaterialCommunityIcons name="close-circle-outline" size={24} color="white" />
@@ -138,14 +133,13 @@ export default function Trivia({ onBack }) {
             </TouchableOpacity>
           </View>
         ) : (
-          <TouchableOpacity 
-            style={[styles.mainButton, { marginTop: 20, width: '100%', backgroundColor: '#10B981' }]} 
+          <TouchableOpacity
+            style={[styles.mainButton, { marginTop: 20, width: '100%', backgroundColor: '#10B981' }]}
             onPress={onBack}
           >
             <Text style={styles.mainButtonText}>Volver al menú</Text>
           </TouchableOpacity>
         )}
-
       </ScrollView>
     </View>
   );

@@ -3,8 +3,8 @@ import { View, Text, TouchableOpacity, Platform, StatusBar, ScrollView } from 'r
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { getStyles } from '../../../style/styles';
-import { useAccesibilidad } from '../../../services/accesibilidadContext';
+import { getStyles } from '../../../../style/styles';
+import { useAccesibilidad } from '../../../../services/accesibilidadContext';
 
 const ICONS = ['star', 'heart', 'leaf', 'fish', 'moon-waxing-crescent', 'flower-tulip'];
 const COLORS = ['#EC4899', '#10B981', '#3B82F6', '#F59E0B', '#8B5CF6', '#EF4444'];

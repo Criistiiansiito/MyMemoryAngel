@@ -3,8 +3,8 @@ import { View, Text, TouchableOpacity, Platform, StatusBar, ScrollView, Alert } 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { getStyles } from '../../../style/styles';
-import { useAccesibilidad } from '../../../services/accesibilidadContext';
+import { getStyles } from '../../../../style/styles';
+import { useAccesibilidad } from '../../../../services/accesibilidadContext';
 
 const WEEKDAYS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
 const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
