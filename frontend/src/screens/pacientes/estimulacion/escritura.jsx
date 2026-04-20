@@ -10,6 +10,7 @@ import { getStyles } from '../../../style/styles';
 import { useAccesibilidad } from '../../../services/accesibilidadContext';
 import { escrituraService } from '../../../services/escrituraService';
 import { useStoredUser } from '../../../hooks/storedUser';
+import MenuCategoriaEstimulacion from '../../../components/estimulacion/MenuCardEstimulacion';
 
 export default function Escritura({ onBack }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
@@ -28,6 +29,37 @@ export default function Escritura({ onBack }) {
     { id: 2, inicio: "Al que madruga, Dios le...", respuesta: "ayuda" },
   ];
   const [indiceRefran, setIndiceRefran] = useState(0);
+  const opcionesEscritura = [
+    {
+      id: 1,
+      titulo: 'Completar Refranes',
+      descripcion: 'Entrena tu mente terminando frases clásicas.',
+      icono: 'comment-quote-outline',
+      color: '#6366F1',
+      actionIcon: 'pencil-outline',
+      actionLabel: 'Practicar',
+      meta: 'Memoria verbal',
+      onPress: () => {
+        setVista('refranes');
+        setEntrada('');
+        setCompletado(false);
+      },
+    },
+    {
+      id: 2,
+      titulo: 'Mi Diario',
+      descripcion: 'Escribe lo que sientes.',
+      icono: 'book-open-variant',
+      color: '#10B981',
+      actionIcon: 'pencil-outline',
+      actionLabel: 'Escribir',
+      meta: 'Expresión personal',
+      onPress: () => {
+        setVista('diario');
+        setEntrada('');
+      },
+    },
+  ];
 
   useEffect(() => {
     if (vista === 'menu' && user.uid) {
@@ -74,27 +106,11 @@ export default function Escritura({ onBack }) {
 
   const renderMenuPrincipal = () => (
     <View>
-      <View>
-        <TouchableOpacity style={styles.musicCard} onPress={() => { setVista('refranes'); setEntrada(''); setCompletado(false); }}>
-          <View style={[styles.musicIconContainer, { backgroundColor: '#6366F1' }]}>
-            <MaterialCommunityIcons name="comment-quote-outline" size={32} color="white" />
-          </View>
-          <View style={styles.musicTextContainer}>
-            <Text style={styles.musicCardTitle}>Completar Refranes</Text>
-            <Text style={styles.musicCardDescription}>Entrena tu mente terminando frases clásicas.</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.musicCard} onPress={() => { setVista('diario'); setEntrada(''); }}>
-          <View style={[styles.musicIconContainer, { backgroundColor: '#10B981' }]}>
-            <MaterialCommunityIcons name="book-open-variant" size={32} color="white" />
-          </View>
-          <View style={styles.musicTextContainer}>
-            <Text style={styles.musicCardTitle}>Mi Diario</Text>
-            <Text style={styles.musicCardDescription}>Escribe lo que sientes.</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+      <MenuCategoriaEstimulacion
+        items={opcionesEscritura}
+        onSelectItem={(item) => item.onPress()}
+        containerStyle={{ padding: 0 }}
+      />
 
       <View style={styles.dividerContainer}>
           <View style={styles.dividerLine} />
@@ -150,7 +166,7 @@ export default function Escritura({ onBack }) {
     <View style={{ flex: 1 }}>
       <View style={styles.settingsCard}>
         <Text style={[styles.musicCardTitle, { fontSize: 22, marginBottom: 15, textAlign: 'center' }]}>
-          "{refranes[indiceRefran].inicio}"
+          &quot;{refranes[indiceRefran].inicio}&quot;
         </Text>
         <TextInput
           style={[styles.escrituraInput, completado && { borderColor: '#10B981', backgroundColor: '#F0FDF4' }]}

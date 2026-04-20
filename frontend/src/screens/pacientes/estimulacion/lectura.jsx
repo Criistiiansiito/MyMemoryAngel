@@ -9,6 +9,7 @@ import * as Speech from 'expo-speech';
 import { getStyles } from '../../../style/styles';
 import { useAccesibilidad } from '../../../services/accesibilidadContext';
 import { lecturaService } from '../../../services/lecturaService';
+import MenuCategoriaEstimulacion from '../../../components/estimulacion/MenuCardEstimulacion';
 
 const { width } = Dimensions.get('window');
 
@@ -72,39 +73,15 @@ export default function Lectura({ onBack }) {
     }
   };
 
+  const categoriasLectura = [
+    { id: 1, titulo: 'Relatos del Ayer', tipo: 'reminiscencia', meta: '5-10 min', descripcion: 'Historias de los años 50, 60 y 70 para recordar.', icono: 'history', color: '#6366F1', actionIcon: 'book-open-variant', actionLabel: 'Leer' },
+    { id: 2, titulo: 'Lectura Facilitada', tipo: 'adaptada', meta: '2-5 min', descripcion: 'Textos cortos con frases sencillas y claras.', icono: 'format-size', color: '#EC4899', actionIcon: 'book-open-variant', actionLabel: 'Leer' },
+    { id: 3, titulo: 'Poesía y Rimas', tipo: 'poesia', meta: '3 min', descripcion: 'Lecturas con ritmo para estimular la memoria.', icono: 'feather', color: '#F59E0B', actionIcon: 'book-open-variant', actionLabel: 'Leer' },
+    { id: 4, titulo: 'Naturaleza', tipo: 'curiosidades', meta: '5 min', descripcion: 'Artículos breves sobre el mundo natural.', icono: 'leaf', color: '#10B981', actionIcon: 'book-open-variant', actionLabel: 'Leer' },
+  ];
+
   const renderMenu = () => (
-    <ScrollView 
-      contentContainerStyle={{ padding: 20}}
-      showsVerticalScrollIndicator={false}
-    >
-      {[
-        { id: 1, titulo: 'Relatos del Ayer', tipo: 'reminiscencia', tiempo: '5-10 min', descripcion: 'Historias de los años 50, 60 y 70 para recordar.', icono: 'history', color: '#6366F1' },
-        { id: 2, titulo: 'Lectura Facilitada', tipo: 'adaptada', tiempo: '2-5 min', descripcion: 'Textos cortos con frases sencillas y claras.', icono: 'format-size', color: '#EC4899' },
-        { id: 3, titulo: 'Poesía y Rimas', tipo: 'poesia', tiempo: '3 min', descripcion: 'Lecturas con ritmo para estimular la memoria.', icono: 'feather', color: '#F59E0B' },
-        { id: 4, titulo: 'Naturaleza', tipo: 'curiosidades', tiempo: '5 min', descripcion: 'Artículos breves sobre el mundo natural.', icono: 'leaf', color: '#10B981' },
-      ].map((item) => (
-        <TouchableOpacity key={item.id} style={styles.musicCard} onPress={() => onSelectCategoria(item)}>
-          <View style={[styles.musicIconContainer, { backgroundColor: item.color }]}>
-            <MaterialCommunityIcons name={item.icono} size={32} color="white" />
-          </View>
-          <View style={styles.musicTextContainer}>
-            <Text style={styles.musicCardTitle}>{item.titulo}</Text>
-            <Text style={styles.musicCardDescription} numberOfLines={2}>{item.descripcion}</Text>
-            <View style={styles.musicBadge}>
-              <View style={styles.musicBadgePlaySection}>
-                <MaterialCommunityIcons name="book-open-variant" size={16} color={item.color} />
-                <Text style={[styles.musicBadgeText, { color: item.color }]}>Leer</Text>
-              </View>
-              <Text style={styles.musicSeparator}>|</Text>
-              <View style={styles.musicBadgeMomentSection}>
-                <MaterialCommunityIcons name="clock-outline" size={13} color="#64748B" />
-                <Text style={styles.momentoTextInline}>{item.tiempo}</Text>
-              </View>
-            </View>
-          </View>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
+    <MenuCategoriaEstimulacion items={categoriasLectura} onSelectItem={onSelectCategoria} />
   );
 
   const renderLista = () => (
@@ -229,7 +206,11 @@ export default function Lectura({ onBack }) {
           <TouchableOpacity 
             onPress={() => {
               if (isTalking) Speech.stop();
-              vistaActual === 'menu' ? onBack() : setVistaActual(vistaActual === 'lector' ? 'lista' : 'menu');
+              if (vistaActual === 'menu') {
+                onBack();
+              } else {
+                setVistaActual(vistaActual === 'lector' ? 'lista' : 'menu');
+              }
             }}
           >
             <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />

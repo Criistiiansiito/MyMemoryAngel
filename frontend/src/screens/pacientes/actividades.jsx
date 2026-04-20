@@ -9,24 +9,24 @@ import BottomTabBar from '../../components/BottomTabBar';
 
 import MenuEstimulacion from './estimulacion/menuEstimulacion';
 import MenuJuegos from './juegos/menuJuegos';
-import MenuMemoria from './juegos/menuMemoria';
-import MenuAtencion from './juegos/menuAtencion';
-import MenuLenguaje from './juegos/menuLenguaje';
-import MenuOrientacion from './juegos/menuOrientacion';
-import MenuFuncionesEjecutivas from './juegos/menuFuncionesEjecutivas';
-import MenuVisual from './juegos/menuVisual';
+import MenuMemoria from './juegos/memoria/menuMemoria';
+import MenuAtencion from './juegos/atencion/menuAtencion';
+import MenuLenguaje from './juegos/lenguaje/menuLenguaje';
+import MenuOrientacion from './juegos/orientacion/menuOrientacion';
+import MenuFuncionesEjecutivas from './juegos/funcionesEjecutivas/menuFuncionesEjecutivas';
+import MenuVisual from './juegos/visual/menuVisual';
 
 import Musica from './estimulacion/musica';
 import Arte from './estimulacion/arte';
 import Lectura from './estimulacion/lectura';
 import Escritura from './estimulacion/escritura';
 
-import Memoria from './juegos/memoria';
-import Calculadora from './juegos/calculadora';
-import Trivia from './juegos/trivia';
-import Atencion from './juegos/atencion';
-import Orientacion from './juegos/orientacion';
-import Visual from './juegos/visual';
+import Memoria from './juegos/memoria/memoria';
+import Calculadora from './juegos/funcionesEjecutivas/calculadora';
+import Trivia from './juegos/lenguaje/trivia';
+import Atencion from './juegos/atencion/atencion';
+import Orientacion from './juegos/orientacion/orientacion';
+import Visual from './juegos/visual/visual';
 
 export default function EstimulacionCognitiva() {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
