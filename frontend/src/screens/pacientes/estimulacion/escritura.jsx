@@ -22,6 +22,7 @@ export default function Escritura({ onBack }) {
   const [completado, setCompletado] = useState(false);
   const [historial, setHistorial] = useState([]);
   const user = useStoredUser();
+  const userId = user?.uid;
   const [expandedId, setExpandedId] = useState(null); // Estado para controlar el despliegue
 
   const refranes = [
@@ -62,10 +63,10 @@ export default function Escritura({ onBack }) {
   ];
 
   useEffect(() => {
-    if (vista === 'menu' && user.uid) {
+    if (vista === 'menu' && userId) {
       const obtenerHistorial = async () => {
         try {
-          const data = await escrituraService.obtenerEscrituras(user.uid);
+          const data = await escrituraService.obtenerEscrituras(userId);
           setHistorial(data);
         } catch (error) {
           console.error("Error al cargar historial", error);
@@ -74,15 +75,15 @@ export default function Escritura({ onBack }) {
 
       obtenerHistorial();
     }
-  }, [vista, user.uid]);
+  }, [vista, userId]);
 
   const guardarDiario = async () => {
     if (!entrada.trim()) return Alert.alert("Aviso", "El texto está vacío.");
-    if (!user.uid) return Alert.alert("Error", "No se detectó el usuario.");
+    if (!userId) return Alert.alert("Error", "No se detectó el usuario.");
     
     try {
       const hoy = new Date().toLocaleDateString('es-ES');
-      await escrituraService.insertarEscritura(user.uid, hoy, entrada);
+      await escrituraService.insertarEscritura(userId, hoy, entrada);
       Alert.alert("¡Guardado!", "Se ha guardado en tu diario.");
       setVista('menu');
       setEntrada('');
@@ -97,7 +98,7 @@ export default function Escritura({ onBack }) {
       { text: "Sí", style: 'destructive', onPress: async () => {
           try {
             await escrituraService.eliminarEscritura(id);
-            const data = await escrituraService.obtenerEscrituras(user.uid);
+            const data = await escrituraService.obtenerEscrituras(userId);
             setHistorial(data);
           } catch (e) { Alert.alert("Error", "No se pudo borrar."); }
       }}

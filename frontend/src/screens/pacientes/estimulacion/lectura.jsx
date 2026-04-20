@@ -116,7 +116,7 @@ export default function Lectura({ onBack }) {
               <Text style={styles.tituloListaLectura} numberOfLines={2}>{t.titulo}</Text>
               <View style={styles.badgeListaLectura}>
                 <MaterialCommunityIcons name="clock-outline" size={14} color="#64748B" />
-                <Text style={styles.tiempoListaLectura}>{categoriaActiva?.tiempo}</Text>
+                <Text style={styles.tiempoListaLectura}>{categoriaActiva?.meta}</Text>
               </View>
             </View>
             <View style={[styles.circuloLectura, { backgroundColor: categoriaActiva?.color }]}>

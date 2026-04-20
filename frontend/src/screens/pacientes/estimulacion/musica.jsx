@@ -29,6 +29,7 @@ export default function Musica({ onBack }) {
   const [reproduciendoId, setReproduciendoId] = useState(null);
   const [progreso, setProgreso] = useState({ posicion: 0, duracion: 0 });
   const user = useStoredUser();
+  const userId = user?.uid;
 
   useEffect(() => {
     const configurarAudio = async () => {
@@ -51,7 +52,7 @@ export default function Musica({ onBack }) {
     setCategoriaActiva(item);
     try {
       // Si es personal, enviamos el userId para filtrar sus canciones
-      const data = await musicaService.obtenerMusicaPorTipo(item.tipo, item.tipo === 'personal' ? user.uid : null);
+      const data = await musicaService.obtenerMusicaPorTipo(item.tipo, item.tipo === 'personal' ? userId : null);
       setCanciones(data);
       setVistaActual('reproductor');
     } catch (error) {
@@ -88,10 +89,10 @@ export default function Musica({ onBack }) {
         setCargando(true);
         const titulo = name.split('.')[0];
 
-        await musicaService.insertarMusicaPersonal(uri, titulo, user.uid);
+        await musicaService.insertarMusicaPersonal(uri, titulo, userId);
 
         Alert.alert("¡Éxito!", "MP3 guardado en tus recuerdos.");
-        const data = await musicaService.obtenerMusicaPorTipo('personal', user.uid);
+        const data = await musicaService.obtenerMusicaPorTipo('personal', userId);
         setCanciones(data);
       }
     } catch (error) {
