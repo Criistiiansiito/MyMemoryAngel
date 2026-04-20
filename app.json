@@ -16,15 +16,18 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-          "UIBackgroundModes": ["audio"]
-      }      
+        "UIBackgroundModes": [
+          "audio"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./frontend/assets/icons/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.criistiian.MyMemoryAngel"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,6 +35,12 @@
     "plugins": [
       "expo-secure-store",
       "expo-notifications"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "21b5a544-b0df-4f8f-ba8d-7e5630aed0d2"
+      }
+    },
+    "owner": "criistiian"
   }
 }
