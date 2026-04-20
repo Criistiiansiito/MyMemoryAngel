@@ -8,7 +8,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import * as SecureStore from 'expo-secure-store';
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
-import { registerForPushNotificationsAsync, enviarPushTokenAlBackend } from '../../services/notificationService';
+import { registerForPushNotificationsAsync, enviarPushTokenAlBackend } from '../../services/notificacionesService';
 
 const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
 
