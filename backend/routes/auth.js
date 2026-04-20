@@ -190,6 +190,11 @@ router.post('/preguntar', async (req, res) => {
     } catch (error) { res.status(500).json({ respuesta: "Error al consultar." }); }
 });
 
+
+// ---------------------------
+//   MUSICA DE LA APLICACIÓN
+// ---------------------------
+
 router.get('/get-musica', async (req, res) => {
     try {
         const { tipo, id_usuario } = req.query;
@@ -241,6 +246,11 @@ router.post('/insert-musica', (req, res) => {
     });
 });
 
+// -------------------------------------
+//   LECTURAS COMUNES DE LA APLICACIÓN
+// -------------------------------------
+
+// Obtener todas las lecturas de la aplicación (comunes a todos los pacientes)
 router.get('/get-lecturas', async (req, res) => {
   try {
     const { tipo } = req.query;
@@ -260,13 +270,15 @@ router.get('/get-lecturas', async (req, res) => {
   }
 });
 
-// OBTENER ESCRITURAS DE UN USUARIO ESPECÍFICO
+// ------------------------------------
+//   ESCRITURAS DEL PACIENTE (DIARIO)
+// ------------------------------------
+
+// Obtener el diario de un paciente
 router.get('/get-escrituras', async (req, res) => {
   try {
-    // Si usas middleware de auth, el id viene en req.user.id
-    // Si no, lo pasamos por query de momento
     const { id_usuario } = req.query; 
-    
+
     const [rows] = await db.query(
       'SELECT id, dia, texto FROM escrituras WHERE id_usuario = ? ORDER BY id DESC',
       [id_usuario]
@@ -277,11 +289,10 @@ router.get('/get-escrituras', async (req, res) => {
   }
 });
 
-// Ruta para añadir: Verifica que el log imprima el UID correctamente
+// Guardar un nuevo escrito en diario de paciente
 router.post('/add-escritura', async (req, res) => {
   try {
     const { id_usuario, dia, texto } = req.body;
-    console.log("Recibiendo UID para guardar:", id_usuario); // Verás algo como "abc123XYZ..."
 
     if (!id_usuario || !texto) {
       return res.status(400).json({ error: "Faltan datos (uid o texto)" });
@@ -293,11 +304,11 @@ router.post('/add-escritura', async (req, res) => {
     );
     res.json({ ok: true, message: "Guardado correctamente" });
   } catch (error) {
-    console.error(error);
     res.status(500).send("Error al guardar");
   }
 });
 
+// Borrar una escritura concreta del diario de paciente
 router.delete('/delete-escritura/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -309,9 +320,9 @@ router.delete('/delete-escritura/:id', async (req, res) => {
   }
 });
 
-// ==========================================
-// 6. VINCULACIONES (QR)
-// ==========================================
+// -------------------------------------
+//   VINCULACIONES PACIENTE - CUIDADOR
+// -------------------------------------
 
 // Datos del paciente para mostrar el nombre en la alerta al escanear
 router.get('/paciente/:id', async (req, res) => {

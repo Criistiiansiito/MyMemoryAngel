@@ -42,7 +42,7 @@ export default function InformacionPaciente({ paciente, onBack, styles }) {
         {/* INFORMACIÓN GENERAL */}
         <TouchableOpacity 
           style={styles.menuCard} 
-          onPress={() => console.log("Ir a Información General")}
+          onPress={() =>  navigation.navigate('GestionarInformacionGeneralPaciente', { paciente: paciente })}
         >
           <View style={[styles.menuIconContainer, { backgroundColor: '#F3E8FF' }]}>
             <MaterialCommunityIcons name="account-details-outline" size={28} color="#A855F7" />
@@ -72,7 +72,7 @@ export default function InformacionPaciente({ paciente, onBack, styles }) {
         {/* ESCRITOS */}
         <TouchableOpacity 
           style={styles.menuCard} 
-          onPress={() => console.log("Ir a Escritos")}
+          onPress={() => navigation.navigate('GestionarEscriturasPaciente', { paciente: paciente })}
         >
           <View style={[styles.menuIconContainer, { backgroundColor: '#DCFCE7' }]}>
             <MaterialCommunityIcons name="fountain-pen-tip" size={28} color="#22C55E" />
