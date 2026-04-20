@@ -259,19 +259,6 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     color: '#718096',
     marginTop: 2,
   },
-  tabItem: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tabText: {
-    fontSize: aplicarEscala(11),
-    fontWeight: '600',
-    color: '#94A3B8',
-    marginTop: 4,
-  },
-  tabTextActive: {
-    color: '#334155',
-  },
   scrollContent: {
     paddingHorizontal: 20, 
     paddingTop: 15,
@@ -329,15 +316,6 @@ messageWrapper: {
     fontWeight: '700',
     color: '#2D3748',
     marginLeft: 10,
-  },
-  optionButton: {
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
-    paddingVertical: 12,
-    alignItems: 'center',
-    marginBottom: 10,
-    backgroundColor: '#FFFFFF',
   },
   optionButtonActive: {
     borderColor: '#4D6BFE',
