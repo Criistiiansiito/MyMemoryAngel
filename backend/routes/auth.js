@@ -175,6 +175,17 @@ router.put('/recordatorios/:id', async (req, res) => {
     } catch (err) { res.status(500).json({ ok: false }); }
 });
 
+router.put('/recordatorios/:id/cumplido', async (req, res) => {
+    const { cumplido } = req.body;
+    try {
+        await db.query(
+            'UPDATE recordatorios SET cumplido = ? WHERE id_recordatorio = ?',
+            [cumplido ? 1 : 0, req.params.id]
+        );
+        res.json({ ok: true });
+    } catch (err) { res.status(500).json({ ok: false }); }
+});
+
 router.delete('/recordatorios/:id', async (req, res) => {
     try {
         await db.query("DELETE FROM recordatorios WHERE id_recordatorio = ?", [req.params.id]);
