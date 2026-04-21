@@ -11,19 +11,50 @@ const normalizarTipo = (tipo = '') =>
     .toLowerCase()
     .trim();
 
+const getCurrentUserId = async () => {
+  const userJSON = await AsyncStorage.getItem('user');
+  if (!userJSON) return null;
+  const user = JSON.parse(userJSON);
+  return user.uid;
+};
+
 export const fetchRecordatorios = async () => {
   try {
-    const userJSON = await AsyncStorage.getItem('user');
-    if (!userJSON) return { ok: false, data: [] };
+    const userId = await getCurrentUserId();
+    if (!userId) return { ok: false, data: [] };
 
-    const user = JSON.parse(userJSON);
-    const userId = user.uid;
-
-    const response = await axios.get(`${API}/auth/recordatorios/${userId}`);
-
+    const response = await axios.get(`${API}/auth/recordatorios-hoy/${userId}`);
     return { ok: true, data: response.data.recordatorios || [] };
   } catch (error) {
     console.error('Error fetching recordatorios:', error);
+    return { ok: false, data: [], status: error.response?.status };
+  }
+};
+
+export const fetchAllRecordatorios = async () => {
+  try {
+    const userId = await getCurrentUserId();
+    if (!userId) return { ok: false, data: [] };
+
+    const response = await axios.get(`${API}/auth/recordatorios/${userId}`);
+    return { ok: true, data: response.data.recordatorios || [] };
+  } catch (error) {
+    console.error('Error fetching all recordatorios:', error);
+    return { ok: false, data: [], status: error.response?.status };
+  }
+};
+
+export const fetchRecordatoriosCalendario = async (fromDate, toDate) => {
+  try {
+    const userId = await getCurrentUserId();
+    if (!userId) return { ok: false, data: [] };
+
+    const response = await axios.get(`${API}/auth/recordatorios-calendario/${userId}`, {
+      params: { from: fromDate, to: toDate },
+    });
+    return { ok: true, data: response.data.recordatorios || [] };
+  } catch (error) {
+    console.error('Error fetching recordatorios calendario:', error);
     return { ok: false, data: [], status: error.response?.status };
   }
 };
@@ -68,25 +99,23 @@ export const TIPOS_RECORDATORIO = [
 ];
 
 export const formatToMySQL = (date) => {
-  const pad = (n) => (n < 10 ? '0' + n : n);
+  const pad = (n) => (n < 10 ? `0${n}` : n);
   return (
-    date.getFullYear() + '-' +
-    pad(date.getMonth() + 1) + '-' +
-    pad(date.getDate()) + ' ' +
-    pad(date.getHours()) + ':' +
-    pad(date.getMinutes()) + ':' +
-    pad(date.getSeconds())
+    `${date.getFullYear()}-` +
+    `${pad(date.getMonth() + 1)}-` +
+    `${pad(date.getDate())} ` +
+    `${pad(date.getHours())}:` +
+    `${pad(date.getMinutes())}:` +
+    `${pad(date.getSeconds())}`
   );
 };
 
 export const crearRecordatorio = async (datos) => {
   try {
-    const userJSON = await AsyncStorage.getItem('user');
-    if (!userJSON) throw new Error('No hay sesión de usuario');
+    const userId = await getCurrentUserId();
+    if (!userId) throw new Error('No hay sesión de usuario');
 
-    const user = JSON.parse(userJSON);
-    const body = { ...datos, id_usuario: user.uid };
-
+    const body = { ...datos, id_usuario: userId };
     const response = await axios.post(`${API}/auth/crear`, body);
     return response;
   } catch (error) {
@@ -95,10 +124,31 @@ export const crearRecordatorio = async (datos) => {
   }
 };
 
-export const marcarRecordatorioCumplido = async (recordatorioId, cumplido) => {
+export const actualizarRecordatorio = async (recordatorioId, datos) => {
+  try {
+    const response = await axios.put(`${API}/auth/recordatorios/${recordatorioId}`, datos);
+    return response.data;
+  } catch (error) {
+    console.error('Error al actualizar recordatorio:', error);
+    throw error;
+  }
+};
+
+export const eliminarRecordatorio = async (recordatorioId) => {
+  try {
+    const response = await axios.delete(`${API}/auth/recordatorios/${recordatorioId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al eliminar recordatorio:', error);
+    throw error;
+  }
+};
+
+export const marcarRecordatorioCumplido = async (recordatorioId, cumplido, fechaOcorrencia) => {
   try {
     const response = await axios.put(`${API}/auth/recordatorios/${recordatorioId}/cumplido`, {
       cumplido,
+      fecha_ocurrencia: fechaOcorrencia,
     });
     return response.data;
   } catch (error) {
