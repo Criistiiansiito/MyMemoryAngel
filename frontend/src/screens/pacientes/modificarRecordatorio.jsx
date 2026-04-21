@@ -1,75 +1,89 @@
-import React, { useState } from 'react'; 
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Platform, Alert, ActivityIndicator, StatusBar } from 'react-native';
-// Importamos useSafeAreaInsets y eliminamos SafeAreaView de la renderización
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch, Platform, Alert, ActivityIndicator, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker'; 
-import axios from 'axios';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
+import {
+  TIPOS_RECORDATORIO,
+  formatToMySQL,
+  actualizarRecordatorio,
+  eliminarRecordatorio,
+} from '../../services/recordatoriosService';
 
-const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
+const formatRecurrencia = (recurrencia = 'puntual') => {
+  const value = recurrencia.toLowerCase();
+  if (value === 'diaria') return 'Diaria';
+  if (value === 'semanal') return 'Semanal';
+  if (value === 'mensual') return 'Mensual';
+  return 'Puntual';
+};
 
 export default function ModificarRecordatorio({ route, navigation }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
-  
-  // Hook para el área segura de iOS
   const insets = useSafeAreaInsets();
-    
   const { recordatorio } = route.params;
 
-  const [titulo, setTitulo] = useState(recordatorio.titulo);
+  const [titulo, setTitulo] = useState(recordatorio.titulo || '');
   const [descripcion, setDescripcion] = useState(recordatorio.descripcion || '');
+  const [tipoSeleccionado, setTipoSeleccionado] = useState(recordatorio.tipo || TIPOS_RECORDATORIO[0].id);
+  const [frecuencia, setFrecuencia] = useState(formatRecurrencia(recordatorio.recurrencia));
+  const [alertaSonora, setAlertaSonora] = useState((recordatorio.tipo_alerta || 'sonora') === 'sonora');
   const [date, setDate] = useState(new Date(recordatorio.fecha_hora));
+  const [tempDate, setTempDate] = useState(new Date(recordatorio.fecha_hora));
   const [showPicker, setShowPicker] = useState(false);
   const [mode, setMode] = useState('date');
   const [loading, setLoading] = useState(false);
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShowPicker(Platform.OS === 'ios');
-    setDate(currentDate);
+  const showMode = (currentMode) => {
+    setMode(currentMode);
+    setTempDate(date);
+    setShowPicker(true);
   };
 
   const handleActualizar = async () => {
-    if (!titulo.trim()) return Alert.alert("Error", "El título es obligatorio");
-    setLoading(true);
-    
-    try {
-      const pad = (n) => (n < 10 ? '0' + n : n);
-      const fechaMySQL = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:00`;
-      
-      await axios.put(`${API}/auth/recordatorios/${recordatorio.id_recordatorio}`, {
-        titulo, 
-        descripcion, 
-        fecha_hora: fechaMySQL, 
-        tipo: recordatorio.tipo
-      }, { timeout: 3000 });
+    if (!titulo.trim()) {
+      Alert.alert('Error', 'El título es obligatorio');
+      return;
+    }
 
+    setLoading(true);
+    try {
+      await actualizarRecordatorio(recordatorio.id_recordatorio, {
+        titulo,
+        descripcion,
+        fecha_hora: formatToMySQL(date),
+        tipo: tipoSeleccionado,
+        recurrencia: frecuencia.toLowerCase(),
+        tipo_alerta: alertaSonora ? 'sonora' : 'visual',
+      });
+
+      navigation.goBack();
+    } catch (_error) {
+      Alert.alert('Error', 'No se pudo actualizar el recordatorio.');
+    } finally {
       setLoading(false);
-      navigation.navigate('Recordatorios');
-    } catch (error) {
-      setLoading(false);
-      navigation.navigate('Recordatorios');
     }
   };
 
   const handleEliminar = () => {
-    Alert.alert("Eliminar", "¿Estás seguro de borrar este recordatorio?", [
-      { text: "Cancelar", style: "cancel" },
-      { 
-        text: "Borrar", 
-        style: "destructive", 
+    Alert.alert('Eliminar', '¿Estás seguro de borrar este recordatorio?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Borrar',
+        style: 'destructive',
         onPress: async () => {
           try {
-            await axios.delete(`${API}/auth/recordatorios/${recordatorio.id_recordatorio}`);
-            navigation.navigate('Recordatorios');
-          } catch (e) { 
-            Alert.alert("Error", "No se pudo eliminar"); 
+            await eliminarRecordatorio(recordatorio.id_recordatorio);
+            navigation.goBack();
+          } catch (_error) {
+            Alert.alert('Error', 'No se pudo eliminar');
           }
-        }
-      }
+        },
+      },
     ]);
   };
 
@@ -77,93 +91,201 @@ export default function ModificarRecordatorio({ route, navigation }) {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
 
-      {/* CABECERA CON PADDING DINÁMICO */}
-      <View style={[
-        styles.topBar, 
-        { paddingTop: insets.top }
-      ]}>
+      <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
           </TouchableOpacity>
-          <Text style={styles.brandName}>Editar Recordatorio</Text>
+          <Text style={styles.brandName}>Editar recordatorio</Text>
         </View>
       </View>
 
-      <ScrollView 
-        contentContainerStyle={styles.scrollContent} 
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.settingsCard}>
-          
-          <Text style={styles.inputLabel}>Título del recordatorio</Text>
-          <TextInput 
-            style={styles.textInput} 
-            value={titulo} 
-            onChangeText={setTitulo} 
-            placeholder="Ej: Tomar medicina"
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <Text style={styles.label}>Título</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Ej: Tomar paracetamol"
+            value={titulo}
+            onChangeText={setTitulo}
+            style={styles.input}
+            placeholderTextColor="#94A3B8"
           />
+        </View>
 
-          <Text style={styles.inputLabel}>Notas adicionales</Text>
-          <TextInput 
-            style={[styles.textInput, styles.textArea]} 
-            value={descripcion} 
-            onChangeText={setDescripcion} 
-            multiline 
-            placeholder="Añade detalles aquí..."
+        <Text style={styles.label}>Descripción</Text>
+        <View style={[styles.inputContainer, { height: 100, alignItems: 'flex-start', paddingTop: 12 }]}>
+          <TextInput
+            placeholder="Detalles adicionales..."
+            value={descripcion}
+            onChangeText={setDescripcion}
+            style={styles.input}
+            multiline
+            placeholderTextColor="#94A3B8"
           />
+        </View>
 
-          <Text style={styles.inputLabel}>Fecha y Hora</Text>
-          <View style={styles.dateTimeContainer}>
-            <TouchableOpacity 
-              onPress={() => { setMode('date'); setShowPicker(true); }} 
-              style={styles.dateTimeButton}
-            >
-              <MaterialCommunityIcons name="calendar" size={20} color="#4D6BFE" />
-              <Text style={styles.dateTimeText}>{date.toLocaleDateString()}</Text>
-            </TouchableOpacity>
+        <Text style={styles.label}>Categoría</Text>
+        <View style={styles.gridRecordatorios}>
+          {TIPOS_RECORDATORIO.map((item) => {
+            const esSeleccionado = tipoSeleccionado === item.id;
+            return (
+              <TouchableOpacity
+                key={item.id}
+                onPress={() => setTipoSeleccionado(item.id)}
+                activeOpacity={0.7}
+                style={[
+                  styles.cardTipoRecordatorio,
+                  esSeleccionado && {
+                    borderColor: '#4D6BFE',
+                    borderWidth: 2,
+                    backgroundColor: '#F0F4FF',
+                  },
+                ]}
+              >
+                <View style={[styles.iconoTipoCirculo, { backgroundColor: 'transparent' }]}>
+                  <MaterialCommunityIcons name={item.icon} size={24} color={item.iconColor} />
+                </View>
+                <Text
+                  style={[
+                    styles.textoTipo,
+                    esSeleccionado && { fontWeight: 'bold', color: '#4D6BFE' },
+                  ]}
+                >
+                  {item.id}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
 
-            <TouchableOpacity 
-              onPress={() => { setMode('time'); setShowPicker(true); }} 
-              style={styles.dateTimeButton}
+        <Text style={styles.label}>Frecuencia</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
+          {['Puntual', 'Diaria', 'Semanal', 'Mensual'].map((item) => (
+            <TouchableOpacity
+              key={item}
+              onPress={() => setFrecuencia(item)}
+              style={[
+                styles.optionButton,
+                { flex: 0.235 },
+                frecuencia === item && styles.optionButtonActive,
+              ]}
             >
-              <MaterialCommunityIcons name="clock-outline" size={20} color="#4D6BFE" />
-              <Text style={styles.dateTimeText}>
-                {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              <Text style={[styles.optionText, frecuencia === item && styles.optionTextActive]}>
+                {item}
               </Text>
             </TouchableOpacity>
-          </View>
+          ))}
+        </View>
 
-          {showPicker && (
-            <DateTimePicker 
-              value={date} 
-              mode={mode} 
-              is24Hour={true} 
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'} 
-              onChange={onChange} 
-            />
-          )}
-
-          {/* Botones de Acción */}
-          <TouchableOpacity 
-            style={[styles.btnPrimary, loading && { backgroundColor: '#CBD5E0' }]} 
-            onPress={handleActualizar} 
-            disabled={loading}
-          >
-            <Text style={styles.btnTextPrimary}>
-              {loading ? "Sincronizando..." : "Guardar Cambios"}
-            </Text>
+        <Text style={styles.label}>Programación</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <TouchableOpacity onPress={() => showMode('date')} style={[styles.inputContainer, { flex: 0.52, marginRight: 10 }]}>
+            <MaterialCommunityIcons name="calendar" size={20} color="#4D6BFE" style={{ marginRight: 8 }} />
+            <Text style={{ color: '#1E293B' }}>{date.toLocaleDateString()}</Text>
           </TouchableOpacity>
 
-          {!loading && (
-            <TouchableOpacity 
-              style={styles.btnDangerOutline} 
-              onPress={handleEliminar}
-            >
-              <Text style={{ color: '#EF4444', fontWeight: 'bold' }}>Eliminar recordatorio</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity onPress={() => showMode('time')} style={[styles.inputContainer, { flex: 0.43 }]}>
+            <MaterialCommunityIcons name="clock-outline" size={20} color="#4D6BFE" style={{ marginRight: 8 }} />
+            <Text style={{ color: '#1E293B' }}>
+              {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </Text>
+          </TouchableOpacity>
         </View>
+
+        {showPicker && Platform.OS === 'ios' && (
+          <View style={[styles.settingsCard, { marginTop: 15 }]}>
+            <DateTimePicker
+              value={tempDate}
+              mode={mode}
+              is24Hour={true}
+              display="spinner"
+              onChange={(_event, selectedDate) => {
+                if (selectedDate) {
+                  setTempDate(selectedDate);
+                }
+              }}
+            />
+
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 10 }}>
+              <TouchableOpacity
+                onPress={() => setShowPicker(false)}
+                style={[styles.optionButton, { marginRight: 10, paddingHorizontal: 18 }]}
+              >
+                <Text style={styles.optionText}>Cancelar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  setDate(tempDate);
+                  setShowPicker(false);
+                }}
+                style={[styles.optionButton, styles.optionButtonActive, { paddingHorizontal: 18 }]}
+              >
+                <Text style={[styles.optionText, styles.optionTextActive]}>Aceptar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
+        {showPicker && Platform.OS !== 'ios' && (
+          <DateTimePicker
+            value={date}
+            mode={mode}
+            is24Hour={true}
+            display="default"
+            onChange={(_event, selectedDate) => {
+              setShowPicker(false);
+              if (selectedDate) {
+                setDate(selectedDate);
+              }
+            }}
+          />
+        )}
+
+        <Text style={[styles.label, { marginTop: 25 }]}>Aviso de notificación</Text>
+        <View style={[styles.settingsCard, { paddingVertical: 15, marginBottom: 10 }]}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+              <View style={{ width: 40, alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
+                <MaterialCommunityIcons
+                  name={alertaSonora ? 'bell-outline' : 'bell-off-outline'}
+                  size={26}
+                  color={alertaSonora ? '#4D6BFE' : '#94A3B8'}
+                />
+              </View>
+              <View>
+                <Text style={{ fontSize: 15, fontWeight: '700', color: '#1E293B' }}>
+                  {alertaSonora ? 'Sonido Activado' : 'Modo Silencioso'}
+                </Text>
+                <Text style={{ fontSize: 12, color: '#64748B' }}>
+                  {alertaSonora ? 'Recibirás un aviso con sonido' : 'Solo notificación visual'}
+                </Text>
+              </View>
+            </View>
+
+            <Switch
+              trackColor={{ false: '#CBD5E0', true: '#4D6BFE' }}
+              thumbColor="#FFFFFF"
+              ios_backgroundColor="#CBD5E0"
+              onValueChange={() => setAlertaSonora((prev) => !prev)}
+              value={alertaSonora}
+            />
+          </View>
+        </View>
+
+        <TouchableOpacity
+          style={[styles.mainButton, { marginTop: 25, opacity: loading ? 0.7 : 1 }]}
+          onPress={handleActualizar}
+          disabled={loading}
+        >
+          {loading ? <ActivityIndicator color="#FFF" /> : <Text style={styles.mainButtonText}>Guardar cambios</Text>}
+        </TouchableOpacity>
+
+        {!loading && (
+          <TouchableOpacity style={[styles.btnDangerOutline, { backgroundColor: '#EF4444', marginTop: 14, marginBottom: 20 }]} onPress={handleEliminar}>
+            <Text style={{ color:'#FFF', fontWeight: 'bold' }}>Eliminar recordatorio</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
     </View>
   );
