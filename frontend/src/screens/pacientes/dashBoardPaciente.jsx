@@ -8,6 +8,8 @@ import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
 import { configuracionPerfil } from '../../services/configuracionPerfil';
 import BottomTabBar from '../../components/BottomTabBar';
+import { useCurrentDate } from '../../hooks/useCurrentDate';
+import { formatMadridDate } from '../../utils/dateMadrid';
 
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
@@ -19,9 +21,9 @@ export default function DashboardPaciente({ navigation }) {
   
   // Hook para obtener los tamaños de los bordes (notch, barra de estado)
   const insets = useSafeAreaInsets();
-
-  const fechaHoy = new Date().toLocaleDateString('es-ES', { 
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' 
+  const currentDate = useCurrentDate();
+  const fechaHoy = formatMadridDate(currentDate, {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
   });
 
   const { aplicarEscala, cargarDesdeServidor, isDaltonic } = useAccesibilidad();
@@ -122,9 +124,7 @@ export default function DashboardPaciente({ navigation }) {
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20}}>
         
         <View style={styles.dateHeaderContainer}>
-          <Text style={styles.dateText}>
-            {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-          </Text>
+          <Text style={styles.dateText}>{fechaHoy}</Text>
         </View>   
 
         <TouchableOpacity 

@@ -6,6 +6,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
 import BottomTabBar from '../../components/BottomTabBar';
+import { useCurrentDate } from '../../hooks/useCurrentDate';
+import { formatMadridDate } from '../../utils/dateMadrid';
 
 import MenuEstimulacion from './estimulacion/menuEstimulacion';
 import MenuJuegos from './juegos/menuJuegos';
@@ -32,6 +34,8 @@ export default function EstimulacionCognitiva() {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
+  const currentDate = useCurrentDate();
+  const todayLabel = formatMadridDate(currentDate, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
   const [view, setView] = useState('main');
   const [selectedGame, setSelectedGame] = useState(null);
@@ -121,9 +125,7 @@ export default function EstimulacionCognitiva() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.dateHeaderContainer}>
-          <Text style={styles.dateText}>
-            {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
-          </Text>
+          <Text style={styles.dateText}>{todayLabel}</Text>
         </View>
 
         <TouchableOpacity

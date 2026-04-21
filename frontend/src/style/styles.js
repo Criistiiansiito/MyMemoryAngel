@@ -714,7 +714,7 @@ chatInputContainer: {
     borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 10,
+    marginLeft: 20,
     backgroundColor: '#F8FAFC',
   },
   centeredLoader: {

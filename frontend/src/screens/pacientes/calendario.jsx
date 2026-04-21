@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
@@ -8,6 +8,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
 import { fetchRecordatoriosCalendario, getIconConfig, formatearFechaYHora } from '../../services/recordatoriosService';
+import { useCurrentDate } from '../../hooks/useCurrentDate';
+import { formatMadridDate, toMadridDateOnly } from '../../utils/dateMadrid';
 
 LocaleConfig.locales.es = {
   monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
@@ -18,13 +20,7 @@ LocaleConfig.locales.es = {
 };
 LocaleConfig.defaultLocale = 'es';
 
-const toDateOnly = (value) => {
-  const date = new Date(value);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
+const toDateOnly = (value) => toMadridDateOnly(value);
 
 const getMonthRange = (dateString) => {
   const baseDate = new Date(`${dateString}T00:00:00`);
@@ -41,12 +37,14 @@ export default function CalendarioView({ navigation }) {
   const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
 
-  const today = toDateOnly(new Date());
+  const currentDate = useCurrentDate();
+  const today = toDateOnly(currentDate);
   const [selected, setSelected] = useState(today);
   const [currentMonth, setCurrentMonth] = useState(today);
   const [reminders, setReminders] = useState([]);
   const [markedDates, setMarkedDates] = useState({});
   const [loading, setLoading] = useState(true);
+  const lastTodayRef = useRef(today);
 
   const actualizarMarcadores = (lista, diaSeleccionado) => {
     const marcas = {};
@@ -69,7 +67,7 @@ export default function CalendarioView({ navigation }) {
 
   const cargarDatos = useCallback(async (monthDate = currentMonth, selectedDate = selected) => {
     try {
-      setLoading(true);
+      if (reminders.length === 0) setLoading(true);
       const { from, to } = getMonthRange(monthDate);
       const result = await fetchRecordatoriosCalendario(from, to);
       if (result.ok) {
@@ -82,13 +80,22 @@ export default function CalendarioView({ navigation }) {
     } finally {
       setLoading(false);
     }
-  }, [currentMonth, selected]);
+  }, [currentMonth, reminders.length, selected]);
 
   useFocusEffect(
     useCallback(() => {
       cargarDatos(currentMonth, selected);
-    }, [cargarDatos, currentMonth, selected])
+    }, [cargarDatos, currentMonth])
   );
+
+  useEffect(() => {
+    if (lastTodayRef.current !== today) {
+      lastTodayRef.current = today;
+      setSelected(today);
+      setCurrentMonth(today);
+      cargarDatos(today, today);
+    }
+  }, [today, cargarDatos]);
 
   const recordatoriosDelDia = reminders.filter(
     (r) => (r.fecha_ocurrencia || r.fecha_hora.substring(0, 10)) === selected
@@ -96,7 +103,7 @@ export default function CalendarioView({ navigation }) {
 
   const textoSeparador = () => {
     const d = new Date(`${selected}T00:00:00`);
-    return `Eventos para el ${d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}`;
+    return `Eventos para el ${formatMadridDate(d, { day: 'numeric', month: 'short' })}`;
   };
 
   const renderEstadoCalendario = (item) => {

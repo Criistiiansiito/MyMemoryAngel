@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -6,6 +6,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
 import BottomTabBar from '../../components/BottomTabBarCuidador';
+import { useCurrentDate } from '../../hooks/useCurrentDate';
+import { formatMadridDate, toMadridDateOnly } from '../../utils/dateMadrid';
 
 import {
   fetchRecordatorios,
@@ -18,6 +20,9 @@ export default function Recordatorios({ navigation }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
+  const currentDate = useCurrentDate();
+  const todayLabel = formatMadridDate(currentDate, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const todayKey = toMadridDateOnly(currentDate);
 
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +46,10 @@ export default function Recordatorios({ navigation }) {
       cargarDatos();
     }, [])
   );
+
+  useEffect(() => {
+    cargarDatos();
+  }, [todayKey]);
 
   const toggleCumplido = async (item) => {
     try {
@@ -88,7 +97,7 @@ export default function Recordatorios({ navigation }) {
       <ScrollView contentContainerStyle={[styles.scrollContent, { paddingTop: 0 }]} showsVerticalScrollIndicator={false}>
         <View style={styles.dateHeaderContainer}>
           <Text style={styles.dateText}>
-            {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+            {todayLabel}
           </Text>
         </View>
 

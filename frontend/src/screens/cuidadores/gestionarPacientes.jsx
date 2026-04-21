@@ -13,11 +13,15 @@ import { vinculacionesService } from '../../services/vinculacionesService';
 import { gestionPacientesService } from '../../services/gestionPacientesService';
 import InformacionPaciente from './informacion/informacionPaciente';
 import BottomTabBar from '../../components/BottomTabBarCuidador';
+import { useCurrentDate } from '../../hooks/useCurrentDate';
+import { formatMadridDate } from '../../utils/dateMadrid';
 
 export default function GestionPacientes() {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
+  const currentDate = useCurrentDate();
+  const todayLabel = formatMadridDate(currentDate, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState('main');
@@ -159,9 +163,7 @@ export default function GestionPacientes() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.dateHeaderContainer}>
-          <Text style={styles.dateText}>
-            {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-          </Text>
+          <Text style={styles.dateText}>{todayLabel}</Text>
         </View>  
 
         {loading ? (
