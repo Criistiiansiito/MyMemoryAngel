@@ -46,7 +46,7 @@ export default function Recordatorios({ navigation }) {
     try {
       setUpdatingId(item.id_recordatorio);
       const nextCumplido = !item.cumplido;
-      await marcarRecordatorioCumplido(item.id_recordatorio, nextCumplido);
+      await marcarRecordatorioCumplido(item.id_recordatorio, nextCumplido, item.fecha_ocurrencia);
       setReminders((prev) =>
         prev.map((reminder) =>
           reminder.id_recordatorio === item.id_recordatorio
@@ -72,6 +72,9 @@ export default function Recordatorios({ navigation }) {
             <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('Calendario')}>
               <MaterialCommunityIcons name="calendar-month-outline" size={24} color="#8B5CF6" />
             </TouchableOpacity>
+            <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('GestionarRecordatorios')}>
+              <MaterialCommunityIcons name="playlist-edit" size={24} color="#8B5CF6" />
+            </TouchableOpacity>            
             <TouchableOpacity
               style={[styles.headerIconButton, { backgroundColor: '#334155' }]}
               onPress={() => navigation.navigate('NuevoRecordatorio')}
@@ -102,12 +105,14 @@ export default function Recordatorios({ navigation }) {
             const { fecha, hora } = formatearFechaYHora(item.fecha_hora);
 
             return (
-              <View key={item.id_recordatorio} style={[styles.menuCard, item.cumplido && styles.menuCardCompleted]}>
-                <TouchableOpacity
-                  style={styles.reminderCardContent}
-                  onPress={() => navigation.navigate('ModificarRecordatorio', { recordatorio: item })}
-                  activeOpacity={0.8}
-                >
+              <TouchableOpacity
+                key={item.id_recordatorio}
+                style={[styles.menuCard, item.cumplido && styles.menuCardCompleted]}
+                activeOpacity={0.85}
+                onPress={() => toggleCumplido(item)}
+                disabled={updatingId === item.id_recordatorio}
+              >
+                <View style={styles.reminderCardContent}>
                   <View style={[styles.menuIconContainer, { backgroundColor: config.color }]}>
                     <MaterialCommunityIcons name={config.icon} size={30} color={config.iconColor} />
                   </View>
@@ -136,13 +141,9 @@ export default function Recordatorios({ navigation }) {
                       <Text style={styles.typeTabText}>{item.tipo}</Text>
                     </View>
                   </View>
-                </TouchableOpacity>
+                </View>
 
-                <TouchableOpacity
-                  style={styles.reminderActionButton}
-                  onPress={() => toggleCumplido(item)}
-                  disabled={updatingId === item.id_recordatorio}
-                >
+                <View style={styles.reminderActionButton}>
                   {updatingId === item.id_recordatorio ? (
                     <ActivityIndicator size="small" color="#16A34A" />
                   ) : (
@@ -152,8 +153,8 @@ export default function Recordatorios({ navigation }) {
                       color={item.cumplido ? '#16A34A' : '#94A3B8'}
                     />
                   )}
-                </TouchableOpacity>
-              </View>
+                </View>
+              </TouchableOpacity>
             );
           })
         )}
