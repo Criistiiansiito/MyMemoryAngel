@@ -517,7 +517,7 @@ chatInputContainer: {
   // --- ESTILOS DEL FOOTER (TAB BAR) ---
   tabBar: {
     flexDirection: 'row',
-    height: 80,
+    height: 90,
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
     borderTopColor: '#F1F5F9',

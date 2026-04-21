@@ -2,8 +2,8 @@
 
   async function sendPushNotifications(tokens, { title, body, data = {} }) {
 
-         const { Expo } = await import('expo-server-sdk');
-      const expo = new Expo();
+    const { Expo } = await import('expo-server-sdk');
+    const expo = new Expo();
 
     const validTokens = tokens.filter((token) => Expo.isExpoPushToken(token));
 

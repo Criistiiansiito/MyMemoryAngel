@@ -25,7 +25,7 @@ export default function BottomTabBar() {
         const active = route.name === tab.name;
         return (
           <TouchableOpacity key={tab.name} style={styles.tabItem} onPress={() => navigation.navigate(tab.name)}>
-            <MaterialCommunityIcons name={active ? tab.activeIcon : tab.icon} size={24} color={active ? '#334155' : '#94A3B8'} />
+            <MaterialCommunityIcons name={active ? tab.activeIcon : tab.icon} size={27} color={active ? '#334155' : '#94A3B8'} />
             <Text style={[styles.tabText, active && { color: '#334155', fontWeight: 'bold' }]}>
               {tab.label}
             </Text>

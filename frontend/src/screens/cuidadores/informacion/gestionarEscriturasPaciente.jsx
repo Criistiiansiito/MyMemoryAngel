@@ -71,7 +71,7 @@ export default function GestionarEscriturasPaciente({ route, navigation }) {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
           </TouchableOpacity>
-          <Text style={styles.brandName}>Escrituras</Text>
+          <Text style={styles.brandName}>Diario personal</Text>
         </View>
       </View>
 
@@ -84,7 +84,7 @@ export default function GestionarEscriturasPaciente({ route, navigation }) {
             textAlign: 'center',
           }}
         >
-          Aquí puedes revisar y eliminar entradas personales de {paciente?.nombre}.
+          Aquí puedes revisar y eliminar escritos personales de {paciente?.nombre}.
         </Text>
       </View>
 
@@ -94,11 +94,6 @@ export default function GestionarEscriturasPaciente({ route, navigation }) {
         </View>
       ) : (
         <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
-          <View style={styles.dividerContainer}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>Diario del paciente</Text>
-            <View style={styles.dividerLine} />
-          </View>
 
           {historial.length > 0 ? (
             historial.map((item) => (
@@ -130,7 +125,7 @@ export default function GestionarEscriturasPaciente({ route, navigation }) {
                       <MaterialCommunityIcons
                         name={expandedId === item.id ? 'eye-off-outline' : 'eye-outline'}
                         size={24}
-                        color={expandedId === item.id ? '#10B981' : '#64748B'}
+                        color={expandedId === item.id ? "#6366F1" : "#64748B"} 
                       />
                     </TouchableOpacity>
 
