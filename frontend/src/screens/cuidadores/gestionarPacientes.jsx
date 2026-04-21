@@ -141,7 +141,7 @@ export default function GestionPacientes() {
       {/* HEADER */}
       <View style={[
         styles.topBar, 
-        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+        { paddingTop: insets.top }
       ]}>
         <View style={styles.headerActions}>
           <Text style={styles.brandName}>Mis Pacientes</Text>

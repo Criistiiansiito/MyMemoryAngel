@@ -261,7 +261,7 @@ export default function Musica({ onBack }) {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
-      <View style={[styles.topBar, { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }]}>
+      <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={vistaActual === 'menu' ? onBack : volverAlMenu}>
             <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />

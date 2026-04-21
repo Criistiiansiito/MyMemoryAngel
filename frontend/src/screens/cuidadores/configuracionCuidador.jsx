@@ -218,7 +218,7 @@ export default function ConfiguracionPaciente({ navigation }) {
             {/* HEADER */}
             <View style={[
                 styles.topBar, 
-                { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+                { paddingTop: insets.top }
             ]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>

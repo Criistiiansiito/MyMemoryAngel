@@ -164,7 +164,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
       <View
         style={[
           styles.topBar,
-          { paddingTop: Platform.OS === 'ios' ? insets.top : 20 },
+          { paddingTop: insets.top },
         ]}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>

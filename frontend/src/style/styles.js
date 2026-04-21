@@ -264,7 +264,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     paddingTop: 15,
     paddingBottom:30,
   },
-messageWrapper: {
+  messageWrapper: {
     marginBottom: 15,
   },
   // --- SECCIÓN DE PERFIL (Sin borde de card, más limpio) ---

@@ -69,7 +69,7 @@ export default function ArteActividad({ onBack }) {
       <StatusBar barStyle="dark-content" />
       
       {/* HEADER CORREGIDO*/}
-      <View style={[styles.topBar, { paddingTop: Platform.OS === 'ios' ? insets.top : 20,flexDirection: 'row',justifyContent: 'space-between',alignItems: 'center'
+      <View style={[styles.topBar, { paddingTop: insets.top ,flexDirection: 'row',justifyContent: 'space-between',alignItems: 'center'
       }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={onBack}>

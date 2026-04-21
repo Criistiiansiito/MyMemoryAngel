@@ -209,7 +209,7 @@ export default function Escritura({ onBack }) {
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={[styles.container, { flex: 1 }]}>
       <StatusBar barStyle="dark-content" />
-      <View style={[styles.topBar, { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }]}>
+      <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => vista === 'menu' ? onBack() : setVista('menu')}>
             <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />

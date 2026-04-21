@@ -8,11 +8,7 @@ import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
 import BottomTabBar from '../../components/BottomTabBar';
 
-import { 
-  fetchRecordatorios, 
-  getIconConfig, 
-  formatearFechaYHora 
-} from '../../services/recordatoriosService';
+import { fetchRecordatorios, getIconConfig, formatearFechaYHora } from '../../services/recordatoriosService';
 
 export default function Recordatorios({ navigation }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
@@ -50,7 +46,7 @@ export default function Recordatorios({ navigation }) {
       {/* CABECERA CON PADDING DINÁMICO */}
       <View style={[
         styles.topBar, 
-        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+        { paddingTop: insets.top }
       ]}>
         <View style={styles.headerActions}>
           <Text style={styles.brandName}>Recordatorios</Text>

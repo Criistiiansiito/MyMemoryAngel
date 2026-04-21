@@ -87,7 +87,7 @@ export default function DashboardPaciente({ navigation }) {
       <StatusBar barStyle="dark-content" />
       
       {/* HEADER PERSONALIZADO */}
-      <View style={[styles.topBar, { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }]}>
+      <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={[styles.logoRow]}>
           {/* Contenedor del nombre: Usamos flex: 1 para que ocupe solo el espacio disponible */}
           <View style={[styles.headerUserInfo]}>

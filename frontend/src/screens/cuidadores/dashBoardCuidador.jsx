@@ -63,7 +63,7 @@ export default function DashboardCuidador({ navigation }) {
       <StatusBar barStyle="dark-content" />
       
       {/* HEADER PERSONALIZADO */}
-      <View style={[styles.topBar, { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }]}>
+      <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={styles.logoRow}>
           <View style={styles.headerUserInfo}>
             <View style={[styles.iconCircle, { backgroundColor: '#F3E8FF', marginRight: 10, overflow: 'hidden', flexShrink: 0 }]}>

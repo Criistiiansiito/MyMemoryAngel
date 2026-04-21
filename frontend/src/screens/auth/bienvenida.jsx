@@ -2,16 +2,18 @@ import { View, Text, TouchableOpacity, Image, StatusBar } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 export default function Bienvenida({ navigation }) {
 
   const { aplicarEscala } = useAccesibilidad();
   const styles = getStyles(aplicarEscala);
+  const insets = useSafeAreaInsets();
   
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-      <View style={styles.topBar}>
+      <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={styles.logoRow}>
           <Image source={require('../../../assets/icons/logo.png')} style={styles.logoHeader} resizeMode="contain" />
           <View style={styles.textContainer}>

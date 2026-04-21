@@ -80,7 +80,7 @@ export default function ModificarRecordatorio({ route, navigation }) {
       {/* CABECERA CON PADDING DINÁMICO */}
       <View style={[
         styles.topBar, 
-        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+        { paddingTop: insets.top }
       ]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>

@@ -103,7 +103,7 @@ export default function EstimulacionCognitiva() {
       <View
         style={[
           styles.topBar,
-          { paddingTop: Platform.OS === 'ios' ? insets.top : 20 },
+          { paddingTop: insets.top },
         ]}
       >
         <View style={styles.headerActions}>
