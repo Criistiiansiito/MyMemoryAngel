@@ -8,6 +8,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import * as SecureStore from 'expo-secure-store';
 import { getStyles } from '../../style/styles'; 
 import { useAccesibilidad } from '../../services/accesibilidadContext';
+import { registerForPushNotificationsAsync, enviarPushTokenAlBackend } from '../../services/notificacionesService';
 
 const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
 
@@ -40,6 +41,18 @@ export default function InicioSesion({ navigation }) {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       const idToken = await user.getIdToken();
+      
+      // Registrar push token del dispositivo
+        try {
+          const expoPushToken = await registerForPushNotificationsAsync();
+          await enviarPushTokenAlBackend({
+            token: expoPushToken,
+            firebaseToken: idToken,
+            platform: Platform.OS,
+          });
+        } catch (pushError) {
+          console.log('No se pudo registrar push token:', pushError.message);
+        }      
       
       // Guardar token de sesión de forma segura
       await setToken('userToken', idToken);

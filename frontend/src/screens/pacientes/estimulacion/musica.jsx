@@ -9,10 +9,11 @@ import { Audio } from 'expo-av';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import { File } from 'expo-file-system';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getStyles } from '../../../style/styles';
 import { useAccesibilidad } from '../../../services/accesibilidadContext';
 import { musicaService } from '../../../services/musicaService';
+import { useStoredUser } from '../../../hooks/storedUser';
+import MenuCategoriaEstimulacion from '../../../components/estimulacion/MenuCardEstimulacion';
 
 export default function Musica({ onBack }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
@@ -27,19 +28,8 @@ export default function Musica({ onBack }) {
   const [estaReproduciendo, setEstaReproduciendo] = useState(false);
   const [reproduciendoId, setReproduciendoId] = useState(null);
   const [progreso, setProgreso] = useState({ posicion: 0, duracion: 0 });
-  const [userId, setUserId] = useState(null);
-
-  // Obtener el ID del usuario al iniciar
-  useEffect(() => {
-    const getUserId = async () => {
-      const userData = await AsyncStorage.getItem('user');
-      if (userData) {
-        const { uid } = JSON.parse(userData);
-        setUserId(uid);
-      }
-    };
-    getUserId();
-  }, []);
+  const user = useStoredUser();
+  const userId = user?.uid;
 
   useEffect(() => {
     const configurarAudio = async () => {
@@ -182,40 +172,14 @@ export default function Musica({ onBack }) {
   };
 
   const categoriasMusica = [
-    { id: 1, titulo: 'Mis Recuerdos', tipo: 'personal', momento: 'Cualquier momento', descripcion: 'Sube tus canciones favoritas para escucharlas aquí.', icono: 'account-music', color: '#6366F1' },
-    { id: 2, titulo: 'Naturaleza', tipo: 'naturaleza', momento: 'Tarde o Relax', descripcion: 'Sonidos de lluvia u olas para un entorno tranquilo.', icono: 'sprout', color: '#10B981' },
-    { id: 3, titulo: 'Clásica', tipo: 'clasica', momento: 'Mañana', descripcion: 'Ritmos constantes para reducir la ansiedad.', icono: 'music-clef-treble', color: '#F59E0B' },
-    { id: 4, titulo: 'Terapia 40 Hz', tipo: 'frecuencias', momento: 'Sesión Diaria', descripcion: 'Frecuencias para la estimulación neuroprotectora.', icono: 'waveform', color: '#EC4899' },
+    { id: 1, titulo: 'Mis Recuerdos', tipo: 'personal', meta: 'Cualquier momento', descripcion: 'Sube tus canciones favoritas para escucharlas aquí.', icono: 'account-music', color: '#6366F1', actionIcon: 'play-circle', actionLabel: 'Escuchar' },
+    { id: 2, titulo: 'Naturaleza', tipo: 'naturaleza', meta: 'Tarde o Relax', descripcion: 'Sonidos de lluvia u olas para un entorno tranquilo.', icono: 'sprout', color: '#10B981', actionIcon: 'play-circle', actionLabel: 'Escuchar' },
+    { id: 3, titulo: 'Clásica', tipo: 'clasica', meta: 'Mañana', descripcion: 'Ritmos constantes para reducir la ansiedad.', icono: 'music-clef-treble', color: '#F59E0B', actionIcon: 'play-circle', actionLabel: 'Escuchar' },
+    { id: 4, titulo: 'Terapia 40 Hz', tipo: 'frecuencias', meta: 'Sesión Diaria', descripcion: 'Frecuencias para la estimulación neuroprotectora.', icono: 'waveform', color: '#EC4899', actionIcon: 'play-circle', actionLabel: 'Escuchar' },
   ];
 
   const renderMenu = () => (
-    <ScrollView 
-      contentContainerStyle={{ padding: 20 }}
-      showsVerticalScrollIndicator={false}
-    >
-      {categoriasMusica.map((item) => (
-        <TouchableOpacity key={item.id} style={styles.musicCard} onPress={() => onSelectCategoria(item)}>
-          <View style={[styles.musicIconContainer, { backgroundColor: item.color }]}>
-            <MaterialCommunityIcons name={item.icono} size={32} color="white" />
-          </View>
-          <View style={styles.musicTextContainer}>
-            <Text style={styles.musicCardTitle}>{item.titulo}</Text>
-            <Text style={styles.musicCardDescription} numberOfLines={2}>{item.descripcion}</Text>
-            <View style={styles.musicBadge}>
-              <View style={styles.musicBadgePlaySection}>
-                <MaterialCommunityIcons name="play-circle" size={16} color={item.color} />
-                <Text style={[styles.musicBadgeText, { color: item.color }]}>Escuchar</Text>
-              </View>
-              <Text style={styles.musicSeparator}>|</Text>
-              <View style={styles.musicBadgeMomentSection}>
-                <MaterialCommunityIcons name="clock-outline" size={13} color="#64748B" />
-                <Text style={styles.momentoTextInline}>{item.momento}</Text>
-              </View>
-            </View>
-          </View>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
+    <MenuCategoriaEstimulacion items={categoriasMusica} onSelectItem={onSelectCategoria} />
   );
 
   const renderReproductor = () => (
@@ -297,7 +261,7 @@ export default function Musica({ onBack }) {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
-      <View style={[styles.topBar, { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }]}>
+      <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={vistaActual === 'menu' ? onBack : volverAlMenu}>
             <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />

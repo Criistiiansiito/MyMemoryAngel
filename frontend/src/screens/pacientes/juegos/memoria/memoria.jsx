@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  View, Text, TouchableOpacity, Platform, StatusBar, 
-  ScrollView, Alert, StyleSheet 
+import {
+  View, Text, TouchableOpacity, Platform, StatusBar,
+  ScrollView, Alert, StyleSheet
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { getStyles } from '../../../style/styles';
-import { useAccesibilidad } from '../../../services/accesibilidadContext';
+import { getStyles } from '../../../../style/styles';
+import { useAccesibilidad } from '../../../../services/accesibilidadContext';
 
 export default function Memoria({ onBack }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
@@ -22,18 +22,16 @@ export default function Memoria({ onBack }) {
   }, []);
 
   const generateSequence = () => {
-    // Generamos 4 números para empezar (puedes subirlo a 5 si prefieres)
     const newSequence = Array.from({ length: 4 }, () => Math.floor(Math.random() * 9) + 1);
     setSequence(newSequence);
     setShowSequence(true);
     setUserInput([]);
-    
-    // Damos 3 segundos para memorizar
+
     setTimeout(() => setShowSequence(false), 3000);
   };
 
   const handleInput = (num) => {
-    if (showSequence) return; // Evitar clics mientras se muestra la secuencia
+    if (showSequence) return;
 
     const newInput = [...userInput, num];
     setUserInput(newInput);
@@ -55,10 +53,9 @@ export default function Memoria({ onBack }) {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
 
-      {/* CABECERA DINÁMICA */}
       <View style={[
-        styles.topBar, 
-        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+        styles.topBar,
+        { paddingTop: insets.top }
       ]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={onBack}>
@@ -69,17 +66,15 @@ export default function Memoria({ onBack }) {
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 20, alignItems: 'center' }}>
-        
-        {/* PANEL CENTRAL */}
         <View style={[styles.settingsCard, { width: '100%', alignItems: 'center', paddingVertical: 30 }]}>
-          <MaterialCommunityIcons 
-            name={showSequence ? "eye-outline" : "form-textbox-password"} 
-            size={40} 
-            color={showSequence ? "#EC4899" : "#6366F1"} 
+          <MaterialCommunityIcons
+            name={showSequence ? 'eye-outline' : 'form-textbox-password'}
+            size={40}
+            color={showSequence ? '#EC4899' : '#6366F1'}
           />
-          
+
           <Text style={{ fontSize: aplicarEscala(18), color: '#64748B', marginTop: 10, textAlign: 'center' }}>
-            {showSequence ? "Memoriza estos números:" : "Introduce la secuencia:"}
+            {showSequence ? 'Memoriza estos números:' : 'Introduce la secuencia:'}
           </Text>
 
           <View style={{ height: 100, justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
@@ -90,14 +85,14 @@ export default function Memoria({ onBack }) {
             ) : (
               <View style={{ flexDirection: 'row', gap: 10 }}>
                 {sequence.map((_, index) => (
-                  <View 
-                    key={index} 
+                  <View
+                    key={index}
                     style={{
-                      width: 20, 
-                      height: 20, 
-                      borderRadius: 10, 
+                      width: 20,
+                      height: 20,
+                      borderRadius: 10,
                       backgroundColor: userInput.length > index ? '#6366F1' : '#E2E8F0'
-                    }} 
+                    }}
                   />
                 ))}
               </View>
@@ -105,15 +100,14 @@ export default function Memoria({ onBack }) {
           </View>
         </View>
 
-        {/* TECLADO NUMÉRICO */}
         <View style={localStyles.grid}>
           {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-            <TouchableOpacity 
-              key={num} 
+            <TouchableOpacity
+              key={num}
               style={[
-                localStyles.numButton, 
+                localStyles.numButton,
                 { opacity: showSequence ? 0.5 : 1 }
-              ]} 
+              ]}
               onPress={() => handleInput(num)}
               disabled={showSequence}
             >
@@ -123,14 +117,13 @@ export default function Memoria({ onBack }) {
         </View>
 
         {!showSequence && (
-          <TouchableOpacity 
-            style={{ marginTop: 20 }} 
+          <TouchableOpacity
+            style={{ marginTop: 20 }}
             onPress={generateSequence}
           >
             <Text style={{ color: '#6366F1', fontWeight: '600' }}>Ver de nuevo</Text>
           </TouchableOpacity>
         )}
-
       </ScrollView>
     </View>
   );

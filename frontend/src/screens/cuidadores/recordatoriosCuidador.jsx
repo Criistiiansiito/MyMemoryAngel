@@ -50,7 +50,7 @@ export default function Recordatorios({ navigation }) {
       {/* CABECERA CON PADDING DINÁMICO */}
       <View style={[
         styles.topBar, 
-        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+        { paddingTop: insets.top }
       ]}>
         <View style={styles.headerActions}>
           <Text style={styles.brandName}>Recordatorios</Text>

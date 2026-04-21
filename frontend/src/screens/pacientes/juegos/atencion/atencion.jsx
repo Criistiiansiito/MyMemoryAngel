@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  View, Text, TouchableOpacity, StyleSheet, Animated, 
-  Platform, StatusBar, ScrollView 
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  View, Text, TouchableOpacity, StyleSheet, Animated,
+  Platform, StatusBar, ScrollView
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { getStyles } from '../../../style/styles';
-import { useAccesibilidad } from '../../../services/accesibilidadContext';
+import { getStyles } from '../../../../style/styles';
+import { useAccesibilidad } from '../../../../services/accesibilidadContext';
+
+const simbolos = ['★', '▲', '●', '■', '♥'];
 
 export default function Atencion({ onBack }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
 
-  const simbolos = ['★', '▲', '●', '■', '♥'];
   const [objetivo, setObjetivo] = useState('');
   const [lista, setLista] = useState([]);
   const [ronda, setRonda] = useState(1);
@@ -22,26 +23,25 @@ export default function Atencion({ onBack }) {
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  const nuevaRonda = () => {
+  const nuevaRonda = useCallback(() => {
     const nuevoObjetivo = simbolos[Math.floor(Math.random() * simbolos.length)];
-    const nuevaLista = Array.from({ length: 12 }, () => // 12 elementos para que quepa bien en el grid
+    const nuevaLista = Array.from({ length: 12 }, () =>
       simbolos[Math.floor(Math.random() * simbolos.length)]
     );
-    
-    // Aseguramos que al menos uno sea el objetivo
+
     if (!nuevaLista.includes(nuevoObjetivo)) {
-        nuevaLista[Math.floor(Math.random() * nuevaLista.length)] = nuevoObjetivo;
+      nuevaLista[Math.floor(Math.random() * nuevaLista.length)] = nuevoObjetivo;
     }
 
     setObjetivo(nuevoObjetivo);
     setLista(nuevaLista);
     setMensaje('');
     fadeAnim.setValue(0);
-  };
+  }, [fadeAnim]);
 
   useEffect(() => {
     nuevaRonda();
-  }, []);
+  }, [nuevaRonda]);
 
   const mostrarMensaje = (texto) => {
     setMensaje(texto);
@@ -57,7 +57,7 @@ export default function Atencion({ onBack }) {
     if (simbolo === objetivo) {
       setAciertos((prev) => prev + 1);
       const nuevaLista = [...lista];
-      nuevaLista[index] = ''; 
+      nuevaLista[index] = '';
       setLista(nuevaLista);
 
       const quedan = nuevaLista.filter((s) => s === objetivo).length;
@@ -67,8 +67,8 @@ export default function Atencion({ onBack }) {
           mostrarMensaje('✅ ¡Ronda superada!');
           setTimeout(() => nuevaRonda(), 800);
         } else {
-          setMensaje(`🎉 ¡Fin del juego!`);
-          setRonda(6); // Estado para mostrar fin
+          setMensaje('🎉 ¡Fin del juego!');
+          setRonda(6);
         }
       } else {
         mostrarMensaje('✅ ¡Encontrado!');
@@ -82,10 +82,9 @@ export default function Atencion({ onBack }) {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
 
-      {/* CABECERA DINÁMICA */}
       <View style={[
-        styles.topBar, 
-        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+        styles.topBar,
+        { paddingTop: insets.top }
       ]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={onBack}>
@@ -96,53 +95,49 @@ export default function Atencion({ onBack }) {
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 20, alignItems: 'center' }}>
-        
-        {/* INDICADOR DE OBJETIVO */}
         <View style={[styles.settingsCard, { width: '100%', alignItems: 'center', paddingVertical: 20 }]}>
           <Text style={{ fontSize: aplicarEscala(16), color: '#64748B', marginBottom: 10 }}>
             {ronda <= 5 ? `Ronda ${ronda} de 5` : 'Juego Completado'}
           </Text>
-          
+
           {ronda <= 5 ? (
             <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: aplicarEscala(20), fontWeight: '700', color: '#1E293B', marginBottom: 10 }}>
-                    Busca todos los:
-                </Text>
-                <View style={[localStyles.objetivoCircle]}>
-                    <Text style={{ fontSize: 40, color: '#10B981' }}>{objetivo}</Text>
-                </View>
+              <Text style={{ fontSize: aplicarEscala(20), fontWeight: '700', color: '#1E293B', marginBottom: 10 }}>
+                Busca todos los:
+              </Text>
+              <View style={[localStyles.objetivoCircle]}>
+                <Text style={{ fontSize: 40, color: '#10B981' }}>{objetivo}</Text>
+              </View>
             </View>
           ) : (
             <View style={{ alignItems: 'center' }}>
-                <MaterialCommunityIcons name="trophy" size={60} color="#F59E0B" />
-                <Text style={{ fontSize: aplicarEscala(22), fontWeight: 'bold', color: '#1E293B', marginTop: 10 }}>
-                    ¡Excelente atención!
-                </Text>
-                <Text style={{ color: '#64748B' }}>Aciertos totales: {aciertos}</Text>
+              <MaterialCommunityIcons name="trophy" size={60} color="#F59E0B" />
+              <Text style={{ fontSize: aplicarEscala(22), fontWeight: 'bold', color: '#1E293B', marginTop: 10 }}>
+                ¡Excelente atención!
+              </Text>
+              <Text style={{ color: '#64748B' }}>Aciertos totales: {aciertos}</Text>
             </View>
           )}
         </View>
 
-        {/* REJILLA DE SÍMBOLOS */}
         {ronda <= 5 && (
-            <View style={localStyles.grid}>
-                {lista.map((s, i) => (
-                <TouchableOpacity
-                    key={i}
-                    disabled={!s}
-                    style={[
-                        localStyles.cell, 
-                        !s && { backgroundColor: 'transparent', borderColor: 'transparent' }
-                    ]}
-                    onPress={() => s && handlePress(s, i)}
-                >
-                    <Text style={{ fontSize: 32, color: '#334155' }}>{s}</Text>
-                </TouchableOpacity>
-                ))}
-            </View>
+          <View style={localStyles.grid}>
+            {lista.map((s, i) => (
+              <TouchableOpacity
+                key={i}
+                disabled={!s}
+                style={[
+                  localStyles.cell,
+                  !s && { backgroundColor: 'transparent', borderColor: 'transparent' }
+                ]}
+                onPress={() => s && handlePress(s, i)}
+              >
+                <Text style={{ fontSize: 32, color: '#334155' }}>{s}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         )}
 
-        {/* MENSAJE FLOTANTE */}
         {mensaje ? (
           <Animated.View style={{ opacity: fadeAnim, marginTop: 20 }}>
             <Text style={{ fontSize: aplicarEscala(18), fontWeight: '600', color: mensaje.includes('❌') ? '#EF4444' : '#10B981' }}>
@@ -151,14 +146,12 @@ export default function Atencion({ onBack }) {
           </Animated.View>
         ) : null}
 
-        {/* BOTÓN FINAL O SALIR */}
-        <TouchableOpacity 
-          style={[styles.mainButton, { marginTop: 30, width: '100%', backgroundColor: ronda > 5 ? '#10B981' : '#64748B' }]} 
+        <TouchableOpacity
+          style={[styles.mainButton, { marginTop: 30, width: '100%', backgroundColor: ronda > 5 ? '#10B981' : '#64748B' }]}
           onPress={onBack}
         >
           <Text style={styles.mainButtonText}>{ronda > 5 ? 'Finalizar' : 'Salir del juego'}</Text>
         </TouchableOpacity>
-
       </ScrollView>
     </View>
   );
@@ -191,7 +184,6 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    // Sombra para darle profundidad
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },

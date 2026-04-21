@@ -19,6 +19,14 @@ export const configuracionPerfil = {
         return res.data;
     },
 
+    obtenerPerfilPaciente: async (pacienteId) => {
+        const token = await getAuthToken();
+        const res = await axios.get(`${API}/auth/paciente-profile/${pacienteId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return res.data;
+    },
+
     actualizarPerfil: async (nombre, foto, fecha) => {
         const token = await getAuthToken();
         const res = await axios.put(`${API}/auth/actualizar-perfil`, {
@@ -26,6 +34,14 @@ export const configuracionPerfil = {
             foto_perfil: foto,
             fecha_nacimiento: fecha
         }, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return res.data;
+    },
+
+    actualizarPerfilPaciente: async (pacienteId, datos) => {
+        const token = await getAuthToken();
+        const res = await axios.put(`${API}/auth/paciente-profile/${pacienteId}`, datos, {
             headers: { Authorization: `Bearer ${token}` }
         });
         return res.data;

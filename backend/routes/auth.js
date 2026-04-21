@@ -3,6 +3,7 @@ const router = express.Router();
 const admin = require('../firebaseAdmin');
 const multer = require('multer'); 
 const db = require('../db'); 
+const { sendPushNotifications } = require('../pushNotifications');
 
 const upload = multer({ 
     storage: multer.memoryStorage(),
@@ -65,7 +66,6 @@ router.post('/sync', async (req, res) => {
         
     } catch (err) {
         if (connection) await connection.rollback();
-        console.error('Sync error:', err);
         return res.status(500).json({ error: 'Error al sincronizar datos del usuario' });
     } finally {
         connection.release();
@@ -190,6 +190,11 @@ router.post('/preguntar', async (req, res) => {
     } catch (error) { res.status(500).json({ respuesta: "Error al consultar." }); }
 });
 
+
+// ---------------------------
+//   MUSICA DE LA APLICACIÓN
+// ---------------------------
+
 router.get('/get-musica', async (req, res) => {
     try {
         const { tipo, id_usuario } = req.query;
@@ -215,7 +220,6 @@ router.get('/get-musica', async (req, res) => {
 
         res.json(respuesta);
     } catch (error) {
-        console.error("Error al obtener:", error);
         res.status(500).send("Error en el servidor");
     }
 });
@@ -241,6 +245,11 @@ router.post('/insert-musica', (req, res) => {
     });
 });
 
+// -------------------------------------
+//   LECTURAS COMUNES DE LA APLICACIÓN
+// -------------------------------------
+
+// Obtener todas las lecturas de la aplicación (comunes a todos los pacientes)
 router.get('/get-lecturas', async (req, res) => {
   try {
     const { tipo } = req.query;
@@ -260,13 +269,15 @@ router.get('/get-lecturas', async (req, res) => {
   }
 });
 
-// OBTENER ESCRITURAS DE UN USUARIO ESPECÍFICO
+// ------------------------------------
+//   ESCRITURAS DEL PACIENTE (DIARIO)
+// ------------------------------------
+
+// Obtener el diario de un paciente
 router.get('/get-escrituras', async (req, res) => {
   try {
-    // Si usas middleware de auth, el id viene en req.user.id
-    // Si no, lo pasamos por query de momento
     const { id_usuario } = req.query; 
-    
+
     const [rows] = await db.query(
       'SELECT id, dia, texto FROM escrituras WHERE id_usuario = ? ORDER BY id DESC',
       [id_usuario]
@@ -277,11 +288,10 @@ router.get('/get-escrituras', async (req, res) => {
   }
 });
 
-// Ruta para añadir: Verifica que el log imprima el UID correctamente
+// Guardar un nuevo escrito en diario de paciente
 router.post('/add-escritura', async (req, res) => {
   try {
     const { id_usuario, dia, texto } = req.body;
-    console.log("Recibiendo UID para guardar:", id_usuario); // Verás algo como "abc123XYZ..."
 
     if (!id_usuario || !texto) {
       return res.status(400).json({ error: "Faltan datos (uid o texto)" });
@@ -293,25 +303,24 @@ router.post('/add-escritura', async (req, res) => {
     );
     res.json({ ok: true, message: "Guardado correctamente" });
   } catch (error) {
-    console.error(error);
     res.status(500).send("Error al guardar");
   }
 });
 
+// Borrar una escritura concreta del diario de paciente
 router.delete('/delete-escritura/:id', async (req, res) => {
   try {
     const { id } = req.params;
     await db.query('DELETE FROM escrituras WHERE id = ?', [id]);
     res.json({ message: "Entrada eliminada" });
   } catch (error) {
-    console.error(error);
     res.status(500).send("Error al eliminar");
   }
 });
 
-// ==========================================
-// 6. VINCULACIONES (QR)
-// ==========================================
+// -------------------------------------
+//   VINCULACIONES PACIENTE - CUIDADOR
+// -------------------------------------
 
 // Datos del paciente para mostrar el nombre en la alerta al escanear
 router.get('/paciente/:id', async (req, res) => {
@@ -337,7 +346,6 @@ router.get('/paciente/:id', async (req, res) => {
         return res.json({ ok: true, paciente: { nombre: paciente.nombre } });
 
     } catch (err) {
-        console.error("Error al buscar paciente:", err);
         return res.status(401).json({ error: 'Token inválido o error de servidor' });
     }
 });
@@ -376,7 +384,6 @@ router.post('/vincular-paciente', async (req, res) => {
         }
 
     } catch (err) {
-        console.error("Error en vinculación:", err);
         return res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
@@ -393,5 +400,157 @@ router.get('/mis-pacientes', async (req, res) => {
         res.json({ ok: true, pacientes: rows });
     } catch (error) { res.status(500).json({ error: 'Error al obtener pacientes' }); }
 });
+
+router.post('/push-token', async (req, res) => {
+      const authHeader = req.headers.authorization || '';
+      const token = authHeader.split(' ')[1];
+
+      if (!token) {
+          return res.status(401).json({ error: 'Token faltante' });
+      }
+
+      try {
+          const decoded = await admin.auth().verifyIdToken(token);
+          const { expo_push_token, platform } = req.body;
+
+          if (!expo_push_token || !platform) {
+              return res.status(400).json({ error: 'Faltan datos del dispositivo' });
+          }
+
+          const sql = `
+              INSERT INTO device_tokens (user_uid, expo_push_token, platform, activo)
+              VALUES (?, ?, ?, 1)
+              ON DUPLICATE KEY UPDATE
+                  user_uid = VALUES(user_uid),
+                  platform = VALUES(platform),
+                  activo = 1,
+                  updated_at = CURRENT_TIMESTAMP
+          `;
+
+          await db.query(sql, [decoded.uid, expo_push_token, platform]);
+
+          return res.json({ ok: true });
+      } catch (err) {
+          console.error('Error guardando push token:', err);
+          return res.status(500).json({ error: 'No se pudo guardar el token push' });
+      }
+});
+
+router.post('/test-push', async (req, res) => {
+      const authHeader = req.headers.authorization || '';
+      const token = authHeader.split(' ')[1];
+
+      if (!token) {
+          return res.status(401).json({ error: 'Token faltante' });
+      }
+
+      try {
+          const decoded = await admin.auth().verifyIdToken(token);
+
+          const [rows] = await db.query(
+              'SELECT expo_push_token FROM device_tokens WHERE user_uid = ? AND activo = 1',
+              [decoded.uid]
+          );
+
+          const tokens = rows.map((row) => row.expo_push_token);
+
+          const result = await sendPushNotifications(tokens, {
+              title: 'Prueba MyMemoryAngel',
+              body: 'Esta es una notificación push de prueba',
+              data: { tipo: 'test' },
+          });
+
+          return res.json({ ok: true, result });
+      } catch (err) {
+          console.error('Error en test push:', err);
+          return res.status(500).json({ error: 'No se pudo enviar la push' });
+      }
+});
+
+  router.get('/paciente-profile/:id', async (req, res) => {
+      const authHeader = req.headers.authorization || '';
+      const token = authHeader.split(' ')[1];
+
+      if (!token) return res.status(401).json({ error: 'Token faltante' });
+
+      try {
+          await admin.auth().verifyIdToken(token);
+          const { id } = req.params;
+
+          const sql = `
+              SELECT u.*, a.tamano_texto, a.modo_daltonico
+              FROM usuarios u
+              LEFT JOIN accesibilidad a ON u.uid = a.user_uid
+              WHERE u.uid = ?
+              LIMIT 1
+          `;
+          const [rows] = await db.query(sql, [id]);
+
+          if (rows.length === 0) {
+              return res.status(404).json({ ok: false, error: 'Paciente no encontrado' });
+          }
+
+          return res.json({ ok: true, usuario: rows[0] });
+      } catch (err) {
+          console.error('Error obteniendo perfil de paciente:', err);
+          return res.status(500).json({ ok: false, error: 'No se pudo obtener el perfil del paciente' });
+      }
+  });
+
+  router.put('/paciente-profile/:id', async (req, res) => {
+      const authHeader = req.headers.authorization || '';
+      const token = authHeader.split(' ')[1];
+
+      if (!token) return res.status(401).json({ error: 'Token faltante' });
+
+      const connection = await db.getConnection();
+
+      try {
+          await admin.auth().verifyIdToken(token);
+          const { id } = req.params;
+          const {
+              nombre,
+              foto_perfil,
+              fecha_nacimiento,
+              tamano_texto,
+              modo_daltonico,
+          } = req.body;
+
+          if (!nombre) {
+              return res.status(400).json({ ok: false, error: 'El nombre es obligatorio' });
+          }
+
+          const fechaFinal = (fecha_nacimiento && String(fecha_nacimiento).trim() !== '')
+              ? fecha_nacimiento
+              : null;
+
+          await connection.beginTransaction();
+
+          await connection.query(
+              'UPDATE usuarios SET nombre = ?, foto_perfil = ?, fecha_nacimiento = ? WHERE uid = ?',
+              [nombre, foto_perfil || null, fechaFinal, id]
+          );
+
+          await connection.query(
+              `
+                  INSERT INTO accesibilidad (user_uid, tamano_texto, modo_daltonico)
+                  VALUES (?, ?, ?)
+                  ON DUPLICATE KEY UPDATE
+                      tamano_texto = VALUES(tamano_texto),
+                      modo_daltonico = VALUES(modo_daltonico)
+              `,
+              [id, tamano_texto || 'Mediano', modo_daltonico ? 1 : 0]
+          );
+
+          await connection.commit();
+          return res.json({ ok: true, message: 'Perfil del paciente actualizado correctamente' });
+      } catch (err) {
+          await connection.rollback();
+          console.error('Error actualizando perfil de paciente:', err);
+          return res.status(500).json({ ok: false, error: 'No se pudo actualizar el perfil del paciente' });
+      } finally {
+          connection.release();
+      }
+  });
 
 module.exports = router;

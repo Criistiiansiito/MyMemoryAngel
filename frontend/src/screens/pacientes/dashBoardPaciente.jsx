@@ -9,6 +9,9 @@ import { useAccesibilidad } from '../../services/accesibilidadContext';
 import { configuracionPerfil } from '../../services/configuracionPerfil';
 import BottomTabBar from '../../components/BottomTabBar';
 
+import axios from 'axios';
+import { getAuth } from 'firebase/auth';
+
 export default function DashboardPaciente({ navigation }) {
   const [nombreUsuario, setNombreUsuario] = useState('Paciente'); 
   const [fotoPerfil, setFotoPerfil] = useState(null); 
@@ -56,13 +59,35 @@ export default function DashboardPaciente({ navigation }) {
     );
   }
 
+  const enviarPushTest = async () => {
+  try {
+    const auth = getAuth();
+    const firebaseToken = await auth.currentUser.getIdToken();
+
+    const res = await axios.post(
+      'http://192.168.1.133:5000/api/auth/test-push',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${firebaseToken}`
+        }
+      }
+    );
+
+    console.log('PUSH OK:', res.data);
+
+  } catch (error) {
+    console.log('ERROR PUSH:', error.response?.data || error.message);
+  }
+};
+
   return (
     // Quitamos el SafeAreaView de afuera para que el color de fondo llegue hasta arriba
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       
       {/* HEADER PERSONALIZADO */}
-      <View style={[styles.topBar, { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }]}>
+      <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={[styles.logoRow]}>
           {/* Contenedor del nombre: Usamos flex: 1 para que ocupe solo el espacio disponible */}
           <View style={[styles.headerUserInfo]}>
@@ -100,7 +125,25 @@ export default function DashboardPaciente({ navigation }) {
           <Text style={styles.dateText}>
             {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
           </Text>
-        </View>          
+        </View>   
+
+        <TouchableOpacity 
+  style={{
+    backgroundColor: '#4D6BFE',
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
+  }}
+  onPress={enviarPushTest}
+>
+  <MaterialCommunityIcons name="bell-ring" size={22} color="white" />
+  <Text style={{ color: 'white', marginLeft: 10, fontWeight: 'bold' }}>
+    Enviar push de prueba
+  </Text>
+</TouchableOpacity>       
 
         <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('Recordatorios')}>
           <View style={[styles.menuIconContainer, { backgroundColor: '#E1E7FF' }]}>

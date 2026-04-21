@@ -11,7 +11,7 @@ import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
 import { vinculacionesService } from '../../services/vinculacionesService';
 import { gestionPacientesService } from '../../services/gestionPacientesService';
-import InformacionPaciente from './informacionPaciente';
+import InformacionPaciente from './informacion/informacionPaciente';
 import BottomTabBar from '../../components/BottomTabBarCuidador';
 
 export default function GestionPacientes() {
@@ -141,7 +141,7 @@ export default function GestionPacientes() {
       {/* HEADER */}
       <View style={[
         styles.topBar, 
-        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+        { paddingTop: insets.top }
       ]}>
         <View style={styles.headerActions}>
           <Text style={styles.brandName}>Mis Pacientes</Text>

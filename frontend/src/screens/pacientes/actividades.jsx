@@ -1,89 +1,123 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Platform, StatusBar } from 'react-native';
-// Importamos useSafeAreaInsets y eliminamos SafeAreaView de la renderización
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
-
-// Componentes comunes
 import BottomTabBar from '../../components/BottomTabBar';
 
-// Menús secundarios
-import MenuEstimulacion from './estimulacion/menuEstimulacion'; 
+import MenuEstimulacion from './estimulacion/menuEstimulacion';
 import MenuJuegos from './juegos/menuJuegos';
+import MenuMemoria from './juegos/memoria/menuMemoria';
+import MenuAtencion from './juegos/atencion/menuAtencion';
+import MenuLenguaje from './juegos/lenguaje/menuLenguaje';
+import MenuOrientacion from './juegos/orientacion/menuOrientacion';
+import MenuFuncionesEjecutivas from './juegos/funcionesEjecutivas/menuFuncionesEjecutivas';
+import MenuVisual from './juegos/visual/menuVisual';
 
-// Actividades específicas
-import Musica from './estimulacion/musica'; 
+import Musica from './estimulacion/musica';
 import Arte from './estimulacion/arte';
 import Lectura from './estimulacion/lectura';
 import Escritura from './estimulacion/escritura';
 
-// Mini-juegos
-import Memoria from './juegos/memoria';
-import Calculadora from './juegos/calculadora';
-import Trivia from './juegos/trivia';
-import Atencion from './juegos/atencion';
+import Memoria from './juegos/memoria/memoria';
+import Calculadora from './juegos/funcionesEjecutivas/calculadora';
+import Trivia from './juegos/lenguaje/trivia';
+import Atencion from './juegos/atencion/atencion';
+import Orientacion from './juegos/orientacion/orientacion';
+import Visual from './juegos/visual/visual';
 
 export default function EstimulacionCognitiva() {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
-  
-  // Hook para manejar los espacios seguros en iOS
   const insets = useSafeAreaInsets();
 
-  const [view, setView] = useState('main'); 
+  const [view, setView] = useState('main');
   const [selectedGame, setSelectedGame] = useState(null);
+  const [selectedGameMenu, setSelectedGameMenu] = useState(null);
   const [selectedActivity, setSelectedActivity] = useState(null);
 
-  // 1. Lógica para mostrar Juegos
   if (selectedGame) {
     const props = { onBack: () => setSelectedGame(null) };
     switch (selectedGame) {
-      case 'Memoria': return <Memoria {...props} />;
-      case 'Calculadora': return <Calculadora {...props} />;
-      case 'Trivia': return <Trivia {...props} />;
-      case 'Atencion': return <Atencion {...props} />;
-      default: return null;
+      case 'Memoria':
+        return <Memoria {...props} />;
+      case 'Calculadora':
+        return <Calculadora {...props} />;
+      case 'Trivia':
+        return <Trivia {...props} />;
+      case 'Atencion':
+        return <Atencion {...props} />;
+      case 'Orientacion':
+        return <Orientacion {...props} />;
+      case 'Visual':
+        return <Visual {...props} />;
+      default:
+        return null;
     }
   }
 
-  // 2. Lógica para mostrar las Actividades
+  if (selectedGameMenu) {
+    const props = {
+      onBack: () => setSelectedGameMenu(null),
+      onSelectGame: (game) => setSelectedGame(game),
+    };
+
+    switch (selectedGameMenu) {
+      case 'Memoria':
+        return <MenuMemoria {...props} />;
+      case 'Atencion':
+        return <MenuAtencion {...props} />;
+      case 'Lenguaje':
+        return <MenuLenguaje {...props} />;
+      case 'Orientacion':
+        return <MenuOrientacion {...props} />;
+      case 'FuncionesEjecutivas':
+        return <MenuFuncionesEjecutivas {...props} />;
+      case 'Visual':
+        return <MenuVisual {...props} />;
+      default:
+        return null;
+    }
+  }
+
   if (selectedActivity === 'Musica') {
     return <Musica onBack={() => setSelectedActivity(null)} />;
   }
 
   if (selectedActivity === 'Arte') {
     return <Arte onBack={() => setSelectedActivity(null)} />;
-  } 
+  }
 
   if (selectedActivity === 'Lectura') {
     return <Lectura onBack={() => setSelectedActivity(null)} />;
-  } 
+  }
 
   if (selectedActivity === 'Escritura') {
     return <Escritura onBack={() => setSelectedActivity(null)} />;
-  } 
+  }
 
   const renderMainMenu = () => (
     <View style={{ flex: 1 }}>
-      {/* CABECERA AJUSTADA AL NOTCH */}
-      <View style={[
-        styles.topBar, 
-        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
-      ]}>
+      <View
+        style={[
+          styles.topBar,
+          { paddingTop: insets.top },
+        ]}
+      >
         <View style={styles.headerActions}>
           <Text style={styles.brandName}>Estimulación</Text>
           <View style={styles.headerButtonsGroup}>
             <View style={[styles.headerIconButton, { backgroundColor: '#E8F0FE' }]}>
-               <MaterialCommunityIcons name="head-heart" size={24} color="#4D6BFE" />
+              <MaterialCommunityIcons name="head-heart" size={24} color="#4D6BFE" />
             </View>
           </View>
         </View>
       </View>
 
-      <ScrollView 
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 100, paddingTop: 0, }]} 
+      <ScrollView
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 100, paddingTop: 0 }]}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.dateHeaderContainer}>
@@ -91,8 +125,8 @@ export default function EstimulacionCognitiva() {
             {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
           </Text>
         </View>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={[styles.menuCard, { height: 120, borderLeftWidth: 0, borderLeftColor: '#F97316' }]}
           onPress={() => setView('actividades')}
         >
@@ -105,7 +139,7 @@ export default function EstimulacionCognitiva() {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.menuCard, { height: 120, borderLeftWidth: 0, borderLeftColor: '#4D6BFE' }]}
           onPress={() => setView('juegos')}
         >
@@ -114,7 +148,7 @@ export default function EstimulacionCognitiva() {
           </View>
           <View style={{ flex: 1, marginLeft: 15 }}>
             <Text style={styles.menuTitle}>Juegos</Text>
-            <Text style={styles.menuSubtitle}>Memoria, lógica y atención</Text>
+            <Text style={styles.menuSubtitle}>6 áreas cognitivas y sus juegos</Text>
           </View>
         </TouchableOpacity>
 
@@ -129,7 +163,6 @@ export default function EstimulacionCognitiva() {
             </Text>
           </View>
         </View>
-
       </ScrollView>
 
       <View>
@@ -141,20 +174,20 @@ export default function EstimulacionCognitiva() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
-      
+
       {view === 'main' && renderMainMenu()}
 
       {view === 'juegos' && (
-        <MenuJuegos 
-          onBack={() => setView('main')} 
-          onSelectGame={(game) => setSelectedGame(game)} 
+        <MenuJuegos
+          onBack={() => setView('main')}
+          onSelectCategory={(category) => setSelectedGameMenu(category)}
         />
       )}
 
       {view === 'actividades' && (
         <MenuEstimulacion
-          onBack={() => setView('main')} 
-          onSelectActivity={(id) => setSelectedActivity(id)} 
+          onBack={() => setView('main')}
+          onSelectActivity={(id) => setSelectedActivity(id)}
         />
       )}
     </View>

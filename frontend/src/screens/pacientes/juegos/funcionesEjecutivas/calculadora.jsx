@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  View, Text, TextInput, TouchableOpacity, 
-  Platform, StatusBar, KeyboardAvoidingView, ScrollView 
+import {
+  View, Text, TextInput, TouchableOpacity,
+  Platform, StatusBar, KeyboardAvoidingView, ScrollView
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { getStyles } from '../../../style/styles';
-import { useAccesibilidad } from '../../../services/accesibilidadContext';
+import { getStyles } from '../../../../style/styles';
+import { useAccesibilidad } from '../../../../services/accesibilidadContext';
 
 export default function Calculadora({ onBack }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
@@ -41,7 +41,6 @@ export default function Calculadora({ onBack }) {
       setMensaje(`Casi, el resultado era ${resultadoReal} ❌`);
     }
 
-    // Esperar un momento para mostrar el mensaje y luego cambiar de pregunta
     setTimeout(() => {
       setMensaje(null);
       nuevaPregunta();
@@ -49,16 +48,15 @@ export default function Calculadora({ onBack }) {
   };
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
       <StatusBar barStyle="dark-content" />
 
-      {/* CABECERA DINÁMICA */}
       <View style={[
-        styles.topBar, 
-        { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }
+        styles.topBar,
+        { paddingTop: insets.top }
       ]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={onBack}>
@@ -69,20 +67,18 @@ export default function Calculadora({ onBack }) {
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 20, alignItems: 'center' }}>
-        
-        {/* TARJETA DEL JUEGO */}
         <View style={[styles.settingsCard, { width: '100%', alignItems: 'center', paddingVertical: 40 }]}>
           <MaterialCommunityIcons name="calculator-variant" size={50} color="#3B82F6" style={{ marginBottom: 20 }} />
-          
+
           <Text style={{ fontSize: aplicarEscala(18), color: '#64748B', marginBottom: 10 }}>
             Resuelve la operación:
           </Text>
-          
+
           <Text style={{ fontSize: aplicarEscala(48), fontWeight: '800', color: '#1E293B', marginBottom: 30 }}>
             {num1} + {num2}
           </Text>
 
-          <TextInput 
+          <TextInput
             style={{
               backgroundColor: '#F1F5F9',
               borderRadius: 15,
@@ -94,8 +90,8 @@ export default function Calculadora({ onBack }) {
               borderWidth: 2,
               borderColor: '#E2E8F0'
             }}
-            keyboardType="numeric" 
-            value={respuesta} 
+            keyboardType="numeric"
+            value={respuesta}
             onChangeText={setRespuesta}
             placeholder="?"
             placeholderTextColor="#94A3B8"
@@ -103,38 +99,35 @@ export default function Calculadora({ onBack }) {
           />
         </View>
 
-        {/* MENSAJE DE FEEDBACK */}
         {mensaje && (
-          <View style={{ 
-            marginTop: 20, 
-            padding: 15, 
-            borderRadius: 12, 
+          <View style={{
+            marginTop: 20,
+            padding: 15,
+            borderRadius: 12,
             backgroundColor: esCorrecto ? '#DCFCE7' : '#FEE2E2',
-            width: '100%' 
+            width: '100%'
           }}>
-            <Text style={{ 
-              textAlign: 'center', 
-              fontSize: aplicarEscala(18), 
-              fontWeight: '600', 
-              color: esCorrecto ? '#166534' : '#991B1B' 
+            <Text style={{
+              textAlign: 'center',
+              fontSize: aplicarEscala(18),
+              fontWeight: '600',
+              color: esCorrecto ? '#166534' : '#991B1B'
             }}>
               {mensaje}
             </Text>
           </View>
         )}
 
-        {/* BOTÓN DE RESPUESTA */}
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[
-            styles.mainButton, 
+            styles.mainButton,
             { marginTop: 30, width: '100%', opacity: respuesta ? 1 : 0.6 }
-          ]} 
+          ]}
           onPress={comprobar}
           disabled={!respuesta || mensaje !== null}
         >
           <Text style={styles.mainButtonText}>Comprobar resultado</Text>
         </TouchableOpacity>
-
       </ScrollView>
     </KeyboardAvoidingView>
   );
