@@ -49,7 +49,7 @@ export default function InformacionPaciente({ paciente, onBack, styles }) {
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.menuTitle}>Información General</Text>
-            <Text style={styles.menuSubtitle}>Datos personales y contacto</Text>
+            <Text style={styles.menuSubtitle}>Datos personales del paciente</Text>
           </View>
           <MaterialCommunityIcons name="chevron-right" size={24} color="#CBD5E1" />
         </TouchableOpacity>
@@ -79,7 +79,7 @@ export default function InformacionPaciente({ paciente, onBack, styles }) {
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.menuTitle}>Escritos</Text>
-            <Text style={styles.menuSubtitle}>Notas y reflexiones compartidas</Text>
+            <Text style={styles.menuSubtitle}>Notas y reflexiones del paciente</Text>
           </View>
           <MaterialCommunityIcons name="chevron-right" size={24} color="#CBD5E1" />
         </TouchableOpacity>

@@ -71,7 +71,7 @@ export default function GestionarEscriturasPaciente({ route, navigation }) {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
           </TouchableOpacity>
-          <Text style={styles.brandName}>Diario personal</Text>
+          <Text style={styles.brandName}>Diario Personal</Text>
         </View>
       </View>
 

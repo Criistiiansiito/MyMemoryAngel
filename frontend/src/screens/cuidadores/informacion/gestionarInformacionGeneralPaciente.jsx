@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -37,15 +37,13 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [savingAccessibility, setSavingAccessibility] = useState(false);
+  const [savingAccessibilityField, setSavingAccessibilityField] = useState(null);
 
   const [textSizeLabel, setTextSizeLabel] = useState('Mediano');
   const [isDaltonic, setIsDaltonic] = useState(false);
 
-  useEffect(() => {
-    cargarDatosPaciente();
-  }, []);
-
-  const cargarDatosPaciente = async () => {
+  const cargarDatosPaciente = useCallback(async () => {
     try {
       const data = await configuracionPerfil.obtenerPerfilPaciente(pacienteId);
 
@@ -76,7 +74,11 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
     } finally {
       setLoading(false);
     }
-  };
+  }, [pacienteId]);
+
+  useEffect(() => {
+    cargarDatosPaciente();
+  }, [cargarDatosPaciente]);
 
   const onDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
@@ -110,13 +112,40 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
     }
   };
 
-  const manejarCambioTamano = (size) => {
-    setTextSizeLabel(size);
+  const guardarAccesibilidadPaciente = async (nextTextSize, nextDaltonic, field) => {
+    try {
+      setSavingAccessibility(true);
+      setSavingAccessibilityField(field);
+
+      const res = await configuracionPerfil.actualizarPerfilPaciente(pacienteId, {
+        nombre,
+        foto_perfil: profilePhoto,
+        fecha_nacimiento: fechaSQL,
+        tamano_texto: nextTextSize,
+        modo_daltonico: nextDaltonic ? 1 : 0,
+      });
+
+      if (!res?.ok) {
+        throw new Error('No se pudo guardar la accesibilidad');
+      }
+    } catch (error) {
+      console.error('Error al actualizar accesibilidad del paciente:', error);
+      Alert.alert('Error', 'No se pudo actualizar la accesibilidad del paciente.');
+    } finally {
+      setSavingAccessibility(false);
+      setSavingAccessibilityField(null);
+    }
   };
 
-  const manejarCambioDaltonismo = (val) => {
+  const manejarCambioTamano = async (size) => {
+    setTextSizeLabel(size);
+    await guardarAccesibilidadPaciente(size, isDaltonic, 'textSize');
+  };
+
+  const manejarCambioDaltonismo = async (val) => {
     setIsDaltonic(val);
     setPreviewDaltonic(val);
+    await guardarAccesibilidadPaciente(textSizeLabel, val, 'daltonic');
   };
 
   const manejarGuardarPerfil = async () => {
@@ -171,7 +200,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
           </TouchableOpacity>
-          <Text style={styles.brandName}>Información General</Text>
+          <Text style={styles.brandName}>Información Paciente</Text>
         </View>
       </View>
 
@@ -197,7 +226,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
             </View>
           </TouchableOpacity>
 
-          <Text style={styles.label}>Nombre completo</Text>
+          <Text style={styles.label}>Nombre completo (paciente)</Text>
           <View style={styles.inputContainer}>
             <MaterialCommunityIcons name="account-outline" style={styles.inputIcon} />
             <TextInput
@@ -208,7 +237,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
             />
           </View>
 
-          <Text style={styles.label}>Correo electrónico</Text>
+          <Text style={styles.label}>Correo electrónico (paciente)</Text>
           <View style={styles.inputContainer}>
             <MaterialCommunityIcons name="email-outline" style={styles.inputIcon} />
             <TextInput
@@ -218,7 +247,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
             />
           </View>
 
-          <Text style={styles.label}>Fecha de nacimiento</Text>
+          <Text style={styles.label}>Fecha de nacimiento (paciente)</Text>
           <TouchableOpacity
             style={styles.inputContainer}
             onPress={() => setShowDatePicker(true)}
@@ -254,7 +283,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
         <View style={styles.settingsCard}>
           <View style={styles.sectionHeader}>
             <MaterialCommunityIcons name="format-size" size={22} color="#4D6BFE" />
-            <Text style={styles.sectionTitle}>Tamaño del texto</Text>
+            <Text style={styles.sectionTitle}>Tamaño del texto (paciente)</Text>
           </View>
 
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -279,6 +308,10 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
               </TouchableOpacity>
             ))}
           </View>
+
+          {savingAccessibility && savingAccessibilityField === 'textSize' ? (
+             <Text style={[styles.menuSubtitle, { marginTop: 12, textAlign: 'center' }]}>Guardando accesibilidad...</Text>
+          ) : null}
         </View>
 
         <View style={styles.settingsCard}>
@@ -288,7 +321,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
               size={22}
               color={isDaltonic ? '#000' : '#8B5CF6'}
             />
-            <Text style={styles.sectionTitle}>Modo Daltónico</Text>
+            <Text style={styles.sectionTitle}>Modo Daltónico (paciente)</Text>
           </View>
 
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -297,6 +330,10 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
             </Text>
             <Switch onValueChange={manejarCambioDaltonismo} value={isDaltonic} />
           </View>
+
+          {savingAccessibility && savingAccessibilityField === 'daltonic' ? (
+            <Text style={[styles.menuSubtitle, { marginTop: 12, textAlign: 'center' }]}>Guardando accesibilidad...</Text>
+          ) : null}
         </View>
       </ScrollView>
     </View>
