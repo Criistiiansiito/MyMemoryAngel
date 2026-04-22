@@ -29,6 +29,9 @@ import InformacionPaciente from './screens/cuidadores/informacion/informacionPac
 import GestionarMusicaPaciente from './screens/cuidadores/informacion/gestionarMusicaPaciente';
 import GestionarEscriturasPaciente from './screens/cuidadores/informacion/gestionarEscriturasPaciente';
 import GestionarInformacionGeneralPaciente from './screens/cuidadores/informacion/gestionarInformacionGeneralPaciente';
+import GestionarRecordatoriosPaciente from './screens/cuidadores/informacion/gestionRecordatorios/gestionarRecordatoriosPaciente';
+import GestionarListaRecordatoriosPaciente from './screens/cuidadores/informacion/gestionRecordatorios/gestionarListaRecordatoriosPaciente';
+import GestionarHistorialRecordatoriosPaciente from './screens/cuidadores/informacion/gestionRecordatorios/gestionarHistorialRecordatoriosPaciente';
 
 // Common
 import ChatBot from './screens/common/chatBot';
@@ -80,6 +83,9 @@ export default function App() {
           <Stack.Screen name="GestionarMusicaPaciente" component={GestionarMusicaPaciente} options={{ headerShown: false }} />
           <Stack.Screen name="GestionarEscriturasPaciente" component={GestionarEscriturasPaciente} options={{ headerShown: false }} />
           <Stack.Screen name="GestionarInformacionGeneralPaciente" component={GestionarInformacionGeneralPaciente} options={{ headerShown: false }} />
+          <Stack.Screen name="GestionarRecordatoriosPaciente" component={GestionarRecordatoriosPaciente} options={{ headerShown: false }} />
+          <Stack.Screen name="GestionarListaRecordatoriosPaciente" component={GestionarListaRecordatoriosPaciente} options={{ headerShown: false }} />
+          <Stack.Screen name="GestionarHistorialRecordatoriosPaciente" component={GestionarHistorialRecordatoriosPaciente} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </AccesibilidadProvider>
