@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Platform, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Speech from 'expo-speech';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
@@ -47,6 +48,23 @@ export default function EstimulacionCognitiva() {
   useEffect(() => () => {
     Speech.stop();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        Speech.stop();
+        setIsSpeaking(false);
+      };
+    }, [])
+  );
+
+  useEffect(() => {
+    const isMainView = view === 'main' && !selectedGame && !selectedGameMenu && !selectedActivity;
+    if (!isMainView) {
+      Speech.stop();
+      setIsSpeaking(false);
+    }
+  }, [view, selectedGame, selectedGameMenu, selectedActivity]);
 
   if (selectedGame) {
     const props = { onBack: () => setSelectedGame(null) };
@@ -127,7 +145,7 @@ export default function EstimulacionCognitiva() {
     Speech.speak(mensaje, {
       language: 'es-ES',
       pitch: 1,
-      rate: 0.9,
+      rate: 0.8,
       onDone: () => setIsSpeaking(false),
       onStopped: () => setIsSpeaking(false),
       onError: () => setIsSpeaking(false),
