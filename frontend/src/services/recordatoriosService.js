@@ -18,13 +18,27 @@ const getCurrentUserId = async () => {
   return user.uid;
 };
 
-export const fetchRecordatorios = async () => {
+export const getStoredUser = async () => {
+  const userJSON = await AsyncStorage.getItem('user');
+  return userJSON ? JSON.parse(userJSON) : null;
+};
+
+export const fetchRecordatoriosHoyPorUsuario = async (userId) => {
   try {
-    const userId = await getCurrentUserId();
     if (!userId) return { ok: false, data: [] };
 
     const response = await axios.get(`${API}/auth/recordatorios-hoy/${userId}`);
     return { ok: true, data: response.data.recordatorios || [] };
+  } catch (error) {
+    console.error('Error fetching recordatorios por usuario:', error);
+    return { ok: false, data: [], status: error.response?.status };
+  }
+};
+
+export const fetchRecordatorios = async () => {
+  try {
+    const userId = await getCurrentUserId();
+    return await fetchRecordatoriosHoyPorUsuario(userId);
   } catch (error) {
     console.error('Error fetching recordatorios:', error);
     return { ok: false, data: [], status: error.response?.status };
@@ -76,11 +90,38 @@ export const getIconConfig = (tipo) => {
   }
 };
 
+export const parseMySQLDateTime = (fechaRaw) => {
+  if (!fechaRaw) return null;
+  if (fechaRaw instanceof Date) {
+    return Number.isNaN(fechaRaw.getTime()) ? null : fechaRaw;
+  }
+
+  const value = String(fechaRaw).trim();
+  const match = value.match(
+    /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?)?$/
+  );
+
+  if (!match) {
+    const fallback = new Date(value);
+    return Number.isNaN(fallback.getTime()) ? null : fallback;
+  }
+
+  const [, year, month, day, hour = '00', minute = '00', second = '00'] = match;
+  return new Date(
+    Number(year),
+    Number(month) - 1,
+    Number(day),
+    Number(hour),
+    Number(minute),
+    Number(second)
+  );
+};
+
 export const formatearFechaYHora = (fechaRaw) => {
   if (!fechaRaw) return { fecha: '--', hora: '--:--' };
   try {
-    const d = new Date(fechaRaw);
-    if (isNaN(d.getTime())) return { fecha: 'Error', hora: '--:--' };
+    const d = parseMySQLDateTime(fechaRaw);
+    if (!d || Number.isNaN(d.getTime())) return { fecha: 'Error', hora: '--:--' };
     const fechaTexto = d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }).replace('.', '');
     const horaTexto = d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
     return { fecha: fechaTexto, hora: horaTexto };
