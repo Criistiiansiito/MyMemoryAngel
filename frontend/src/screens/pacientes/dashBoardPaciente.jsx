@@ -121,7 +121,7 @@ export default function DashboardPaciente({ navigation }) {
     Speech.speak(mensaje, {
       language: 'es-ES',
       pitch: 1,
-      rate: 0.9,
+      rate: 0.8,
       onDone: () => setIsSpeaking(false),
       onStopped: () => setIsSpeaking(false),
       onError: () => setIsSpeaking(false),
