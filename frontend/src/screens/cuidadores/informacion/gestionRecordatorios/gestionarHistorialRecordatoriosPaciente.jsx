@@ -17,10 +17,10 @@ const formatDateLabel = (dateString) =>
 
 const renderEstado = (estado) => {
   if (estado === 'cumplido') {
-    return { icon: 'check-circle', color: '#16A34A', text: 'Completado' };
+    return { icon: 'check-circle', color: '#16A34A', text: 'Cumplido' };
   }
   if (estado === 'incumplido') {
-    return { icon: 'close-circle', color: '#EF4444', text: 'No completado' };
+    return { icon: 'close-circle', color: '#EF4444', text: 'No cumplido' };
   }
   return { icon: 'progress-clock', color: '#F59E0B', text: 'Pendiente' };
 };
