@@ -11,10 +11,14 @@ import { formatMadridDate, toMadridDateOnly } from '../../utils/dateMadrid';
 
 import {
   fetchRecordatorios,
+  fetchRecordatoriosHoyPorUsuario,
+  getStoredUser,
   getIconConfig,
   formatearFechaYHora,
   marcarRecordatorioCumplido,
+  parseMySQLDateTime,
 } from '../../services/recordatoriosService';
+import { gestionPacientesService } from '../../services/gestionPacientesService';
 
 export default function Recordatorios({ navigation }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
@@ -30,15 +34,45 @@ export default function Recordatorios({ navigation }) {
 
   const cargarDatos = async () => {
     setLoading(true);
-    const result = await fetchRecordatorios();
-    if (result.ok) {
-      setReminders(result.data);
-    } else if (result.status !== 404) {
+    try {
+      const usuario = await getStoredUser();
+      const propios = await fetchRecordatorios();
+
+      let listaFinal = [];
+      if (propios.ok) {
+        listaFinal = (propios.data || []).map((item) => ({
+          ...item,
+          origen_nombre: 'Mis recordatorios',
+          origen_uid: usuario?.uid || null,
+        }));
+      }
+
+      const pacientesRes = await gestionPacientesService.listarMisPacientes();
+      if (pacientesRes.ok && Array.isArray(pacientesRes.pacientes)) {
+        const resultadosPacientes = await Promise.all(
+          pacientesRes.pacientes.map(async (paciente) => {
+            const result = await fetchRecordatoriosHoyPorUsuario(paciente.uid);
+            if (!result.ok) return [];
+
+            return (result.data || []).map((item) => ({
+              ...item,
+              origen_nombre: paciente.nombre || 'Paciente vinculado',
+              origen_uid: paciente.uid,
+            }));
+          })
+        );
+
+        listaFinal = [...listaFinal, ...resultadosPacientes.flat()];
+      }
+
+      listaFinal.sort((a, b) => parseMySQLDateTime(a.fecha_hora) - parseMySQLDateTime(b.fecha_hora));
+      setReminders(listaFinal);
+    } catch (_error) {
       Alert.alert('Error', 'No se pudieron obtener los recordatorios.');
-    } else {
       setReminders([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useFocusEffect(
@@ -78,7 +112,7 @@ export default function Recordatorios({ navigation }) {
         <View style={styles.headerActions}>
           <Text style={styles.brandName}>Recordatorios</Text>
           <View style={styles.headerButtonsGroup}>
-            <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('Calendario')}>
+            <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('CalendarioCuidador')}>
               <MaterialCommunityIcons name="calendar-month-outline" size={24} color="#8B5CF6" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('GestionarRecordatorios')}>
@@ -139,20 +173,23 @@ export default function Recordatorios({ navigation }) {
                       ) : null}
                     </View>
 
-                    <Text style={styles.menuTitle}>{item.titulo}</Text>
+                    <Text style={[styles.menuTitle, {fontSize: aplicarEscala(16)}]}>{item.titulo}</Text>
 
                     {item.descripcion && item.descripcion.trim().length > 0 ? (
                       <Text style={styles.menuSubtitle}>{item.descripcion}</Text>
                     ) : null}
 
-                    <View style={styles.reminderFooterRow}>
-                      <View style={[styles.typeDot, { backgroundColor: config.iconColor }]} />
-                      <Text style={styles.typeTabText}>{item.tipo}</Text>
-                    </View>
+              
+                    {item.origen_nombre ? (
+                      <View style={[styles.reminderFooterRow, { marginTop: 6 }]}>
+                        <MaterialCommunityIcons name="account-outline" size={14} color="#64748B" />
+                        <Text style={[styles.typeTabText, { marginLeft: 6 }]}>{item.origen_nombre}</Text>
+                      </View>
+                    ) : null}
                   </View>
                 </View>
 
-                <View style={styles.reminderActionButton}>
+                <View style={[styles.reminderActionButton, { width: 30, height: 30 }]}>
                   {updatingId === item.id_recordatorio ? (
                     <ActivityIndicator size="small" color="#16A34A" />
                   ) : (

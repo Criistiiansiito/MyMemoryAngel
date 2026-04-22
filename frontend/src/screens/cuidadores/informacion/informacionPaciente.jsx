@@ -34,7 +34,7 @@ export default function InformacionPaciente({ paciente, onBack, styles }) {
             )}
           </View>
 
-          <Text style={[styles.menuTitle, { fontSize: 18, textAlign: 'center' }]}>
+          <Text style={[styles.menuTitle, { fontSize: 17, textAlign: 'center' }]}>
             {paciente?.nombre || 'Paciente'}
           </Text>
         </View>
@@ -87,14 +87,14 @@ export default function InformacionPaciente({ paciente, onBack, styles }) {
         {/* RECORDATORIOS */}
         <TouchableOpacity 
           style={styles.menuCard} 
-          onPress={() => console.log("Ir a Recordatorios")}
+          onPress={() => navigation.navigate('GestionarRecordatoriosPaciente', { paciente: paciente })}
         >
           <View style={[styles.menuIconContainer, { backgroundColor: '#FEF3C7' }]}>
             <MaterialCommunityIcons name="bell-outline" size={28} color="#F59E0B" />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.menuTitle}>Recordatorios</Text>
-            <Text style={styles.menuSubtitle}>Supervisión de medicación y citas</Text>
+            <Text style={styles.menuSubtitle}>Recordatorios del paciente</Text>
           </View>
           <MaterialCommunityIcons name="chevron-right" size={24} color="#CBD5E1" />
         </TouchableOpacity>

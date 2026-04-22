@@ -16,8 +16,6 @@ import Calendario from './screens/pacientes/calendario';
 import ConfiguracionPaciente from './screens/pacientes/configuracionPaciente';
 import DashboardPaciente from './screens/pacientes/dashBoardPaciente';
 import GestionarRecordatorios from './screens/pacientes/gestionarRecordatorios';
-import ModificarRecordatorio from './screens/pacientes/modificarRecordatorio';
-import NuevoRecordatorio from './screens/pacientes/nuevoRecordatorio';
 import Recordatorios from './screens/pacientes/recordatorios';
 
 // Cuidador
@@ -25,12 +23,18 @@ import ConfiguracionCuidador from './screens/cuidadores/configuracionCuidador';
 import DashboardCuidador from './screens/cuidadores/dashBoardCuidador';
 import GestionarPacientes from './screens/cuidadores/gestionarPacientes';
 import RecordatoriosCuidador from './screens/cuidadores/recordatoriosCuidador';
+import CalendarioCuidador from './screens/cuidadores/calendarioCuidador';
 import InformacionPaciente from './screens/cuidadores/informacion/informacionPaciente';
 import GestionarMusicaPaciente from './screens/cuidadores/informacion/gestionarMusicaPaciente';
 import GestionarEscriturasPaciente from './screens/cuidadores/informacion/gestionarEscriturasPaciente';
 import GestionarInformacionGeneralPaciente from './screens/cuidadores/informacion/gestionarInformacionGeneralPaciente';
+import GestionarRecordatoriosPaciente from './screens/cuidadores/informacion/gestionRecordatorios/gestionarRecordatoriosPaciente';
+import GestionarListaRecordatoriosPaciente from './screens/cuidadores/informacion/gestionRecordatorios/gestionarListaRecordatoriosPaciente';
+import GestionarHistorialRecordatoriosPaciente from './screens/cuidadores/informacion/gestionRecordatorios/gestionarHistorialRecordatoriosPaciente';
 
 // Common
+import ModificarRecordatorio from './screens/common/modificarRecordatorio';
+import NuevoRecordatorio from './screens/common/nuevoRecordatorio';
 import ChatBot from './screens/common/chatBot';
 import ChatBotCuidador from './screens/common/chatBotCuidador';
 import { inicializarNotificaciones } from './services/notificacionesService';
@@ -76,10 +80,14 @@ export default function App() {
           <Stack.Screen name="GestionarPacientes" component={GestionarPacientes} options={{ headerShown: false }} />
           <Stack.Screen name="InformacionPaciente" component={InformacionPaciente} options={{ headerShown: false }} />
           <Stack.Screen name="RecordatoriosCuidador" component={RecordatoriosCuidador} options={{ headerShown: false }} />
+          <Stack.Screen name="CalendarioCuidador" component={CalendarioCuidador} options={{ headerShown: false }} />
           <Stack.Screen name="ChatBotCuidador" component={ChatBotCuidador} options={{ headerShown: false }} />
           <Stack.Screen name="GestionarMusicaPaciente" component={GestionarMusicaPaciente} options={{ headerShown: false }} />
           <Stack.Screen name="GestionarEscriturasPaciente" component={GestionarEscriturasPaciente} options={{ headerShown: false }} />
           <Stack.Screen name="GestionarInformacionGeneralPaciente" component={GestionarInformacionGeneralPaciente} options={{ headerShown: false }} />
+          <Stack.Screen name="GestionarRecordatoriosPaciente" component={GestionarRecordatoriosPaciente} options={{ headerShown: false }} />
+          <Stack.Screen name="GestionarListaRecordatoriosPaciente" component={GestionarListaRecordatoriosPaciente} options={{ headerShown: false }} />
+          <Stack.Screen name="GestionarHistorialRecordatoriosPaciente" component={GestionarHistorialRecordatoriosPaciente} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </AccesibilidadProvider>
