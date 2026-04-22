@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -14,6 +15,7 @@ import Actividades from './screens/pacientes/actividades';
 import Calendario from './screens/pacientes/calendario';
 import ConfiguracionPaciente from './screens/pacientes/configuracionPaciente';
 import DashboardPaciente from './screens/pacientes/dashBoardPaciente';
+import GestionarRecordatorios from './screens/pacientes/gestionarRecordatorios';
 import ModificarRecordatorio from './screens/pacientes/modificarRecordatorio';
 import NuevoRecordatorio from './screens/pacientes/nuevoRecordatorio';
 import Recordatorios from './screens/pacientes/recordatorios';
@@ -31,10 +33,17 @@ import GestionarInformacionGeneralPaciente from './screens/cuidadores/informacio
 // Common
 import ChatBot from './screens/common/chatBot';
 import ChatBotCuidador from './screens/common/chatBotCuidador';
+import { inicializarNotificaciones } from './services/notificacionesService';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  useEffect(() => {
+    inicializarNotificaciones().catch((error) => {
+      console.log('No se pudieron inicializar las notificaciones:', error.message);
+    });
+  }, []);
+
   return (
     <AccesibilidadProvider>
       <NavigationContainer>
@@ -59,6 +68,7 @@ export default function App() {
           <Stack.Screen name="ConfiguracionCuidador" component={ConfiguracionCuidador} options={{ headerShown: false }} />
           <Stack.Screen name="NuevoRecordatorio" component={NuevoRecordatorio} options={{ headerShown: false }} />
           <Stack.Screen name="ModificarRecordatorio" component={ModificarRecordatorio} options={{ headerShown: false }} />
+          <Stack.Screen name="GestionarRecordatorios" component={GestionarRecordatorios} options={{ headerShown: false }} />
           <Stack.Screen name="Calendario" component={Calendario} options={{ headerShown: false }} />
           <Stack.Screen name="Recordatorios" component={Recordatorios} options={{ headerShown: false }} />
           <Stack.Screen name="ChatBot" component={ChatBot} options={{ headerShown: false }} />
