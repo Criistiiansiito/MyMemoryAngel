@@ -62,6 +62,13 @@ export default function Musica({ onBack }) {
     }, [])
   );
 
+  useEffect(() => {
+    if (vistaActual !== 'menu') {
+      Speech.stop();
+      setIsSpeaking(false);
+    }
+  }, [vistaActual]);
+
   const onSelectCategoria = async (item) => {
     setCargando(true);
     setCategoriaActiva(item);
