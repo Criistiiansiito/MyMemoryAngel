@@ -16,8 +16,6 @@ import Calendario from './screens/pacientes/calendario';
 import ConfiguracionPaciente from './screens/pacientes/configuracionPaciente';
 import DashboardPaciente from './screens/pacientes/dashBoardPaciente';
 import GestionarRecordatorios from './screens/pacientes/gestionarRecordatorios';
-import ModificarRecordatorio from './screens/pacientes/modificarRecordatorio';
-import NuevoRecordatorio from './screens/pacientes/nuevoRecordatorio';
 import Recordatorios from './screens/pacientes/recordatorios';
 
 // Cuidador
@@ -34,6 +32,8 @@ import GestionarListaRecordatoriosPaciente from './screens/cuidadores/informacio
 import GestionarHistorialRecordatoriosPaciente from './screens/cuidadores/informacion/gestionRecordatorios/gestionarHistorialRecordatoriosPaciente';
 
 // Common
+import ModificarRecordatorio from './screens/common/modificarRecordatorio';
+import NuevoRecordatorio from './screens/common/nuevoRecordatorio';
 import ChatBot from './screens/common/chatBot';
 import ChatBotCuidador from './screens/common/chatBotCuidador';
 import { inicializarNotificaciones } from './services/notificacionesService';
