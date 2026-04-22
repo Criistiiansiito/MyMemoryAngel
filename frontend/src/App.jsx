@@ -22,6 +22,7 @@ import ConfiguracionCuidador from './screens/cuidadores/configuracionCuidador';
 import DashboardCuidador from './screens/cuidadores/dashBoardCuidador';
 import GestionarPacientes from './screens/cuidadores/gestionarPacientes';
 import RecordatoriosCuidador from './screens/cuidadores/recordatoriosCuidador';
+import CalendarioCuidador from './screens/cuidadores/calendarioCuidador';
 import InformacionPaciente from './screens/cuidadores/informacion/informacionPaciente';
 import GestionarMusicaPaciente from './screens/cuidadores/informacion/gestionarMusicaPaciente';
 import GestionarEscriturasPaciente from './screens/cuidadores/informacion/gestionarEscriturasPaciente';
@@ -79,6 +80,7 @@ export default function App() {
           <Stack.Screen name="GestionarPacientes" component={GestionarPacientes} options={{ headerShown: false }} />
           <Stack.Screen name="InformacionPaciente" component={InformacionPaciente} options={{ headerShown: false }} />
           <Stack.Screen name="RecordatoriosCuidador" component={RecordatoriosCuidador} options={{ headerShown: false }} />
+          <Stack.Screen name="CalendarioCuidador" component={CalendarioCuidador} options={{ headerShown: false }} />
           <Stack.Screen name="ChatBotCuidador" component={ChatBotCuidador} options={{ headerShown: false }} />
           <Stack.Screen name="GestionarMusicaPaciente" component={GestionarMusicaPaciente} options={{ headerShown: false }} />
           <Stack.Screen name="GestionarEscriturasPaciente" component={GestionarEscriturasPaciente} options={{ headerShown: false }} />

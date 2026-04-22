@@ -63,12 +63,23 @@ export const fetchRecordatoriosCalendario = async (fromDate, toDate) => {
     const userId = await getCurrentUserId();
     if (!userId) return { ok: false, data: [] };
 
+    return await fetchRecordatoriosCalendarioPorUsuario(userId, fromDate, toDate);
+  } catch (error) {
+    console.error('Error fetching recordatorios calendario:', error);
+    return { ok: false, data: [], status: error.response?.status };
+  }
+};
+
+export const fetchRecordatoriosCalendarioPorUsuario = async (userId, fromDate, toDate) => {
+  try {
+    if (!userId) return { ok: false, data: [] };
+
     const response = await axios.get(`${API}/auth/recordatorios-calendario/${userId}`, {
       params: { from: fromDate, to: toDate },
     });
     return { ok: true, data: response.data.recordatorios || [] };
   } catch (error) {
-    console.error('Error fetching recordatorios calendario:', error);
+    console.error('Error fetching recordatorios calendario por usuario:', error);
     return { ok: false, data: [], status: error.response?.status };
   }
 };

@@ -112,7 +112,7 @@ export default function Recordatorios({ navigation }) {
         <View style={styles.headerActions}>
           <Text style={styles.brandName}>Recordatorios</Text>
           <View style={styles.headerButtonsGroup}>
-            <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('Calendario')}>
+            <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('CalendarioCuidador')}>
               <MaterialCommunityIcons name="calendar-month-outline" size={24} color="#8B5CF6" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('GestionarRecordatorios')}>
