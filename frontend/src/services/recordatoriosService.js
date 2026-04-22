@@ -113,9 +113,10 @@ export const formatToMySQL = (date) => {
 export const crearRecordatorio = async (datos) => {
   try {
     const userId = await getCurrentUserId();
-    if (!userId) throw new Error('No hay sesión de usuario');
+    const targetUserId = datos.id_usuario || userId;
+    if (!targetUserId) throw new Error('No hay sesión de usuario');
 
-    const body = { ...datos, id_usuario: userId };
+    const body = { ...datos, id_usuario: targetUserId };
     const response = await axios.post(`${API}/auth/crear`, body);
     return response;
   } catch (error) {
