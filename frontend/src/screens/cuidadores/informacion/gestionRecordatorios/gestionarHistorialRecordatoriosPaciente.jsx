@@ -127,21 +127,21 @@ export default function HistorialRecordatoriosPaciente({ route, navigation }) {
 
                 <View style={styles.reminderInfoBody}>
                   <View style={[styles.reminderBadge, { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }]}>
-                    <Text style={styles.reminderBadgeText}>
+                    <Text style={[styles.reminderBadgeText, {color: '#718096', fontSize: aplicarEscala(12)}]}>
                       {formatDateLabel(item.fecha_ocurrencia)} | {hora}
                     </Text>
                     <Text
                       style={[
                         styles.menuSubtitle,
-                        { marginLeft: 10, marginBottom: 0, fontWeight: '700', color: estado.color },
+                        { fontSize: aplicarEscala(12), marginLeft: 10, marginBottom: 0, fontWeight: '700', color: estado.color },
                       ]}
                     >
                       {estado.text}
                     </Text>
                   </View>
 
-                  <Text style={styles.menuTitle} numberOfLines={2}>{item.titulo}</Text>
-                  <Text style={styles.menuSubtitle} numberOfLines={2}>
+                  <Text style={[styles.menuTitle, {fontSize: aplicarEscala(14)}]} numberOfLines={2}>{item.titulo}</Text>
+                  <Text style={[styles.menuSubtitle, { fontSize: aplicarEscala(10) }]} numberOfLines={2}>
                     {item.descripcion || 'Sin descripcion'}
                   </Text>
                 </View>

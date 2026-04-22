@@ -105,7 +105,7 @@ export default function GestionarRecordatorios({ navigation }) {
                   </View>
                 </View>
 
-                <View style={[styles.reminderActionButton, { width: 35, height: 35 }]}>
+                <View style={[styles.reminderActionButton, { width: 25, height: 25 }]}>
                   <MaterialCommunityIcons name="chevron-right" size={20} color="#94A3B8" />
                 </View>
               </TouchableOpacity>

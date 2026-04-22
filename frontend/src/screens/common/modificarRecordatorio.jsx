@@ -9,6 +9,7 @@ import { useAccesibilidad } from '../../services/accesibilidadContext';
 import {
   TIPOS_RECORDATORIO,
   formatToMySQL,
+  parseMySQLDateTime,
   actualizarRecordatorio,
   eliminarRecordatorio,
 } from '../../services/recordatoriosService';
@@ -32,8 +33,9 @@ export default function ModificarRecordatorio({ route, navigation }) {
   const [tipoSeleccionado, setTipoSeleccionado] = useState(recordatorio.tipo || TIPOS_RECORDATORIO[0].id);
   const [frecuencia, setFrecuencia] = useState(formatRecurrencia(recordatorio.recurrencia));
   const [alertaSonora, setAlertaSonora] = useState((recordatorio.tipo_alerta || 'sonora') === 'sonora');
-  const [date, setDate] = useState(new Date(recordatorio.fecha_hora));
-  const [tempDate, setTempDate] = useState(new Date(recordatorio.fecha_hora));
+  const initialDate = parseMySQLDateTime(recordatorio.fecha_hora) || new Date();
+  const [date, setDate] = useState(initialDate);
+  const [tempDate, setTempDate] = useState(initialDate);
   const [showPicker, setShowPicker] = useState(false);
   const [mode, setMode] = useState('date');
   const [loading, setLoading] = useState(false);

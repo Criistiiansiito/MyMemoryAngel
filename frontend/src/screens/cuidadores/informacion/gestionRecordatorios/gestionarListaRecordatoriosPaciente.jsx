@@ -108,7 +108,7 @@ export default function GestionarListaRecordatoriosPaciente({ route, navigation 
                       </View>
                     </View>
 
-                    <Text style={[styles.menuTitle, {fontSize: aplicarEscala(14)}]}>{item.titulo}</Text>
+                    <Text style={[styles.menuTitle, {fontSize: aplicarEscala(13)}]}>{item.titulo}</Text>
 
                     {item.descripcion ? (
                       <Text style={[styles.menuSubtitle, { fontSize: aplicarEscala(10) }]}>{item.descripcion}</Text>
@@ -123,7 +123,7 @@ export default function GestionarListaRecordatoriosPaciente({ route, navigation 
                     </View>
                   </View>
                 </View>
-                <View style={[styles.reminderActionButton, { width: 35, height: 35 }]}>
+                <View style={[styles.reminderActionButton, { width: 25, height: 25 }]}>
                   <MaterialCommunityIcons name="chevron-right" size={20} color="#94A3B8" />
                 </View>
               </TouchableOpacity>
