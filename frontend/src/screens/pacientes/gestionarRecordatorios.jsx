@@ -89,7 +89,7 @@ export default function GestionarRecordatorios({ navigation }) {
                       </View>
                     </View>
 
-                    <Text style={styles.menuTitle}>{item.titulo}</Text>
+                    <Text style={[styles.menuTitle, { fontSize: aplicarEscala(16) }]}>{item.titulo}</Text>
 
                     {item.descripcion ? (
                       <Text style={[styles.menuSubtitle, { fontSize: aplicarEscala(10) }]}>{item.descripcion}</Text>
@@ -97,16 +97,16 @@ export default function GestionarRecordatorios({ navigation }) {
 
                     <View style={styles.reminderFooterRow}>
                       <View style={[styles.typeDot, { backgroundColor: config.iconColor }]} />
-                      <Text style={styles.typeTabText}>{item.tipo}</Text>
-                      <Text style={[styles.menuSubtitle, { marginLeft: 10, marginBottom: 0 }]}>
+                      <Text style={styles.typeTabText}>{item.tipo + '   |   '}</Text>
+                      <Text style={styles.typeTabText}>
                         {formatRecurrencia(item.recurrencia)}
                       </Text>
                     </View>
                   </View>
                 </View>
 
-                <View style={styles.reminderActionButton}>
-                  <MaterialCommunityIcons name="chevron-right" size={26} color="#94A3B8" />
+                <View style={[styles.reminderActionButton, { width: 35, height: 35 }]}>
+                  <MaterialCommunityIcons name="chevron-right" size={20} color="#94A3B8" />
                 </View>
               </TouchableOpacity>
             );

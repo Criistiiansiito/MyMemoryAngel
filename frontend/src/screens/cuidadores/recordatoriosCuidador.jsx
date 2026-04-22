@@ -139,7 +139,7 @@ export default function Recordatorios({ navigation }) {
                       ) : null}
                     </View>
 
-                    <Text style={styles.menuTitle}>{item.titulo}</Text>
+                    <Text style={[styles.menuTitle, {fontSize: aplicarEscala(16)}]}>{item.titulo}</Text>
 
                     {item.descripcion && item.descripcion.trim().length > 0 ? (
                       <Text style={styles.menuSubtitle}>{item.descripcion}</Text>
@@ -152,7 +152,7 @@ export default function Recordatorios({ navigation }) {
                   </View>
                 </View>
 
-                <View style={styles.reminderActionButton}>
+                <View style={[styles.reminderActionButton, { width: 30, height: 30 }]}>
                   {updatingId === item.id_recordatorio ? (
                     <ActivityIndicator size="small" color="#16A34A" />
                   ) : (

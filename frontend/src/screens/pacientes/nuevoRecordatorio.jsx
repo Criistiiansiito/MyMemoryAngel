@@ -13,7 +13,7 @@ import {
   crearRecordatorio 
 } from '../../services/recordatoriosService';
 
-export default function NuevoRecordatorio({ navigation }) {
+export default function NuevoRecordatorio({ navigation, route }) {
 
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
@@ -34,6 +34,8 @@ export default function NuevoRecordatorio({ navigation }) {
   const [showPicker, setShowPicker] = useState(false);
   const [mode, setMode] = useState('date');
   const [tempDate, setTempDate] = useState(new Date());
+  const paciente = route?.params?.paciente;
+  const pacienteId = paciente?.uid || paciente?.id;
 
   const handleGuardar = async () => {
     if (!titulo.trim()) {
@@ -46,6 +48,7 @@ export default function NuevoRecordatorio({ navigation }) {
       const tipoAlertaFinal = alertaSonora ? 'sonora' : 'visual';
 
       await crearRecordatorio({
+        ...(pacienteId ? { id_usuario: pacienteId } : {}),
         titulo,
         descripcion,
         tipo: tipoSeleccionado,
