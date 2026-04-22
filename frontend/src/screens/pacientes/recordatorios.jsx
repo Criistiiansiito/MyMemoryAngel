@@ -106,7 +106,7 @@ export default function Recordatorios({ navigation }) {
         ) : reminders.length === 0 ? (
           <View style={styles.emptyStateContainer}>
             <MaterialCommunityIcons name="bell-off-outline" size={60} color="#CBD5E0" />
-            <Text style={styles.emptyStateText}>No hay recordatorios registrados</Text>
+            <Text style={styles.emptyStateText}>No hay recordatorios para hoy</Text>
           </View>
         ) : (
           reminders.map((item) => {
