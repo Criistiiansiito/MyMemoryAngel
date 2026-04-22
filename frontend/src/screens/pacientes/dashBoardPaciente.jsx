@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Platform, Image, StatusBar } from 'react-native';
 // Importamos useSafeAreaInsets para control total sobre los espacios de iOS
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import * as Speech from 'expo-speech';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
 import { configuracionPerfil } from '../../services/configuracionPerfil';
 import BottomTabBar from '../../components/BottomTabBar';
+import { useCurrentDate } from '../../hooks/useCurrentDate';
+import { formatMadridDate } from '../../utils/dateMadrid';
 
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
@@ -16,12 +20,13 @@ export default function DashboardPaciente({ navigation }) {
   const [nombreUsuario, setNombreUsuario] = useState('Paciente'); 
   const [fotoPerfil, setFotoPerfil] = useState(null); 
   const [loading, setLoading] = useState(true);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   
   // Hook para obtener los tamaños de los bordes (notch, barra de estado)
   const insets = useSafeAreaInsets();
-
-  const fechaHoy = new Date().toLocaleDateString('es-ES', { 
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' 
+  const currentDate = useCurrentDate();
+  const fechaHoy = formatMadridDate(currentDate, {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
   });
 
   const { aplicarEscala, cargarDesdeServidor, isDaltonic } = useAccesibilidad();
@@ -50,6 +55,19 @@ export default function DashboardPaciente({ navigation }) {
       setLoading(false);
     }
   };
+
+  useEffect(() => () => {
+    Speech.stop();
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        Speech.stop();
+        setIsSpeaking(false);
+      };
+    }, [])
+  );
 
   if (loading) {
     return (
@@ -81,6 +99,35 @@ export default function DashboardPaciente({ navigation }) {
   }
 };
 
+  const leerDashboard = () => {
+    if (isSpeaking) {
+      Speech.stop();
+      setIsSpeaking(false);
+      return;
+    }
+
+    const mensaje = [
+      `Hola ${nombreUsuario}.`,
+      `Hoy es ${fechaHoy}.`,
+      'Estoy aquí para ayudarte.',
+      'Puedes entrar en Recordatorios para ver lo que tienes que hacer hoy.',
+      'En Calendario puedes ver fechas importantes.',
+      'En Estimulación encontrarás juegos y ejercicios para la memoria.',
+      'En Asistente puedes hacer preguntas cuando lo necesites.',
+      'Arriba a la derecha tienes un botón para acceder a los ajustes. Desde ahí puedes cambiar tus datos o conectarte con tu cuidador.',
+    ].join(' ');
+
+    setIsSpeaking(true);
+    Speech.speak(mensaje, {
+      language: 'es-ES',
+      pitch: 1,
+      rate: 0.8,
+      onDone: () => setIsSpeaking(false),
+      onStopped: () => setIsSpeaking(false),
+      onError: () => setIsSpeaking(false),
+    });
+  };
+
   return (
     // Quitamos el SafeAreaView de afuera para que el color de fondo llegue hasta arriba
     <View style={styles.container}>
@@ -104,8 +151,8 @@ export default function DashboardPaciente({ navigation }) {
 
           {/* Contenedor de botones: Con flexShrink: 0 evitamos que se compriman */}
           <View style={{ flexDirection: 'row', flexShrink: 0 }}> 
-            <TouchableOpacity style={styles.headerIconButton}>
-              <MaterialCommunityIcons name="volume-high" size={24} color="#334155" />
+            <TouchableOpacity style={styles.headerIconButton} onPress={leerDashboard}>
+              <MaterialCommunityIcons name={isSpeaking ? "stop" : "volume-high"} size={24} color="#334155" />
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.headerIconButton} 
@@ -122,9 +169,7 @@ export default function DashboardPaciente({ navigation }) {
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20}}>
         
         <View style={styles.dateHeaderContainer}>
-          <Text style={styles.dateText}>
-            {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-          </Text>
+          <Text style={styles.dateText}>{fechaHoy}</Text>
         </View>   
 
         <TouchableOpacity 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   View, Text, TouchableOpacity, ScrollView, 
   ActivityIndicator, Alert, Image, Platform, StatusBar, StyleSheet 
@@ -6,9 +6,11 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
+import * as Speech from 'expo-speech';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import { File } from 'expo-file-system';
+import { useFocusEffect } from '@react-navigation/native';
 import { getStyles } from '../../../style/styles';
 import { useAccesibilidad } from '../../../services/accesibilidadContext';
 import { musicaService } from '../../../services/musicaService';
@@ -28,6 +30,7 @@ export default function Musica({ onBack }) {
   const [estaReproduciendo, setEstaReproduciendo] = useState(false);
   const [reproduciendoId, setReproduciendoId] = useState(null);
   const [progreso, setProgreso] = useState({ posicion: 0, duracion: 0 });
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const user = useStoredUser();
   const userId = user?.uid;
 
@@ -44,8 +47,27 @@ export default function Musica({ onBack }) {
       } catch (e) { console.error(e); }
     };
     configurarAudio();
-    return () => { if (sonido) sonido.unloadAsync(); };
+    return () => {
+      Speech.stop();
+      if (sonido) sonido.unloadAsync();
+    };
   }, [sonido]);
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        Speech.stop();
+        setIsSpeaking(false);
+      };
+    }, [])
+  );
+
+  useEffect(() => {
+    if (vistaActual !== 'menu') {
+      Speech.stop();
+      setIsSpeaking(false);
+    }
+  }, [vistaActual]);
 
   const onSelectCategoria = async (item) => {
     setCargando(true);
@@ -166,6 +188,8 @@ export default function Musica({ onBack }) {
   const calcularBarra = () => progreso.duracion > 0 ? (progreso.posicion / progreso.duracion) * 100 : 0;
 
   const volverAlMenu = async () => {
+    Speech.stop();
+    setIsSpeaking(false);
     if (sonido) { await sonido.stopAsync(); await sonido.unloadAsync(); setSonido(null); }
     setVistaActual('menu');
     setReproduciendoId(null);
@@ -177,6 +201,39 @@ export default function Musica({ onBack }) {
     { id: 3, titulo: 'Clásica', tipo: 'clasica', meta: 'Mañana', descripcion: 'Ritmos constantes para reducir la ansiedad.', icono: 'music-clef-treble', color: '#F59E0B', actionIcon: 'play-circle', actionLabel: 'Escuchar' },
     { id: 4, titulo: 'Terapia 40 Hz', tipo: 'frecuencias', meta: 'Sesión Diaria', descripcion: 'Frecuencias para la estimulación neuroprotectora.', icono: 'waveform', color: '#EC4899', actionIcon: 'play-circle', actionLabel: 'Escuchar' },
   ];
+
+  const leerResumen = () => {
+    if (vistaActual !== 'menu') {
+      Speech.stop();
+      setIsSpeaking(false);
+      return;
+    }
+
+    if (isSpeaking) {
+      Speech.stop();
+      setIsSpeaking(false);
+      return;
+    }
+
+    const mensaje = [
+      'Estás en la sección de musicoterapia.',
+      'Mis recuerdos sirve para guardar y escuchar tus canciones personales, especialmente en momentos de nostalgia o para recordar.',
+      'Naturaleza es ideal para relajarse, por ejemplo antes de dormir o cuando te sientas nervioso.',
+      'Clásica está pensada para momentos de calma o cuando quieras concentrarte.',
+      'La terapia de cuarenta hercios se usa en sesiones de estimulación auditiva diaria, preferiblemente en un momento tranquilo del día.',
+      'Pulsa una categoría para entrar y escuchar sus canciones.',
+    ].join(' ');
+
+    setIsSpeaking(true);
+    Speech.speak(mensaje, {
+      language: 'es-ES',
+      pitch: 1,
+      rate: 0.8,
+      onDone: () => setIsSpeaking(false),
+      onStopped: () => setIsSpeaking(false),
+      onError: () => setIsSpeaking(false),
+    });
+  };
 
   const renderMenu = () => (
     <MenuCategoriaEstimulacion items={categoriasMusica} onSelectItem={onSelectCategoria} />
@@ -262,13 +319,20 @@ export default function Musica({ onBack }) {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity onPress={vistaActual === 'menu' ? onBack : volverAlMenu}>
-            <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
-          </TouchableOpacity>
-          <Text style={styles.brandName}>
-            {vistaActual === 'menu' ? 'Musicoterapia' : categoriaActiva?.titulo}
-          </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity onPress={vistaActual === 'menu' ? onBack : volverAlMenu}>
+              <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
+            </TouchableOpacity>
+            <Text style={styles.brandName}>
+              {vistaActual === 'menu' ? 'Musicoterapia' : categoriaActiva?.titulo}
+            </Text>
+          </View>
+          {vistaActual === 'menu' && (
+            <TouchableOpacity style={styles.headerIconButton} onPress={leerResumen}>
+              <MaterialCommunityIcons name={isSpeaking ? 'stop' : 'volume-high'} size={24} color="#334155" />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
       

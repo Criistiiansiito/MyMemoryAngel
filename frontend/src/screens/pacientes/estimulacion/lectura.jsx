@@ -27,6 +27,7 @@ export default function Lectura({ onBack }) {
   const [fontSize, setFontSize] = useState(22);
   const [progresoLectura, setProgresoLectura] = useState(0);
   const [isTalking, setIsTalking] = useState(false);
+  const [isSpeakingSummary, setIsSpeakingSummary] = useState(false);
 
   // Limpiamos la voz al terminar
   useEffect(() => {
@@ -34,6 +35,13 @@ export default function Lectura({ onBack }) {
       Speech.stop();
     };
   }, []);
+
+  useEffect(() => {
+    if (vistaActual !== 'menu') {
+      Speech.stop();
+      setIsSpeakingSummary(false);
+    }
+  }, [vistaActual]);
 
   const onSelectCategoria = async (item) => {
     setCargando(true);
@@ -71,6 +79,39 @@ export default function Lectura({ onBack }) {
         }
       });
     }
+  };
+
+  const leerResumen = () => {
+    if (vistaActual !== 'menu') {
+      Speech.stop();
+      setIsSpeakingSummary(false);
+      return;
+    }
+
+    if (isSpeakingSummary) {
+      Speech.stop();
+      setIsSpeakingSummary(false);
+      return;
+    }
+
+    const mensaje = [
+      'Estas en la seccion de lectura.',
+      'Relatos del ayer ofrece historias de otras epocas para recordar y conversar.',
+      'Lectura facilitada usa textos cortos y sencillos para leer con comodidad.',
+      'Poesia y rimas ayuda a trabajar memoria y ritmo con textos breves.',
+      'Naturaleza incluye curiosidades y articulos suaves para una lectura tranquila.',
+      'Pulsa una categoria para ver sus lecturas.',
+    ].join(' ');
+
+    setIsSpeakingSummary(true);
+    Speech.speak(mensaje, {
+      language: 'es-ES',
+      pitch: 1,
+      rate: 0.8,
+      onDone: () => setIsSpeakingSummary(false),
+      onStopped: () => setIsSpeakingSummary(false),
+      onError: () => setIsSpeakingSummary(false),
+    });
   };
 
   const categoriasLectura = [
@@ -202,22 +243,29 @@ export default function Lectura({ onBack }) {
         styles.topBar, 
         { paddingTop: insets.top }
       ]}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity 
-            onPress={() => {
-              if (isTalking) Speech.stop();
-              if (vistaActual === 'menu') {
-                onBack();
-              } else {
-                setVistaActual(vistaActual === 'lector' ? 'lista' : 'menu');
-              }
-            }}
-          >
-            <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
-          </TouchableOpacity>
-          <Text style={styles.brandName}>
-            {vistaActual === 'menu' ? 'Lectura' : (vistaActual === 'lista' ? categoriaActiva?.titulo : 'Leyendo')}
-          </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity 
+              onPress={() => {
+                if (isTalking || isSpeakingSummary) Speech.stop();
+                if (vistaActual === 'menu') {
+                  onBack();
+                } else {
+                  setVistaActual(vistaActual === 'lector' ? 'lista' : 'menu');
+                }
+              }}
+            >
+              <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
+            </TouchableOpacity>
+            <Text style={styles.brandName}>
+              {vistaActual === 'menu' ? 'Lectura' : (vistaActual === 'lista' ? categoriaActiva?.titulo : 'Leyendo')}
+            </Text>
+          </View>
+          {vistaActual === 'menu' ? (
+            <TouchableOpacity style={styles.headerIconButton} onPress={leerResumen}>
+              <MaterialCommunityIcons name={isSpeakingSummary ? 'stop' : 'volume-high'} size={24} color="#334155" />
+            </TouchableOpacity>
+          ) : null}
         </View>
       </View>
       

@@ -655,6 +655,11 @@ chatInputContainer: {
   reminderInfoBody: {
     flex: 1,
   },
+  reminderCardContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   reminderTopRow: {
     flexDirection: 'row', 
     alignItems: 'center', 
@@ -702,6 +707,15 @@ chatInputContainer: {
     color: '#94A3B8', 
     fontWeight: '600',
     textTransform: 'capitalize',
+  },
+  reminderActionButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 20,
+    backgroundColor: '#F8FAFC',
   },
   centeredLoader: {
     marginTop: 50,

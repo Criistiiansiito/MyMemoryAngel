@@ -1,6 +1,5 @@
 
-
-  async function sendPushNotifications(tokens, { title, body, data = {} }) {
+  async function sendPushNotifications(tokens, { title, body, data = {}, categoryId = null }) {
 
     const { Expo } = await import('expo-server-sdk');
     const expo = new Expo();
@@ -17,6 +16,7 @@
       title,
       body,
       data,
+      ...(categoryId ? { categoryId } : {}),
     }));
 
     const chunks = expo.chunkPushNotifications(messages);

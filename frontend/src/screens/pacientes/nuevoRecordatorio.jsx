@@ -33,6 +33,7 @@ export default function NuevoRecordatorio({ navigation }) {
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
   const [mode, setMode] = useState('date');
+  const [tempDate, setTempDate] = useState(new Date());
 
   const handleGuardar = async () => {
     if (!titulo.trim()) {
@@ -64,6 +65,7 @@ export default function NuevoRecordatorio({ navigation }) {
 
   const showMode = (currentMode) => {
     setMode(currentMode);
+    setTempDate(date);
     setShowPicker(true);
   };
 
@@ -130,7 +132,7 @@ export default function NuevoRecordatorio({ navigation }) {
                   }
                 ]}
               >
-                <View style={[styles.iconoTipoCirculo, { backgroundColor: item.color }]}>
+                <View style={[styles.iconoTipoCirculo, { backgroundColor: 'transparent' }]}>
                   <MaterialCommunityIcons name={item.icon} size={24} color={item.iconColor} />
                 </View>
                 <Text style={[
@@ -146,13 +148,13 @@ export default function NuevoRecordatorio({ navigation }) {
 
         <Text style={styles.label}>Frecuencia</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
-          {['Puntual', 'Semanal', 'Mensual'].map((f) => (
+          {['Puntual', 'Diaria', 'Semanal', 'Mensual'].map((f) => (
             <TouchableOpacity 
               key={f} 
               onPress={() => setFrecuencia(f)} 
               style={[
                 styles.optionButton, 
-                { flex: 0.32 }, 
+                { flex: 0.235 }, 
                 frecuencia === f && styles.optionButtonActive
               ]}
             >
@@ -178,11 +180,53 @@ export default function NuevoRecordatorio({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {showPicker && (
-          <DateTimePicker 
-            value={date} mode={mode} is24Hour={true} 
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'} 
-            onChange={(e, d) => { setShowPicker(Platform.OS === 'ios'); if(d) setDate(d); }} 
+        {showPicker && Platform.OS === 'ios' && (
+          <View style={[styles.settingsCard, { marginTop: 15 }]}>
+            <DateTimePicker
+              value={tempDate}
+              mode={mode}
+              is24Hour={true}
+              display="spinner"
+              onChange={(event, selectedDate) => {
+                if (selectedDate) {
+                  setTempDate(selectedDate);
+                }
+              }}
+            />
+
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 10 }}>
+              <TouchableOpacity
+                onPress={() => setShowPicker(false)}
+                style={[styles.optionButton, { marginRight: 10, paddingHorizontal: 18 }]}
+              >
+                <Text style={styles.optionText}>Cancelar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  setDate(tempDate);
+                  setShowPicker(false);
+                }}
+                style={[styles.optionButton, styles.optionButtonActive, { paddingHorizontal: 18 }]}
+              >
+                <Text style={[styles.optionText, styles.optionTextActive]}>Aceptar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
+        {showPicker && Platform.OS !== 'ios' && (
+          <DateTimePicker
+            value={date}
+            mode={mode}
+            is24Hour={true}
+            display="default"
+            onChange={(event, selectedDate) => {
+              setShowPicker(false);
+              if (selectedDate) {
+                setDate(selectedDate);
+              }
+            }}
           />
         )}
 

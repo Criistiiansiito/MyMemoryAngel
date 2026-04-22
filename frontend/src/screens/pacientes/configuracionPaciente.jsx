@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Switch, TextInput, Image, ActivityIndicator, Platform, Alert, StatusBar, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker'; 
 import * as ImagePicker from 'expo-image-picker';
+import * as Speech from 'expo-speech';
 import QRCode from 'react-native-qrcode-svg';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext'; 
@@ -25,10 +27,24 @@ export default function ConfiguracionPaciente({ navigation }) {
     const [profilePhoto, setProfilePhoto] = useState(null);
     const [loading, setLoading] = useState(true);
     const [uid, setUid] = useState(null);
+    const [isSpeaking, setIsSpeaking] = useState(false);
 
     useEffect(() => { 
         cargarDatos(); 
     }, []);
+
+    useEffect(() => () => {
+        Speech.stop();
+    }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            return () => {
+                Speech.stop();
+                setIsSpeaking(false);
+            };
+        }, [])
+    );
 
     const cargarDatos = async () => {
         try {
@@ -147,6 +163,32 @@ export default function ConfiguracionPaciente({ navigation }) {
         }
     };
 
+    const leerResumen = () => {
+        if (isSpeaking) {
+            Speech.stop();
+            setIsSpeaking(false);
+            return;
+        }
+
+        const mensaje = [
+        'Estás en la pantalla de configuración.',
+        'Aquí puedes cambiar tu foto de perfil, tu nombre y tu fecha de nacimiento.',
+        'También puedes ajustar el tamaño del texto y activar el modo daltónico.',
+        'Más abajo encontrarás tu código QR para conectarte con tu cuidador.',
+        'Por último, al final de la pantalla puedes cerrar la sesión.',
+        ].join(' ');
+
+        setIsSpeaking(true);
+        Speech.speak(mensaje, {
+            language: 'es-ES',
+            pitch: 1,
+            rate: 0.8,
+            onDone: () => setIsSpeaking(false),
+            onStopped: () => setIsSpeaking(false),
+            onError: () => setIsSpeaking(false),
+        });
+    };
+
     if (loading) {
         return (
             <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
@@ -164,11 +206,16 @@ export default function ConfiguracionPaciente({ navigation }) {
                 styles.topBar, 
                 { paddingTop: insets.top }
             ]}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
-                    </TouchableOpacity>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                            <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
+                        </TouchableOpacity>
                     <Text style={styles.brandName}>Configuración</Text>
+                    </View>
+                    <TouchableOpacity style={styles.headerIconButton} onPress={leerResumen}>
+                        <MaterialCommunityIcons name={isSpeaking ? 'stop' : 'volume-high'} size={24} color="#334155" />
+                    </TouchableOpacity>
                 </View>
             </View>
             

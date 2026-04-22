@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import * as Speech from 'expo-speech';
 import * as SecureStore from 'expo-secure-store'; 
 import { getStyles } from '../../../style/styles';
 import { useAccesibilidad } from '../../../services/accesibilidadContext';
@@ -24,6 +25,7 @@ export default function Escritura({ onBack }) {
   const user = useStoredUser();
   const userId = user?.uid;
   const [expandedId, setExpandedId] = useState(null); // Estado para controlar el despliegue
+  const [isSpeakingSummary, setIsSpeakingSummary] = useState(false);
 
   const refranes = [
     { id: 1, inicio: "A caballo regalado, no le mires el...", respuesta: "diente" },
@@ -63,6 +65,19 @@ export default function Escritura({ onBack }) {
   ];
 
   useEffect(() => {
+    return () => {
+      Speech.stop();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (vista !== 'menu') {
+      Speech.stop();
+      setIsSpeakingSummary(false);
+    }
+  }, [vista]);
+
+  useEffect(() => {
     if (vista === 'menu' && userId) {
       const obtenerHistorial = async () => {
         try {
@@ -76,6 +91,38 @@ export default function Escritura({ onBack }) {
       obtenerHistorial();
     }
   }, [vista, userId]);
+
+  const leerResumen = () => {
+    if (vista !== 'menu') {
+      Speech.stop();
+      setIsSpeakingSummary(false);
+      return;
+    }
+
+    if (isSpeakingSummary) {
+      Speech.stop();
+      setIsSpeakingSummary(false);
+      return;
+    }
+
+    const mensaje = [
+      'Estas en la seccion de escritura.',
+      'Completar refranes sirve para trabajar memoria verbal y terminar frases conocidas.',
+      'Mi diario te permite escribir lo que sientes y guardar tus recuerdos personales.',
+      'Debajo tambien puedes revisar o eliminar escritos anteriores, a modo de diario.',
+      'Pulsa una opcion para empezar.',
+    ].join(' ');
+
+    setIsSpeakingSummary(true);
+    Speech.speak(mensaje, {
+      language: 'es-ES',
+      pitch: 1,
+      rate: 0.8,
+      onDone: () => setIsSpeakingSummary(false),
+      onStopped: () => setIsSpeakingSummary(false),
+      onError: () => setIsSpeakingSummary(false),
+    });
+  };
 
   const guardarDiario = async () => {
     if (!entrada.trim()) return Alert.alert("Aviso", "El texto está vacío.");
@@ -210,11 +257,18 @@ export default function Escritura({ onBack }) {
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={[styles.container, { flex: 1 }]}>
       <StatusBar barStyle="dark-content" />
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => vista === 'menu' ? onBack() : setVista('menu')}>
-            <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
-          </TouchableOpacity>
-          <Text style={styles.brandName}>{vista === 'menu' ? 'Escritura' : (vista === 'refranes' ? 'Refranes' : 'Diario')}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity onPress={() => vista === 'menu' ? onBack() : setVista('menu')}>
+              <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
+            </TouchableOpacity>
+            <Text style={styles.brandName}>{vista === 'menu' ? 'Escritura' : (vista === 'refranes' ? 'Refranes' : 'Diario')}</Text>
+          </View>
+          {vista === 'menu' ? (
+            <TouchableOpacity style={styles.headerIconButton} onPress={leerResumen}>
+              <MaterialCommunityIcons name={isSpeakingSummary ? 'stop' : 'volume-high'} size={24} color="#334155" />
+            </TouchableOpacity>
+          ) : null}
         </View>
       </View>
 

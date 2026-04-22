@@ -7,6 +7,8 @@ import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
 import { configuracionPerfil } from '../../services/configuracionPerfil';
 import BottomTabBar from '../../components/BottomTabBarCuidador'; 
+import { useCurrentDate } from '../../hooks/useCurrentDate';
+import { formatMadridDate } from '../../utils/dateMadrid';
 
 export default function DashboardCuidador({ navigation }) {
   const [nombreUsuario, setNombreUsuario] = useState('Cuidador');
@@ -17,8 +19,9 @@ export default function DashboardCuidador({ navigation }) {
   const insets = useSafeAreaInsets();
   const { aplicarEscala, cargarDesdeServidor, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
+  const currentDate = useCurrentDate();
 
-  const fechaHoy = new Date().toLocaleDateString('es-ES', { 
+  const fechaHoy = formatMadridDate(currentDate, {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' 
   });
 
@@ -88,9 +91,7 @@ export default function DashboardCuidador({ navigation }) {
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20}}>
 
         <View style={styles.dateHeaderContainer}>
-          <Text style={styles.dateText}>
-            {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-          </Text>
+          <Text style={styles.dateText}>{fechaHoy}</Text>
         </View>  
               
         <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('GestionarPacientes')}>
