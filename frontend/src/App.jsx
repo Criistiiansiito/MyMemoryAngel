@@ -12,6 +12,7 @@ import RegistroPaciente from './screens/auth/registroPaciente';
 
 // Paciente
 import Actividades from './screens/pacientes/actividades';
+import Calendario from './screens/pacientes/calendario';
 import ConfiguracionPaciente from './screens/pacientes/configuracionPaciente';
 import DashboardPaciente from './screens/pacientes/dashBoardPaciente';
 import GestionarRecordatorios from './screens/pacientes/gestionarRecordatorios';
@@ -34,7 +35,6 @@ import GestionarHistorialRecordatoriosPaciente from './screens/cuidadores/inform
 // Common
 import ModificarRecordatorio from './screens/common/modificarRecordatorio';
 import NuevoRecordatorio from './screens/common/nuevoRecordatorio';
-import Calendario from './screens/common/calendario';
 import ChatBot from './screens/common/chatBot';
 import ChatBotCuidador from './screens/common/chatBotCuidador';
 import { inicializarNotificaciones } from './services/notificacionesService';
