@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Platform, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import * as Speech from 'expo-speech';
 
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
@@ -41,6 +42,11 @@ export default function EstimulacionCognitiva() {
   const [selectedGame, setSelectedGame] = useState(null);
   const [selectedGameMenu, setSelectedGameMenu] = useState(null);
   const [selectedActivity, setSelectedActivity] = useState(null);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  useEffect(() => () => {
+    Speech.stop();
+  }, []);
 
   if (selectedGame) {
     const props = { onBack: () => setSelectedGame(null) };
@@ -102,6 +108,32 @@ export default function EstimulacionCognitiva() {
     return <Escritura onBack={() => setSelectedActivity(null)} />;
   }
 
+  const leerResumen = () => {
+    if (isSpeaking) {
+      Speech.stop();
+      setIsSpeaking(false);
+      return;
+    }
+
+    const mensaje = [
+      'Estás en la pantalla de estimulación cognitiva.',
+      'Aquí encontrarás dos bloques principales.',
+      'Actividades, donde podrás escuchar música, leer, escribir tu propio diario, incluso divertirte dibujando.',
+      'Y por otro lado juegos, con seis áreas cognitivas: memoria, atención, lenguaje, orientación, funciones ejecutivas y visual.',
+      'También tienes un consejo del día para animarte a practicar.',
+    ].join(' ');
+
+    setIsSpeaking(true);
+    Speech.speak(mensaje, {
+      language: 'es-ES',
+      pitch: 1,
+      rate: 0.9,
+      onDone: () => setIsSpeaking(false),
+      onStopped: () => setIsSpeaking(false),
+      onError: () => setIsSpeaking(false),
+    });
+  };
+
   const renderMainMenu = () => (
     <View style={{ flex: 1 }}>
       <View
@@ -113,9 +145,9 @@ export default function EstimulacionCognitiva() {
         <View style={styles.headerActions}>
           <Text style={styles.brandName}>Estimulación</Text>
           <View style={styles.headerButtonsGroup}>
-            <View style={[styles.headerIconButton, { backgroundColor: '#E8F0FE' }]}>
-              <MaterialCommunityIcons name="head-heart" size={24} color="#4D6BFE" />
-            </View>
+            <TouchableOpacity style={styles.headerIconButton} onPress={leerResumen}>
+              <MaterialCommunityIcons name={isSpeaking ? 'stop' : 'volume-high'} size={24} color="#334155" />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
