@@ -1,18 +1,13 @@
 import React, { useCallback, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, StatusBar, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
-import axios from 'axios';
 
 import { getStyles } from '../../../../style/styles';
 import { useAccesibilidad } from '../../../../services/accesibilidadContext';
 import { getIconConfig, formatearFechaYHora } from '../../../../services/recordatoriosService';
-
-const API =
-  Platform.OS === 'web'
-    ? 'http://localhost:5000/api'
-    : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
+import { gestionRecordatoriosPacientesService } from '../../../../services/gestionRecordatoriosPacientes';
 
 const formatRecurrencia = (recurrencia = 'puntual') => {
   const value = recurrencia.toLowerCase();
@@ -40,11 +35,8 @@ export default function GestionarListaRecordatoriosPaciente({ route, navigation 
 
     try {
       setLoading(true);
-      const response = await axios.get(`${API}/auth/recordatorios/${paciente.uid}`);
-      setRecordatorios(response.data.recordatorios || []);
-    } catch (error) {
-      console.error('Error cargando recordatorios del paciente:', error);
-      setRecordatorios([]);
+      const response = await gestionRecordatoriosPacientesService.listarRecordatoriosPaciente(paciente.uid);
+      setRecordatorios(response.recordatorios || []);
     } finally {
       setLoading(false);
     }

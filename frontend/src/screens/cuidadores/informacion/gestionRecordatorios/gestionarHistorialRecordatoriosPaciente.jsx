@@ -1,25 +1,13 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, StatusBar, Platform } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
-import axios from 'axios';
 
 import { getStyles } from '../../../../style/styles';
 import { useAccesibilidad } from '../../../../services/accesibilidadContext';
 import { getIconConfig, formatearFechaYHora } from '../../../../services/recordatoriosService';
-import { toMadridDateOnly } from '../../../../utils/dateMadrid';
-
-const API =
-  Platform.OS === 'web'
-    ? 'http://localhost:5000/api'
-    : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
-
-const addDays = (dateString, delta) => {
-  const date = new Date(`${dateString}T00:00:00`);
-  date.setDate(date.getDate() + delta);
-  return toMadridDateOnly(date);
-};
+import { gestionRecordatoriosPacientesService } from '../../../../services/gestionRecordatoriosPacientes';
 
 const formatDateLabel = (dateString) =>
   new Date(`${dateString}T00:00:00`).toLocaleDateString('es-ES', {
@@ -43,9 +31,6 @@ export default function HistorialRecordatoriosPaciente({ route, navigation }) {
   const insets = useSafeAreaInsets();
   const { paciente } = route.params;
 
-  const today = toMadridDateOnly(new Date());
-  const from = useMemo(() => addDays(today, -30), [today]);
-
   const [historial, setHistorial] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -58,27 +43,12 @@ export default function HistorialRecordatoriosPaciente({ route, navigation }) {
 
     try {
       setLoading(true);
-      const response = await axios.get(`${API}/auth/recordatorios-calendario/${paciente.uid}`, {
-        params: { from, to: today },
-      });
-
-      const lista = (response.data.recordatorios || [])
-        .filter((item) => item.fecha_ocurrencia && item.fecha_ocurrencia <= today)
-        .sort((a, b) => {
-          if (a.fecha_ocurrencia === b.fecha_ocurrencia) {
-            return new Date(a.fecha_hora) - new Date(b.fecha_hora);
-          }
-          return a.fecha_ocurrencia < b.fecha_ocurrencia ? 1 : -1;
-        });
-
-      setHistorial(lista);
-    } catch (error) {
-      console.error('Error cargando historial de recordatorios:', error);
-      setHistorial([]);
+      const response = await gestionRecordatoriosPacientesService.obtenerHistorialUltimoMesPaciente(paciente.uid);
+      setHistorial(response.historial || []);
     } finally {
       setLoading(false);
     }
-  }, [from, paciente?.uid, today]);
+  }, [paciente?.uid]);
 
   useFocusEffect(
     useCallback(() => {
