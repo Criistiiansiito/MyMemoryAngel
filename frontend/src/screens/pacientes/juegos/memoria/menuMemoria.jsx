@@ -11,11 +11,12 @@ export default function MenuMemoria({ onBack, onSelectGame }) {
       games={[
         {
           id: 'Memoria',
-          title: 'Memoria Numérica',
-          description: 'Recuerda una serie de números y reprodúcela en orden.',
-          icon: 'brain',
+          title: 'Memoria Numerica',
+          description: 'Recuerda una serie de dígitos y tecleala en orden.',
+          icon: 'calculator',
           color: '#FDF2F8',
           iconColor: '#EC4899',
+          showProgress: false,
         },
       ]}
     />
