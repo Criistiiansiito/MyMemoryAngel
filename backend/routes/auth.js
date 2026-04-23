@@ -314,10 +314,10 @@ router.post('/progreso-juegos', async (req, res) => {
             await db.query(
                 `
                     INSERT INTO progreso_juegos
-                    (user_uid, juego, categoria, partidas_jugadas, mejor_puntuacion, ultima_puntuacion, promedio_puntuacion, ultimo_resultado, ultima_fecha)
-                    VALUES (?, ?, ?, 1, ?, ?, ?, ?, NOW())
+                    (user_uid, juego, categoria, partidas_jugadas, mejor_puntuacion, promedio_puntuacion, ultimo_resultado, ultima_fecha)
+                    VALUES (?, ?, ?, 1, ?, ?, ?, NOW())
                 `,
-                [targetUid, juego, categoria, puntuacion, puntuacion, puntuacion, ultimo_resultado]
+                [targetUid, juego, categoria, puntuacion, puntuacion, ultimo_resultado]
             );
         } else {
             const actual = rows[0];
@@ -336,13 +336,12 @@ router.post('/progreso-juegos', async (req, res) => {
                         categoria = ?,
                         partidas_jugadas = ?,
                         mejor_puntuacion = ?,
-                        ultima_puntuacion = ?,
                         promedio_puntuacion = ?,
                         ultimo_resultado = ?,
                         ultima_fecha = NOW()
                     WHERE user_uid = ? AND juego = ?
                 `,
-                [categoria, partidasJugadas, mejorPuntuacion, nuevaPuntuacion, nuevoPromedio, ultimo_resultado, targetUid, juego]
+                [categoria, partidasJugadas, mejorPuntuacion, nuevoPromedio, ultimo_resultado, targetUid, juego]
             );
         }
 
@@ -364,7 +363,7 @@ router.get('/progreso-juegos/:user_uid', async (req, res) => {
 
         const [rows] = await db.query(
             `
-                SELECT id, user_uid, juego, categoria, partidas_jugadas, mejor_puntuacion, ultima_puntuacion,
+                SELECT id, user_uid, juego, categoria, partidas_jugadas, mejor_puntuacion,
                        promedio_puntuacion, ultimo_resultado, ultima_fecha, actualizado_en
                 FROM progreso_juegos
                 WHERE user_uid = ?
