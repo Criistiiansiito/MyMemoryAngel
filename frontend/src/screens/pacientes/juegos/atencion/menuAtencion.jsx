@@ -6,16 +6,17 @@ export default function MenuAtencion({ onBack, onSelectGame }) {
     <MenuCategoriaJuegos
       onBack={onBack}
       onSelectGame={onSelectGame}
-      title="Atención"
-      description="Actividades para mantener el foco, localizar estímulos y reaccionar con precisión."
+      title="Atencion"
+      description="Actividades para mantener el foco, localizar estimulos y reaccionar con precision."
       games={[
         {
           id: 'Atencion',
-          title: 'Atención Visual',
-          description: 'Encuentra todos los símbolos objetivo antes de avanzar de ronda.',
+          title: 'Atencion Visual',
+          description: 'Encuentra todos los simbolos iguales que el objetivo.',
           icon: 'target',
           color: '#ECFDF5',
           iconColor: '#10B981',
+          showProgress: false,
         },
       ]}
     />

@@ -11,31 +11,31 @@ import { progresoJuegosService } from '../../../../services/progresoJuegosServic
 const LEVELS = [
   {
     id: 'facil',
-    title: 'Nivel Facil',
-    description: 'Secuencias de 2 digitos.',
+    title: 'Nivel Fácil',
+    description: 'Cuadrícula de 3x3.',
     icon: 'circle-outline',
-    color: '#FCE7F3',
-    iconColor: '#DB2777',
+    color: '#ECFDF5',
+    iconColor: '#10B981',
   },
   {
     id: 'medio',
     title: 'Nivel Medio',
-    description: 'Secuencias de 3 digitos.',
+    description: 'Cuadrícula de 4x4.',
     icon: 'circle-half-full',
-    color: '#FCE7F3',
-    iconColor: '#DB2777',
+    color: '#ECFDF5',
+    iconColor: '#10B981',
   },
   {
     id: 'dificil',
-    title: 'Nivel Dificil',
-    description: 'Secuencias de 4 digitos.',
+    title: 'Nivel Difícil',
+    description: 'Cuadrícula de 5x5.',
     icon: 'checkbox-blank-circle',
-    color: '#FCE7F3',
-    iconColor: '#DB2777',
+    color: '#ECFDF5',
+    iconColor: '#10B981',
   },
 ];
 
-const MEMORY_KEYS = ['memoria_facil', 'memoria_medio', 'memoria_dificil'];
+const ATENCION_KEYS = ['atencion_facil', 'atencion_medio', 'atencion_dificil'];
 
 const normalizeGameKey = (value = '') =>
   String(value)
@@ -44,65 +44,43 @@ const normalizeGameKey = (value = '') =>
     .toLowerCase()
     .trim();
 
-const formatDate = (value) => {
-  if (!value) return 'Sin datos';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'Sin datos';
-  return date.toLocaleDateString('es-ES', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
-};
-
-export default function NivelesMemoria({ onBack, onSelectDifficulty }) {
+export default function NivelesAtencion({ onBack, onSelectDifficulty }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
-  const juegosStyles = getJuegosStyles(aplicarEscala, isDaltonic);
+  const juegosStyles = getJuegosStyles(aplicarEscala);
   const insets = useSafeAreaInsets();
   const [progressMap, setProgressMap] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
-
     const cargarDatos = async () => {
       try {
         setLoading(true);
         const response = await progresoJuegosService.obtenerMiProgreso();
         const rows = response.progreso || [];
-
         if (cancelled) return;
 
         const nextProgressMap = rows.reduce((acc, item) => {
           const key = normalizeGameKey(item.juego);
-          if (MEMORY_KEYS.includes(key)) {
+          if (ATENCION_KEYS.includes(key)) {
             acc[key] = item;
           }
           return acc;
         }, {});
-
         setProgressMap(nextProgressMap);
       } catch (_error) {
-        if (!cancelled) {
-          setProgressMap({});
-        }
+        if (!cancelled) setProgressMap({});
       } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        if (!cancelled) setLoading(false);
       }
     };
-
     cargarDatos();
-
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
   const summary = useMemo(() => {
-    const rows = MEMORY_KEYS.map((key) => progressMap[key]).filter(Boolean);
+    const rows = ATENCION_KEYS.map((key) => progressMap[key]).filter(Boolean);
     const partidasTotales = rows.reduce((acc, item) => acc + Number(item.partidas_jugadas || 0), 0);
     const totalAciertosEstimados = rows.reduce(
       (acc, item) => acc + (Number(item.promedio_puntuacion || 0) * Number(item.partidas_jugadas || 0)),
@@ -125,7 +103,6 @@ export default function NivelesMemoria({ onBack, onSelectDifficulty }) {
       accuracy,
       ultimoResultado: latestRow?.ultimo_resultado || '0/10',
       mejorPuntuacion: `${Math.max(...rows.map((item) => Number(item.mejor_puntuacion || 0)), 0)}/10`,
-      ultimaFecha: latestRow?.ultima_fecha || null,
     };
   }, [progressMap]);
 
@@ -135,16 +112,21 @@ export default function NivelesMemoria({ onBack, onSelectDifficulty }) {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
 
+      {/* Header */}
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={juegosStyles.headerRow}>
           <TouchableOpacity onPress={onBack}>
             <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
           </TouchableOpacity>
-          <Text style={styles.brandName}>Memoria Numerica</Text>
+          <Text style={styles.brandName}>Atención Visual</Text>
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent} 
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Selector de Niveles */}
         {LEVELS.map((level) => (
           <TouchableOpacity
             key={level.id}
@@ -163,88 +145,64 @@ export default function NivelesMemoria({ onBack, onSelectDifficulty }) {
           </TouchableOpacity>
         ))}
 
+        {/* Sección de Progreso */}
         {loading ? (
-          <View style={[styles.settingsCard, { marginTop: 8, alignItems: 'center', paddingVertical: 24 }]}>
-            <ActivityIndicator color="#DB2777" />
+          <View style={[styles.settingsCard, { padding: 40, alignItems: 'center' }]}>
+            <ActivityIndicator color="#10B981" />
           </View>
         ) : !summary.hasData ? (
-          <View style={[styles.settingsCard, { marginTop: 8, alignItems: 'center', paddingVertical: 24 }]}>
+          <View style={[styles.settingsCard, { alignItems: 'center', padding: 20 }]}>
             <MaterialCommunityIcons name="chart-box-outline" size={40} color="#CBD5E1" />
-            <Text style={[styles.sectionTitle, { marginTop: 12 }]}>Tu progreso en memoria</Text>
-            <Text style={[styles.menuSubtitle, { marginTop: 8, textAlign: 'center' }]}>
-              Cuando juegues partidas, aqui veras el porcentaje de aciertos, las partidas jugadas y la ultima partida global.
+            <Text style={[styles.sectionTitle, { textAlign: 'center', marginTop: 10 }]}>Tu progreso en atención</Text>
+            <Text style={[styles.menuSubtitle, { textAlign: 'center' }]}>
+              Cuando juegues partidas, aquí verás tu rendimiento global.
             </Text>
           </View>
         ) : (
-          <View style={[styles.settingsCard, { marginTop: 8 }]}>
-            <Text style={styles.sectionTitle}>Resumen rapido</Text>
-            <Text style={[styles.menuSubtitle, { marginTop: 8, marginBottom: 0 }]}>
-              Tu resumen global de memoria.
-            </Text>
+          <View style={styles.settingsCard}>
+            <Text style={styles.sectionTitle}>Resumen rápido</Text>
+            <Text style={styles.menuSubtitle}>Tu resumen global de atención.</Text>
 
+            {/* Fila 1: Aciertos y Partidas */}
             <View style={juegosStyles.statsRow}>
-                <View
-                  style={[
-                    juegosStyles.cardBase,
-                    accuracyIsGood ? juegosStyles.cardAccuracyGood : juegosStyles.cardAccuracyBad
-                  ]}
-                >
-                <MaterialCommunityIcons
-                  name="percent-outline"
-                  size={24}
-                  color={accuracyIsGood ? '#16A34A' : '#DC2626'}
+              <View style={[
+                juegosStyles.cardBase, 
+                accuracyIsGood ? juegosStyles.cardAccuracyGood : juegosStyles.cardAccuracyBad
+              ]}>
+                <MaterialCommunityIcons 
+                  name="percent-outline" 
+                  size={24} 
+                  color={accuracyIsGood ? '#16A34A' : '#DC2626'} 
                 />
-                <Text style={[styles.menuSubtitle, juegosStyles.statTitle]}>
-                  % de aciertos
-                </Text>
+                <Text style={[styles.menuSubtitle, juegosStyles.statTitle]}>% de aciertos</Text>
                 <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }]}>
                   {summary.accuracy}%
                 </Text>
               </View>
 
-              <View
-                style={[
-                  juegosStyles.cardBase,
-                  juegosStyles.cardNeutral
-                ]}
-              >
+              <View style={[juegosStyles.cardBase, juegosStyles.cardNeutral]}>
                 <MaterialCommunityIcons name="counter" size={24} color="#4D6BFE" />
-                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }]}>
-                  Partidas jugadas
-                </Text>
-                <Text style={{ fontSize: aplicarEscala(24), fontWeight: '800', color: '#1E293B' }}>
+                <Text style={[styles.menuSubtitle, juegosStyles.statTitle]}>Partidas</Text>
+                <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }]}>
                   {summary.partidasTotales}
                 </Text>
               </View>
             </View>
 
+            {/* Fila 2: Última y Mejor puntuación */}
             <View style={juegosStyles.statsRowSmall}>
-              <View
-                style={[
-                  juegosStyles.cardBase,
-                  juegosStyles.cardNeutral
-                ]}
-              >
+              <View style={[juegosStyles.cardBase, juegosStyles.cardNeutral]}>
                 <MaterialCommunityIcons name="clock-outline" size={22} color="#4D6BFE" />
-                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }]}>
-                  Ultima partida
-                </Text>
+                <Text style={[styles.menuSubtitle, juegosStyles.statTitle]}>Última partida</Text>
                 <Text style={[juegosStyles.statNumberSmall, { fontSize: aplicarEscala(20) }]}>
                   {summary.ultimoResultado}
                 </Text>
               </View>
 
-              <View
-                style={[
-                  juegosStyles.cardBase,
-                  juegosStyles.cardWarning
-                ]}
-              >
+              <View style={[juegosStyles.cardBase, juegosStyles.cardWarning]}>
                 <MaterialCommunityIcons name="trophy-outline" size={22} color="#F97316" />
-                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }]}>
-                  Mejor puntuacion
-                </Text>
-                <Text style={{ fontSize: aplicarEscala(20), fontWeight: '800', color: '#1E293B' }}>
+                <Text style={[styles.menuSubtitle, juegosStyles.statTitle]}>Mejor score</Text>
+                <Text style={[juegosStyles.statNumberSmall, { fontSize: aplicarEscala(20) }]}>
                   {summary.mejorPuntuacion}
                 </Text>
               </View>

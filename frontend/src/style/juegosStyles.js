@@ -149,4 +149,81 @@ export const getJuegosStyles = (aplicarEscala) => StyleSheet.create({
       width: '100%',
       backgroundColor: '#10B981',
     },
+    statsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 16,
+    },
+    statsRowSmall: {
+        flexDirection: 'row',
+        gap: 10,
+        marginTop: 12,
+    },
+    cardBase: {
+        flex: 1,
+        borderRadius: 16,
+        padding: 14,
+        borderWidth: 1,
+    },
+    cardAccuracyGood: {
+        backgroundColor: '#DCFCE7',
+        borderColor: '#BBF7D0',
+    },
+    cardAccuracyBad: {
+        backgroundColor: '#FEE2E2',
+        borderColor: '#FECACA',
+    },
+    cardNeutral: {
+        backgroundColor: '#F8FAFC',
+        borderColor: '#E2E8F0',
+    },
+    cardWarning: {
+        backgroundColor: '#FFF7ED',
+        borderColor: '#FED7AA',
+    },
+    statTitle: {
+        marginTop: 10,
+        marginBottom: 4,
+    },
+    statNumberLarge: {
+        fontWeight: '800',
+        color: '#1E293B',
+    },
+    statNumberSmall: {
+        fontWeight: '800',
+        color: '#1E293B',
+    },
+    objetivoText: {
+        fontSize: 52,
+        fontWeight: '700',
+        color: '#334155',
+        marginTop: 8,
+    },
+    grid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        gap: 15,
+        marginTop: 25,
+    },
+    cell: {
+        backgroundColor: 'white',
+        borderRadius: 15,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+    },
+    hitCell: {
+        backgroundColor: '#CBD5E1',
+        borderColor: '#E2E8F0',
+    },
+    emptyCell: {
+        borderColor: 'transparent',
+    },
   });
