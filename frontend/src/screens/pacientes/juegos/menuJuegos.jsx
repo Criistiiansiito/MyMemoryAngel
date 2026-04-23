@@ -54,17 +54,22 @@ export default function MenuJuegos({ onBack, onSelectCategory }) {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={[styles.settingsCard, { marginBottom: 20 }]}>
-          <Text style={styles.sectionTitle}>Elige un área</Text>
-          <Text style={[styles.menuSubtitle, { marginTop: 8 }]}>
-            Accede a los juegos agrupados por capacidad cognitiva.
-          </Text>
-        </View>
-
         <View style={styles.grid}>
           {categories.map((category) => (
             <CategoryCard key={category.id} category={category} />
           ))}
+        </View>
+
+        <View style={styles.infoBox}>
+          <View style={styles.infoIconCircle}>
+            <MaterialCommunityIcons name="lightbulb-on" size={24} color="#F59E0B" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.infoTitle}>Sugerencia del día</Text>
+            <Text style={styles.infoText}>
+             "Los juegos mentales estimulan la memoria y la concentración, ayudando a mantener la mente activa de forma sencilla y agradable."
+            </Text>
+          </View>
         </View>
       </ScrollView>
 

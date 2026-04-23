@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { getStyles } from '../../../../style/styles';
+import { getJuegosStyles } from '../../../../style/juegosStyles';
 import { useAccesibilidad } from '../../../../services/accesibilidadContext';
 import { progresoJuegosService } from '../../../../services/progresoJuegosService';
 
@@ -32,158 +33,10 @@ const getSequenceLength = (round, difficulty) => {
   return 5;
 };
 
-const getLocalStyles = (aplicarEscala) =>
-  StyleSheet.create({
-    headerRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    scrollContent: {
-      padding: 20,
-      alignItems: 'center',
-    },
-    progressWrapper: {
-      width: '100%',
-      marginBottom: 20,
-    },
-    progressHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 5,
-    },
-    roundText: {
-      color: '#64748B',
-      fontWeight: '600',
-    },
-    scoreText: {
-      color: '#EC4899',
-      fontWeight: 'bold',
-    },
-    progressTrack: {
-      height: 8,
-      backgroundColor: '#E2E8F0',
-      borderRadius: 4,
-    },
-    progressFill: {
-      height: '100%',
-      backgroundColor: '#EC4899',
-      borderRadius: 4,
-    },
-    gameCard: {
-      width: '100%',
-      alignItems: 'center',
-      paddingVertical: 30,
-      borderWidth: 2,
-    },
-    gameCardIdleShadow: {
-      shadowOpacity: 0.08,
-      shadowRadius: 4,
-    },
-    gameCardActiveShadow: {
-      shadowOpacity: 0.2,
-      shadowRadius: 10,
-    },
-    phaseText: {
-      marginTop: 10,
-      marginBottom: 0,
-      textAlign: 'center',
-    },
-    difficultyText: {
-      marginTop: 8,
-      marginBottom: 0,
-      textTransform: 'none',
-      letterSpacing: 0,
-      color: '#94A3B8',
-    },
-    sequenceWrapper: {
-      height: 100,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginVertical: 20,
-    },
-    sequenceText: {
-      fontSize: aplicarEscala(40),
-      fontWeight: '800',
-      color: '#EC4899',
-      letterSpacing: 10,
-    },
-    sequenceDotsRow: {
-      flexDirection: 'row',
-      gap: 10,
-    },
-    sequenceDot: {
-      width: 20,
-      height: 20,
-      borderRadius: 10,
-    },
-    feedbackText: {
-      fontSize: aplicarEscala(22),
-      fontWeight: '700',
-      textAlign: 'center',
-      marginTop: 4,
-    },
-    finishedContent: {
-      alignItems: 'center',
-    },
-    finishedTitle: {
-      fontSize: aplicarEscala(24),
-      fontWeight: 'bold',
-      color: '#1E293B',
-      marginTop: 15,
-    },
-    finishedSubtitle: {
-      fontSize: aplicarEscala(18),
-      color: '#64748B',
-      marginTop: 5,
-    },
-    grid: {
-      alignItems: 'center',
-      width: '100%',
-      marginTop: 20,
-      gap: 15,
-    },
-    row: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      gap: 15,
-    },
-    numButton: {
-      width: 100,
-      height: 100,
-      backgroundColor: 'white',
-      borderRadius: 50,
-      alignItems: 'center',
-      justifyContent: 'center',
-      elevation: 3,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      borderWidth: 1,
-      borderColor: '#F1F5F9',
-    },
-    numButtonEnabled: {
-      opacity: 1,
-    },
-    numButtonDisabled: {
-      opacity: 0.5,
-    },
-    numText: {
-      fontSize: 32,
-      fontWeight: '700',
-      color: '#334155',
-    },
-    backButton: {
-      marginTop: 20,
-      width: '100%',
-      backgroundColor: '#10B981',
-    },
-  });
-
 export default function Memoria({ onBack, difficulty = 'dificil' }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
-  const localStyles = getLocalStyles(aplicarEscala);
+  const juegosStyles = getJuegosStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
 
   const [round, setRound] = useState(1);
@@ -300,7 +153,7 @@ export default function Memoria({ onBack, difficulty = 'dificil' }) {
       <StatusBar barStyle="dark-content" />
 
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
-        <View style={localStyles.headerRow}>
+        <View style={juegosStyles.headerRow}>
           <TouchableOpacity onPress={handleBack}>
             <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
           </TouchableOpacity>
@@ -308,18 +161,18 @@ export default function Memoria({ onBack, difficulty = 'dificil' }) {
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={localStyles.scrollContent}>
-        <View style={localStyles.progressWrapper}>
-          <View style={localStyles.progressHeader}>
-            <Text style={localStyles.roundText}>
+      <ScrollView contentContainerStyle={juegosStyles.scrollContent}>
+        <View style={juegosStyles.progressWrapper}>
+          <View style={juegosStyles.progressHeader}>
+            <Text style={juegosStyles.roundText}>
               Ronda {Math.min(round, TOTAL_ROUNDS)} de {TOTAL_ROUNDS}
             </Text>
-            <Text style={localStyles.scoreText}>Aciertos: {score}</Text>
+            <Text style={juegosStyles.scoreText}>Aciertos: {score}</Text>
           </View>
-          <View style={localStyles.progressTrack}>
+          <View style={juegosStyles.progressTrack}>
             <View
               style={{
-                ...localStyles.progressFill,
+                ...juegosStyles.progressFill,
                 width: `${((round - 1 + (finished ? 1 : 0)) / TOTAL_ROUNDS) * 100}%`,
               }}
             />
@@ -329,8 +182,8 @@ export default function Memoria({ onBack, difficulty = 'dificil' }) {
         <View
           style={[
             styles.settingsCard,
-            localStyles.gameCard,
-            feedbackStatus ? localStyles.gameCardActiveShadow : localStyles.gameCardIdleShadow,
+            juegosStyles.gameCard,
+            feedbackStatus ? juegosStyles.gameCardActiveShadow : juegosStyles.gameCardIdleShadow,
             feedbackStyles,
           ]}
         >
@@ -342,24 +195,24 @@ export default function Memoria({ onBack, difficulty = 'dificil' }) {
                 color="#EC4899"
               />
 
-              <Text style={[styles.menuSubtitle, localStyles.phaseText]}>
+              <Text style={[styles.menuSubtitle, juegosStyles.phaseText]}>
                 {showSequence ? 'Memoriza estos numeros:' : 'Introduce la secuencia:'}
               </Text>
 
-              <Text style={[styles.inputLabel, localStyles.difficultyText]}>
+              <Text style={[styles.inputLabel, juegosStyles.difficultyText]}>
                 Dificultad: {sequence.length} digitos
               </Text>
 
-              <View style={localStyles.sequenceWrapper}>
+              <View style={juegosStyles.sequenceWrapper}>
                 {showSequence ? (
-                  <Text style={localStyles.sequenceText}>{sequence.join(' ')}</Text>
+                  <Text style={juegosStyles.sequenceText}>{sequence.join(' ')}</Text>
                 ) : (
-                  <View style={localStyles.sequenceDotsRow}>
+                  <View style={juegosStyles.sequenceDotsRow}>
                     {sequence.map((_, index) => (
                       <View
                         key={index}
                         style={{
-                          ...localStyles.sequenceDot,
+                          ...juegosStyles.sequenceDot,
                           backgroundColor: userInput.length > index ? '#EC4899' : '#FBCFE8',
                         }}
                       />
@@ -371,7 +224,7 @@ export default function Memoria({ onBack, difficulty = 'dificil' }) {
               {feedbackMessage ? (
                 <Text
                   style={{
-                    ...localStyles.feedbackText,
+                    ...juegosStyles.feedbackText,
                     color: feedbackStatus === 'correct' ? '#16A34A' : '#EF4444',
                   }}
                 >
@@ -380,10 +233,10 @@ export default function Memoria({ onBack, difficulty = 'dificil' }) {
               ) : null}
             </>
           ) : (
-            <View style={localStyles.finishedContent}>
+            <View style={juegosStyles.finishedContent}>
               <MaterialCommunityIcons name="calculator" size={60} color="#10B981" />
-              <Text style={localStyles.finishedTitle}>Juego completado</Text>
-              <Text style={localStyles.finishedSubtitle}>
+              <Text style={juegosStyles.finishedTitle}>Juego completado</Text>
+              <Text style={juegosStyles.finishedSubtitle}>
                 Has acertado {score} de {TOTAL_ROUNDS} rondas
               </Text>
             </View>
@@ -391,27 +244,27 @@ export default function Memoria({ onBack, difficulty = 'dificil' }) {
         </View>
 
         {!finished ? (
-          <View style={localStyles.grid}>
+          <View style={juegosStyles.grid}>
             {NUMBER_ROWS.map((row) => (
-              <View key={row.join('-')} style={localStyles.row}>
+              <View key={row.join('-')} style={juegosStyles.row}>
                 {row.map((num) => (
                   <TouchableOpacity
                     key={num}
                     style={[
-                      localStyles.numButton,
-                      showSequence ? localStyles.numButtonDisabled : localStyles.numButtonEnabled,
+                      juegosStyles.numButton,
+                      showSequence ? juegosStyles.numButtonDisabled : juegosStyles.numButtonEnabled,
                     ]}
                     onPress={() => handleInput(num)}
                     disabled={showSequence}
                   >
-                    <Text style={localStyles.numText}>{num}</Text>
+                    <Text style={juegosStyles.numText}>{num}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
             ))}
           </View>
         ) : (
-          <TouchableOpacity style={[styles.mainButton, localStyles.backButton]} onPress={handleBack}>
+          <TouchableOpacity style={[styles.mainButton, juegosStyles.backButton]} onPress={handleBack}>
             <Text style={styles.mainButtonText}>Volver al menu</Text>
           </TouchableOpacity>
         )}
