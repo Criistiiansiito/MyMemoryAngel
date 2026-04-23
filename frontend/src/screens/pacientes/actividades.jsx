@@ -14,7 +14,10 @@ import { formatMadridDate } from '../../utils/dateMadrid';
 import MenuEstimulacion from './estimulacion/menuEstimulacion';
 import MenuJuegos from './juegos/menuJuegos';
 import MenuMemoria from './juegos/memoria/menuMemoria';
+import NivelesMemoriaNumerica from './juegos/memoria/nivelesMemoriaNumerica';
+import NivelesMemoriaMusical from './juegos/memoria/nivelesMemoriaMusical';
 import MenuAtencion from './juegos/atencion/menuAtencion';
+import NivelesAtencion from './juegos/atencion/nivelesAtencion';
 import MenuLenguaje from './juegos/lenguaje/menuLenguaje';
 import MenuOrientacion from './juegos/orientacion/menuOrientacion';
 import MenuFuncionesEjecutivas from './juegos/funcionesEjecutivas/menuFuncionesEjecutivas';
@@ -25,7 +28,8 @@ import Arte from './estimulacion/arte';
 import Lectura from './estimulacion/lectura';
 import Escritura from './estimulacion/escritura';
 
-import Memoria from './juegos/memoria/memoria';
+import MemoriaNumerica from './juegos/memoria/memoriaNumerica';
+import MemoriaMusical from './juegos/memoria/memoriaMusical';
 import Calculadora from './juegos/funcionesEjecutivas/calculadora';
 import Trivia from './juegos/lenguaje/trivia';
 import Atencion from './juegos/atencion/atencion';
@@ -67,10 +71,63 @@ export default function EstimulacionCognitiva() {
   }, [view, selectedGame, selectedGameMenu, selectedActivity]);
 
   if (selectedGame) {
-    const props = { onBack: () => setSelectedGame(null) };
-    switch (selectedGame) {
-      case 'Memoria':
-        return <Memoria {...props} />;
+    if (selectedGame === 'NivelesMemoriaNumerica') {
+      return (
+        <NivelesMemoriaNumerica
+          onBack={() => setSelectedGame(null)}
+          onSelectDifficulty={(difficulty) =>
+            setSelectedGame({ id: 'MemoriaNumerica', difficulty })
+          }
+        />
+      );
+    }
+
+    if (selectedGame === 'NivelesMemoriaMusical') {
+      return (
+        <NivelesMemoriaMusical
+          onBack={() => setSelectedGame(null)}
+          onSelectDifficulty={(difficulty) =>
+            setSelectedGame({ id: 'MemoriaMusical', difficulty })
+          }
+        />
+      );
+    }
+
+    if (selectedGame === 'NivelesAtencion') {
+      return (
+        <NivelesAtencion
+          onBack={() => setSelectedGame(null)}
+          onSelectDifficulty={(difficulty) => setSelectedGame({ id: 'Atencion', difficulty })}
+        />
+      );
+    }
+
+    const gameId = typeof selectedGame === 'string' ? selectedGame : selectedGame.id;
+    const props = {
+      onBack: () =>
+        setSelectedGame(
+          gameId === 'MemoriaNumerica'
+            ? 'NivelesMemoriaNumerica'
+            : gameId === 'MemoriaMusical'
+              ? 'NivelesMemoriaMusical'
+              : gameId === 'Atencion'
+                ? 'NivelesAtencion'
+                : null
+        ),
+      ...(
+        gameId === 'MemoriaNumerica' ||
+        gameId === 'MemoriaMusical' ||
+        gameId === 'Atencion'
+          ? { difficulty: selectedGame.difficulty }
+          : {}
+      ),
+    };
+
+    switch (gameId) {
+      case 'MemoriaNumerica':
+        return <MemoriaNumerica {...props} />;
+      case 'MemoriaMusical':
+        return <MemoriaMusical {...props} />;
       case 'Calculadora':
         return <Calculadora {...props} />;
       case 'Trivia':
@@ -89,7 +146,16 @@ export default function EstimulacionCognitiva() {
   if (selectedGameMenu) {
     const props = {
       onBack: () => setSelectedGameMenu(null),
-      onSelectGame: (game) => setSelectedGame(game),
+      onSelectGame: (game) =>
+      setSelectedGame(
+        game === 'MemoriaNumerica'
+          ? 'NivelesMemoriaNumerica'
+          : game === 'MemoriaMusical'
+            ? 'NivelesMemoriaMusical'
+            : game === 'Atencion'
+              ? 'NivelesAtencion'
+              : game
+      ),
     };
 
     switch (selectedGameMenu) {

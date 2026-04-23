@@ -33,7 +33,7 @@ const getSequenceLength = (round, difficulty) => {
   return 5;
 };
 
-export default function Memoria({ onBack, difficulty = 'dificil' }) {
+export default function MemoriaNumerica({ onBack, difficulty = 'dificil' }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
   const juegosStyles = getJuegosStyles(aplicarEscala, isDaltonic);
