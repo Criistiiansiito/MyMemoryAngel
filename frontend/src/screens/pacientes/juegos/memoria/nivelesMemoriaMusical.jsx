@@ -169,7 +169,7 @@ export default function NivelesMemoriaMusical({ onBack, onSelectDifficulty }) {
           </View>
         ) : (
           <View style={[styles.settingsCard, { marginTop: 8 }]}>
-            <Text style={styles.sectionTitle}>Resumen rapido</Text>
+            <Text style={[styles.sectionTitle, {marginLeft:0}]}>Resumen rapido</Text>
             <Text style={[styles.menuSubtitle, { marginTop: 8, marginBottom: 0 }]}>
               Tu resumen global de memoria musical.
             </Text>

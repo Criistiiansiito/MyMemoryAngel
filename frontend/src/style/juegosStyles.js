@@ -119,8 +119,8 @@ export const getJuegosStyles = (aplicarEscala) => StyleSheet.create({
       gap: 15,
     },
     numButton: {
-      width: 100,
-      height: 100,
+      width: 85,
+      height: 85,
       backgroundColor: 'white',
       borderRadius: 50,
       alignItems: 'center',

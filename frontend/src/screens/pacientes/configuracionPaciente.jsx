@@ -354,7 +354,7 @@ export default function ConfiguracionPaciente({ navigation }) {
 
                 {/* BOTÓN CERRAR SESIÓN */}
                 <TouchableOpacity 
-                    style={[styles.mainButton, { backgroundColor: '#EF4444', marginTop: 30, marginBottom: 50 }]} 
+                    style={[styles.mainButton, { backgroundColor: '#EF4444', marginTop: 30, marginBottom: 20 }]} 
                     onPress={confirmarCerrarSesion}
                 >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>

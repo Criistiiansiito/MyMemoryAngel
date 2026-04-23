@@ -84,8 +84,6 @@ export default function NivelesAtencionReaccion({ onBack, onSelectDifficulty }) 
     const rows = REACCION_KEYS.map((key) => progressMap[key]).filter(Boolean);
     const partidasTotales = rows.reduce((acc, item) => acc + Number(item.partidas_jugadas || 0), 0);
     
-    // Calculamos el rendimiento basado en los topos capturados sobre el total que aparecieron
-    // Nota: Esto asume que el backend guarda el promedio como un porcentaje o ratio.
     const mejorScoreVal = Math.max(...rows.map((item) => Number(item.mejor_puntuacion || 0)), 0);
 
     const latestRow = rows.reduce((latest, item) => {
@@ -158,7 +156,7 @@ export default function NivelesAtencionReaccion({ onBack, onSelectDifficulty }) 
             <Text style={[styles.sectionTitle, {marginLeft:0}]}>Resumen rápido</Text>
             <Text style={styles.menuSubtitle}>Rendimiento global en Caza al Topo.</Text>
 
-            {/* Fila 1: Partidas y Mejor Score */}
+            {/* Partidas y Mejor Score */}
             <View style={juegosStyles.statsRow}>
               <View style={[juegosStyles.cardBase, juegosStyles.cardNeutral]}>
                 <MaterialCommunityIcons name="counter" size={24} color="#6366F1" />
@@ -177,7 +175,7 @@ export default function NivelesAtencionReaccion({ onBack, onSelectDifficulty }) 
               </View>
             </View>
 
-            {/* Fila 2: Última puntuación (Ancho completo) */}
+            {/* Última puntuación */}
             <View style={juegosStyles.statsRowSmall}>
               <View style={[juegosStyles.cardBase, juegosStyles.cardNeutral, { flex: 1 }]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>

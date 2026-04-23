@@ -6,7 +6,7 @@ import {
   StatusBar,
   Alert,
   Animated,
-  Image, // Importamos Image para el PNG
+  Image, 
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -175,11 +175,11 @@ export default function AtencionReaccion({ onBack, difficulty = 'facil' }) {
                     width: config.size,
                     height: config.size,
                     borderRadius: config.size / 2,
-                    backgroundColor: '#5D4037', // MARRÓN (Tierra oscura)
+                    backgroundColor: '#5D4037', 
                     justifyContent: 'center',
                     alignItems: 'center',
                     borderWidth: 5,
-                    borderColor: '#3E2723', // MARRÓN OSCURO (Borde)
+                    borderColor: '#3E2723', 
                     overflow: 'hidden'
                   }}
                 >
