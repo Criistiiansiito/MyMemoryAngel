@@ -18,6 +18,7 @@ import NivelesMemoriaNumerica from './juegos/memoria/nivelesMemoriaNumerica';
 import NivelesMemoriaMusical from './juegos/memoria/nivelesMemoriaMusical';
 import MenuAtencion from './juegos/atencion/menuAtencion';
 import NivelesAtencion from './juegos/atencion/nivelesAtencion';
+import NivelesAtencionReaccion from './juegos/atencion/nivelesAtencionReaccion';
 import MenuLenguaje from './juegos/lenguaje/menuLenguaje';
 import MenuOrientacion from './juegos/orientacion/menuOrientacion';
 import MenuFuncionesEjecutivas from './juegos/funcionesEjecutivas/menuFuncionesEjecutivas';
@@ -33,6 +34,7 @@ import MemoriaMusical from './juegos/memoria/memoriaMusical';
 import Calculadora from './juegos/funcionesEjecutivas/calculadora';
 import Trivia from './juegos/lenguaje/trivia';
 import Atencion from './juegos/atencion/atencion';
+import AtencionReaccion from './juegos/atencion/atencionReaccion';
 import Orientacion from './juegos/orientacion/orientacion';
 import Visual from './juegos/visual/visual';
 
@@ -102,6 +104,15 @@ export default function EstimulacionCognitiva() {
       );
     }
 
+    if (selectedGame === 'NivelesAtencionReaccion') {
+      return (
+        <NivelesAtencionReaccion
+          onBack={() => setSelectedGame(null)}
+          onSelectDifficulty={(difficulty) => setSelectedGame({ id: 'AtencionReaccion', difficulty })}
+        />
+      );
+    }
+
     const gameId = typeof selectedGame === 'string' ? selectedGame : selectedGame.id;
     const props = {
       onBack: () =>
@@ -112,12 +123,15 @@ export default function EstimulacionCognitiva() {
               ? 'NivelesMemoriaMusical'
               : gameId === 'Atencion'
                 ? 'NivelesAtencion'
+                : gameId === 'AtencionReaccion'
+                ? 'NivelesAtencionReaccion'
                 : null
         ),
       ...(
         gameId === 'MemoriaNumerica' ||
         gameId === 'MemoriaMusical' ||
-        gameId === 'Atencion'
+        gameId === 'Atencion' ||
+        gameId === 'AtencionReaccion'
           ? { difficulty: selectedGame.difficulty }
           : {}
       ),
@@ -134,6 +148,8 @@ export default function EstimulacionCognitiva() {
         return <Trivia {...props} />;
       case 'Atencion':
         return <Atencion {...props} />;
+      case 'AtencionReaccion':
+        return <AtencionReaccion {...props} />;
       case 'Orientacion':
         return <Orientacion {...props} />;
       case 'Visual':
@@ -154,6 +170,8 @@ export default function EstimulacionCognitiva() {
             ? 'NivelesMemoriaMusical'
             : game === 'Atencion'
               ? 'NivelesAtencion'
+              : game === 'AtencionReaccion'
+              ? 'NivelesAtencionReaccion'
               : game
       ),
     };

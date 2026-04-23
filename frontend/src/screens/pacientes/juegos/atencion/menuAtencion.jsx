@@ -18,6 +18,15 @@ export default function MenuAtencion({ onBack, onSelectGame }) {
           iconColor: '#10B981',
           showProgress: false,
         },
+        {
+          id: 'AtencionReaccion',
+          title: 'Caza al ratón',
+          description: 'Recuerda una serie de dígitos y tecleala en orden.',
+          icon: 'music-note',
+          color: '#FDF2F8',
+          iconColor: '#EC4899',
+          showProgress: false,
+        },
       ]}
     />
   );

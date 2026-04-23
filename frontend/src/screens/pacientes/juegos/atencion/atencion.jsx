@@ -66,8 +66,8 @@ export default function Atencion({ onBack, difficulty = 'dificil' }) {
     }
 
     Alert.alert(
-      'Salir de la partida',
-      'No se te guardara el progreso de esta partida.',
+      '¿Salir de la partida?',
+      'Si sales ahora, perderás el progreso de esta partida.',
       [
         { text: 'Cancelar', style: 'cancel' },
         { text: 'Salir', style: 'destructive', onPress: onBack },
