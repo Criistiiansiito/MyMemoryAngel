@@ -83,7 +83,7 @@ export default function DashboardPaciente({ navigation }) {
     const firebaseToken = await auth.currentUser.getIdToken();
 
     const res = await axios.post(
-      'http://192.168.1.133:5000/api/auth/test-push',
+      `http://${process.env.EXPO_PUBLIC_IP}:5000/api/auth/test-push`,
       {},
       {
         headers: {

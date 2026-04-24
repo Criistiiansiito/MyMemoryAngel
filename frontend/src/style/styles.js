@@ -1145,7 +1145,7 @@ writingIndicator: {
     bottom: -1,
     left: 0,
     right: -5,
-    height: 120,
+    height: 125,
     backgroundColor: 'white',
     transform: [{ skewY: '-5deg' }, { translateY: 30 }],
   },

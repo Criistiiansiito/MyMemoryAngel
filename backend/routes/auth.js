@@ -523,23 +523,14 @@ router.get('/get-musica', async (req, res) => {
         let params = [tipo];
 
         if (tipo === 'personal') {
-            // Buscamos donde el id_usuario coincida O sea NULL (canciones generales)
             sql += ' AND (id_usuario = ? OR id_usuario IS NULL)';
             params.push(id_usuario);
         }
 
         const [rows] = await db.query(sql, params);
-
-        const respuesta = rows.map(pista => ({
-            id: pista.id,
-            titulo: pista.titulo,
-            tipo: pista.tipo,
-            audio: pista.audio ? pista.audio.toString('base64') : null,
-            imagen: pista.imagen ? pista.imagen.toString('base64') : null
-        }));
-
-        res.json(respuesta);
+        res.json(rows);
     } catch (error) {
+        console.error("Error en musica:", error);
         res.status(500).send("Error en el servidor");
     }
 });
