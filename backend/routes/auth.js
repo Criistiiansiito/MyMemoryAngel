@@ -577,14 +577,10 @@ router.get('/get-lecturas', async (req, res) => {
       'SELECT id, titulo, tipo, contenido, imagenPrincipal FROM lecturas WHERE tipo = ?', 
       [tipo]
     );
-
-    const respuesta = rows.map(lectura => ({
-      ...lectura,
-      imagenPrincipal: lectura.imagenPrincipal ? Buffer.from(lectura.imagenPrincipal).toString('base64') : null
-    }));
-
-    res.json(respuesta);
+    res.json(rows); 
+    
   } catch (error) {
+    console.error("Error al obtener lecturas:", error);
     res.status(500).send("Error en el servidor");
   }
 });

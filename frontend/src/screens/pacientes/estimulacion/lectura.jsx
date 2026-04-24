@@ -13,6 +13,25 @@ import MenuCategoriaEstimulacion from '../../../components/estimulacion/MenuCard
 
 const { width } = Dimensions.get('window');
 
+// IMÁGENES LOCALES
+const IMAGENES_LECTURA = {
+  'cafe': require('../../../../assets/images/lectura/cafe.jpg'),
+  'pan': require('../../../../assets/images/lectura/pan.jpg'),
+  'tienda_esquina': require('../../../../assets/images/lectura/tienda_esquina.jpg'),
+  'huerto': require('../../../../assets/images/lectura/huerto.jpg'),
+  'jardin': require('../../../../assets/images/lectura/jardin.jpg'),
+  'te': require('../../../../assets/images/lectura/te.jpg'),
+  'mar': require('../../../../assets/images/lectura/mar.jpg'),
+  'cantar': require('../../../../assets/images/lectura/cantar.jpg'),
+  'luna': require('../../../../assets/images/lectura/luna.jpg'),
+  'campo': require('../../../../assets/images/lectura/campo.jpg'),
+  'amistad': require('../../../../assets/images/lectura/amistad.jpg'),
+  'abejas': require('../../../../assets/images/lectura/abejas.png'),
+  'bosque': require('../../../../assets/images/lectura/bosque.png'),
+  'pajaro': require('../../../../assets/images/lectura/pajaro.jpg'),
+  'mariposa': require('../../../../assets/images/lectura/mariposa.jpg'),
+};
+
 export default function Lectura({ onBack }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
@@ -29,11 +48,8 @@ export default function Lectura({ onBack }) {
   const [isTalking, setIsTalking] = useState(false);
   const [isSpeakingSummary, setIsSpeakingSummary] = useState(false);
 
-  // Limpiamos la voz al terminar
   useEffect(() => {
-    return () => {
-      Speech.stop();
-    };
+    return () => Speech.stop();
   }, []);
 
   useEffect(() => {
@@ -73,21 +89,11 @@ export default function Lectura({ onBack }) {
         rate: 0.5,
         onDone: () => setIsTalking(false),
         onStopped: () => setIsTalking(false),
-        onError: () => {
-          setIsTalking(false);
-          Alert.alert("Error", "No se pudo reproducir el audio.");
-        }
       });
     }
   };
 
   const leerResumen = () => {
-    if (vistaActual !== 'menu') {
-      Speech.stop();
-      setIsSpeakingSummary(false);
-      return;
-    }
-
     if (isSpeakingSummary) {
       Speech.stop();
       setIsSpeakingSummary(false);
@@ -110,7 +116,6 @@ export default function Lectura({ onBack }) {
       rate: 0.8,
       onDone: () => setIsSpeakingSummary(false),
       onStopped: () => setIsSpeakingSummary(false),
-      onError: () => setIsSpeakingSummary(false),
     });
   };
 
@@ -126,27 +131,19 @@ export default function Lectura({ onBack }) {
   );
 
   const renderLista = () => (
-    <ScrollView 
-      contentContainerStyle={{ padding: 15, paddingBottom: insets.bottom + 50 }}
-      showsVerticalScrollIndicator={false}
-    >
+    <ScrollView contentContainerStyle={{ padding: 15, paddingBottom: insets.bottom + 50 }}>
       {textos.map(t => (
         <TouchableOpacity 
           key={t.id} 
           style={styles.tarjetaLectura} 
           onPress={() => { setTextoSeleccionado(t); setVistaActual('lector'); }}
-          activeOpacity={0.9}
         >
           <View style={styles.contenedorImagenCorteLectura}>
-            {t.imagenPrincipal ? (
-              <Image 
-                source={{ uri: `data:image/jpeg;base64,${t.imagenPrincipal}` }} 
-                style={styles.imagenLectura}
-                resizeMode="cover"
-              />
+            {t.imagenPrincipal && IMAGENES_LECTURA[t.imagenPrincipal] ? (
+              <Image source={IMAGENES_LECTURA[t.imagenPrincipal]} style={styles.imagenLectura} resizeMode="cover" />
             ) : (
-              <View style={[styles.imagenLectura, { backgroundColor: categoriaActiva?.color + '20', justifyContent: 'center', alignItems: 'center' }]}>
-                <MaterialCommunityIcons name="book-open-page-variant" size={100} color={categoriaActiva?.color} />
+              <View style={[styles.imagenLectura, { backgroundColor: '#F1F5F9', justifyContent: 'center', alignItems: 'center' }]}>
+                <MaterialCommunityIcons name="book-open-variant" size={60} color="#CBD5E1" />
               </View>
             )}
             <View style={styles.corteOblicuoLectura} />
@@ -155,9 +152,16 @@ export default function Lectura({ onBack }) {
           <View style={styles.infoCapaLectura}>
             <View style={{ flex: 1 }}>
               <Text style={styles.tituloListaLectura} numberOfLines={2}>{t.titulo}</Text>
-              <View style={styles.badgeListaLectura}>
-                <MaterialCommunityIcons name="clock-outline" size={14} color="#64748B" />
-                <Text style={styles.tiempoListaLectura}>{categoriaActiva?.meta}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+                <View style={styles.badgeListaLectura}>
+                  <MaterialCommunityIcons name="clock-outline" size={14} color="#64748B" />
+                  <Text style={styles.tiempoListaLectura}>{categoriaActiva?.meta}</Text>
+                </View>
+                {/* Lo que tenías al lado de los tiempos */}
+                <View style={[styles.badgeListaLectura, { marginLeft: 8 }]}>
+                  <MaterialCommunityIcons name="book-open-variant" size={14} color="#64748B" />
+                  <Text style={styles.tiempoListaLectura}>Leer</Text>
+                </View>
               </View>
             </View>
             <View style={[styles.circuloLectura, { backgroundColor: categoriaActiva?.color }]}>
@@ -177,21 +181,15 @@ export default function Lectura({ onBack }) {
           setProgresoLectura(Math.min(((layoutMeasurement.height + contentOffset.y) / contentSize.height) * 100, 100));
         }}
         scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
       >
         <View style={styles.portadaLecturaContainer}>
-          {textoSeleccionado?.imagenPrincipal ? (
-            <Image 
-              source={{ uri: `data:image/jpeg;base64,${textoSeleccionado.imagenPrincipal}` }} 
-              style={styles.imagenLecturaPortada}
-              resizeMode="cover"
-            />
+          {textoSeleccionado?.imagenPrincipal && IMAGENES_LECTURA[textoSeleccionado.imagenPrincipal] ? (
+            <Image source={IMAGENES_LECTURA[textoSeleccionado.imagenPrincipal]} style={styles.imagenLecturaPortada} resizeMode="cover" />
           ) : (
-            <View style={[styles.imagenLecturaPlaceholder, { backgroundColor: categoriaActiva?.color + '20' }]}>
-              <MaterialCommunityIcons name="book-open-page-variant" size={80} color={categoriaActiva?.color} />
+            <View style={[styles.imagenLecturaPlaceholder, { backgroundColor: '#E2E8F0' }]}>
+              <MaterialCommunityIcons name="image-outline" size={80} color="#94A3B8" />
             </View>
           )}
-          
           <View style={styles.overlayLecturaTitulo}>
               <Text style={styles.tituloTextoLectura}>{textoSeleccionado?.titulo}</Text>
               <View style={[styles.divisorLectura, { backgroundColor: categoriaActiva?.color }]} />
@@ -199,12 +197,7 @@ export default function Lectura({ onBack }) {
         </View>
 
         <View style={{ padding: 25, paddingBottom: insets.bottom + 160 }}>
-          <Text style={{ 
-            fontSize: fontSize, 
-            lineHeight: fontSize * 1.6, 
-            color: '#334155', 
-            textAlign: 'justify' 
-          }}>
+          <Text style={{ fontSize: fontSize, lineHeight: fontSize * 1.6, color: '#334155', textAlign: 'justify' }}>
             {textoSeleccionado?.contenido}
           </Text>
         </View>
@@ -237,35 +230,26 @@ export default function Lectura({ onBack }) {
 
   return (
     <View style={[styles.container, { flex: 1 }]}>
-      <StatusBar barStyle="dark-content" />
-
-      <View style={[
-        styles.topBar, 
-        { paddingTop: insets.top }
-      ]}>
+      <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TouchableOpacity 
-              onPress={() => {
-                if (isTalking || isSpeakingSummary) Speech.stop();
-                if (vistaActual === 'menu') {
-                  onBack();
-                } else {
-                  setVistaActual(vistaActual === 'lector' ? 'lista' : 'menu');
-                }
-              }}
-            >
+            <TouchableOpacity onPress={() => {
+              if (isTalking || isSpeakingSummary) Speech.stop();
+              if (vistaActual === 'menu') onBack();
+              else setVistaActual(vistaActual === 'lector' ? 'lista' : 'menu');
+            }}>
               <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
             </TouchableOpacity>
             <Text style={styles.brandName}>
               {vistaActual === 'menu' ? 'Lectura' : (vistaActual === 'lista' ? categoriaActiva?.titulo : 'Leyendo')}
             </Text>
           </View>
-          {vistaActual === 'menu' ? (
+          {/* Botón de escuchar resumen en el menú */}
+          {vistaActual === 'menu' && (
             <TouchableOpacity style={styles.headerIconButton} onPress={leerResumen}>
               <MaterialCommunityIcons name={isSpeakingSummary ? 'stop' : 'volume-high'} size={24} color="#334155" />
             </TouchableOpacity>
-          ) : null}
+          )}
         </View>
       </View>
       
