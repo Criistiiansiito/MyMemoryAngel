@@ -77,28 +77,6 @@ export default function DashboardPaciente({ navigation }) {
     );
   }
 
-  const enviarPushTest = async () => {
-  try {
-    const auth = getAuth();
-    const firebaseToken = await auth.currentUser.getIdToken();
-
-    const res = await axios.post(
-      `http://${process.env.EXPO_PUBLIC_IP}:5000/api/auth/test-push`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${firebaseToken}`
-        }
-      }
-    );
-
-    console.log('PUSH OK:', res.data);
-
-  } catch (error) {
-    console.log('ERROR PUSH:', error.response?.data || error.message);
-  }
-};
-
   const leerDashboard = () => {
     if (isSpeaking) {
       Speech.stop();
@@ -170,25 +148,7 @@ export default function DashboardPaciente({ navigation }) {
         
         <View style={styles.dateHeaderContainer}>
           <Text style={styles.dateText}>{fechaHoy}</Text>
-        </View>   
-
-        <TouchableOpacity 
-  style={{
-    backgroundColor: '#4D6BFE',
-    padding: 15,
-    borderRadius: 12,
-    marginBottom: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center'
-  }}
-  onPress={enviarPushTest}
->
-  <MaterialCommunityIcons name="bell-ring" size={22} color="white" />
-  <Text style={{ color: 'white', marginLeft: 10, fontWeight: 'bold' }}>
-    Enviar push de prueba
-  </Text>
-</TouchableOpacity>       
+        </View>      
 
         <TouchableOpacity style={styles.menuCard} onPress={() => navigation.navigate('Recordatorios')}>
           <View style={[styles.menuIconContainer, { backgroundColor: '#E1E7FF' }]}>
