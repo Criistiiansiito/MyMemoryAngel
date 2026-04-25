@@ -125,7 +125,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     borderColor: '#E2E8F0',
     borderRadius: 12,
     paddingHorizontal: 15,
-    height: 55,
+    height: 60,
   },
   inputIcon: {
     marginRight: 10,

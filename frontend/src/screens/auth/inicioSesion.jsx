@@ -24,15 +24,39 @@ export default function InicioSesion({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [messageType, setMessageType] = useState('error');
+  
+  const [borderStatus, setBorderStatus] = useState(null);
 
   const { aplicarEscala } = useAccesibilidad();
   const styles = getStyles(aplicarEscala);
 
+  const colors = {
+    errorBg: '#FFF5F5',
+    errorBorder: '#FEB2B2',
+    successBg: '#F0FFF4',
+    successBorder: '#9AE6B4',
+    defaultBorder: '#E2E8F0',
+    defaultBg: '#F7FAFC'
+  };
+
+  const getDynamicStyles = () => {
+    if (borderStatus === 'error') {
+      return { borderColor: colors.errorBorder, backgroundColor: colors.errorBg };
+    }
+    if (borderStatus === 'success') {
+      return { borderColor: colors.successBorder, backgroundColor: colors.successBg };
+    }
+    return { borderColor: colors.defaultBorder, backgroundColor: colors.defaultBg };
+  };
+
   const handleLogin = async () => {
     setMessage(null);
+    setBorderStatus(null);
+
     if (!email || !password) {
       setMessage('Rellena email y contraseña');
       setMessageType('error');
+      setBorderStatus('error');
       return;
     }
 
@@ -42,36 +66,31 @@ export default function InicioSesion({ navigation }) {
       const user = userCredential.user;
       const idToken = await user.getIdToken();
       
-      // Registrar push token del dispositivo
-        try {
-          const expoPushToken = await registerForPushNotificationsAsync();
-          await enviarPushTokenAlBackend({
-            token: expoPushToken,
-            firebaseToken: idToken,
-            platform: Platform.OS,
-          });
-        } catch (pushError) {
-          console.log('No se pudo registrar push token:', pushError.message);
-        }      
+      try {
+        const expoPushToken = await registerForPushNotificationsAsync();
+        await enviarPushTokenAlBackend({
+          token: expoPushToken,
+          firebaseToken: idToken,
+          platform: Platform.OS,
+        });
+      } catch (pushError) {
+        console.log('No se pudo registrar push token:', pushError.message);
+      }      
       
-      // Guardar token de sesión de forma segura
       await setToken('userToken', idToken);
 
-      // Obtener perfil desde la base de datos MySQL
       const res = await axios.get(`${API}/auth/profile`, {
         headers: { Authorization: `Bearer ${idToken}` }
       });
 
       const perfil = res.data.usuario;
-
-      // Guardar objeto completo del usuario para persistencia
       await AsyncStorage.setItem('user', JSON.stringify(perfil));
 
       setLoading(false);
-      setMessage('Inicio de sesión exitoso');
+      setMessage('¡Inicio de sesión exitoso!');
       setMessageType('success');
+      setBorderStatus('success');
 
-      // Navegación basada en el rol del usuario
       setTimeout(() => {
         if (perfil.tipo_usuario === 'paciente') {
           navigation.replace('DashboardPaciente');
@@ -82,80 +101,76 @@ export default function InicioSesion({ navigation }) {
 
     } catch (err) {
       setLoading(false);
-      setMessage(err.response?.data?.error || "Error al iniciar sesión");
+      setBorderStatus('error');
       setMessageType('error');
+      
+      const errorCode = err.code;
+      
+      if (errorCode === 'auth/user-not-found' || errorCode === 'auth/invalid-credential') {
+        setMessage('¡Credenciales incorrectas! Revisa tu email y contraseña.');
+      } else if (errorCode === 'auth/wrong-password') {
+        setMessage('La contraseña es incorrecta.');
+      } else if (errorCode === 'auth/invalid-email') {
+        setMessage('El formato del correo no es válido.');
+      } else if (errorCode === 'auth/too-many-requests') {
+        setMessage('Demasiados intentos. Inténtalo más tarde.');
+      } else {
+        setMessage("Error al conectar con el servidor.");
+      }
     }
   };
 
   return (
     <View style={styles.container}>
-      <ScrollView 
-        style={styles.contentPadding} 
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
-      >
-        <View style={{ marginBottom: 30, marginTop: 10 }}>
+      <ScrollView style={styles.contentPadding} showsVerticalScrollIndicator={false}contentContainerStyle={{ paddingBottom: 60 }} >
+        <View style={{ marginBottom: 30, marginTop: 20 }}>
           <Text style={{ fontSize: 28, fontWeight: '800', color: '#1A202C' }}>¡Hola de nuevo!</Text>
           <Text style={{ fontSize: 15, color: '#718096', marginTop: 5 }}>Te echábamos de menos en MyMemoryAngel</Text>
         </View>
 
         {message && (
-          <Text style={[styles.message, { color: messageType === 'error' ? '#E53E3E' : '#38A169', marginBottom: 20 }]}>
+          <Text style={[styles.message, { 
+              color: messageType === 'error' ? '#E53E3E' : '#38A169', 
+              marginBottom: 20,
+              textAlign: 'center',
+              fontWeight: '600'
+            }
+          ]}>
             {message}
           </Text>
         )}
 
         <Text style={styles.label}>Correo electrónico</Text>
-        <View style={styles.inputContainer}>
-          <MaterialCommunityIcons name="email-outline" style={styles.inputIcon} />
-          <TextInput 
-            placeholder="tu@email.com" 
-            value={email} 
-            onChangeText={setEmail} 
-            style={styles.input}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            placeholderTextColor="#A0AEC0"
-          />
+        <View style={[styles.inputContainer, getDynamicStyles(), { borderWidth: 1.5, borderRadius: 12 } ]}>
+            <MaterialCommunityIcons name="email-outline" style={styles.inputIcon} />
+          <TextInput placeholder="tu@gmail.com" value={email} onChangeText={(val) => { setEmail(val); setBorderStatus(null); }} style={[styles.input, { backgroundColor: 'transparent' }]}autoCapitalize="none"keyboardType="email-address" placeholderTextColor="#A0AEC0"/>
         </View>
 
         <Text style={styles.label}>Contraseña</Text>
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer, getDynamicStyles(),{ borderWidth: 1.5, borderRadius: 12 }]}>          
           <MaterialCommunityIcons name="lock-outline" style={styles.inputIcon} />
-          <TextInput 
-            placeholder="........" 
-            value={password} 
-            onChangeText={setPassword} 
-            style={styles.input}
-            secureTextEntry={!showPassword}
-            placeholderTextColor="#A0AEC0"
-          />
+          <TextInput placeholder="........" value={password} onChangeText={(val) => { setPassword(val); setBorderStatus(null); }} style={[styles.input, { backgroundColor: 'transparent' }]} secureTextEntry={!showPassword}placeholderTextColor="#A0AEC0"/>
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
             <MaterialCommunityIcons name={showPassword ? "eye-off-outline" : "eye-outline"} size={22} color="#A0AEC0" />
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity 
-          style={styles.loginLink} 
-          onPress={() => navigation.navigate('Bienvenida')}
-        >
-          <Text style={styles.loginText}>¿No tienes cuenta? Regístrate</Text>
+        <TouchableOpacity style={[styles.loginLink, { marginTop: 10 }]} onPress={() => navigation.navigate('Bienvenida')}>
+          <Text style={styles.loginText}>¿No tienes cuenta? <Text style={{fontWeight: 'bold'}}>Regístrate</Text></Text>
         </TouchableOpacity>
-      </ScrollView>
 
-      <View style={styles.footer}>
-        <TouchableOpacity 
-          style={styles.mainButton} 
+         <TouchableOpacity 
+          style={[styles.mainButton, { marginTop: 40, height: 60, justifyContent: 'center',backgroundColor: styles.mainButton.backgroundColor || '#4A90E2'}]} 
           onPress={handleLogin} 
           disabled={loading}
         >
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.mainButtonText}>Entrar</Text>
+            <Text style={[styles.mainButtonText, { fontSize: 18 }]}>Entrar</Text>
           )}
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </View>
   );
 }

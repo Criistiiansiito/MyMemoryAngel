@@ -62,9 +62,9 @@ export default function App() {
           }}
         >
           <Stack.Screen name="Bienvenida" component={Bienvenida} options={{ headerShown: false }} />
-          <Stack.Screen name="RegistroPaciente" component={RegistroPaciente} />
-          <Stack.Screen name="RegistroCuidador" component={RegistroCuidador} />
-          <Stack.Screen name="InicioSesion" component={InicioSesion} />
+          <Stack.Screen name="RegistroPaciente" component={RegistroPaciente} options={{ headerTitle: "" }}/>
+          <Stack.Screen name="RegistroCuidador" component={RegistroCuidador} options={{ headerTitle: "" }}/>
+          <Stack.Screen name="InicioSesion" component={InicioSesion} options={{ headerTitle: "" }}/>
 
           <Stack.Screen name="DashboardPaciente" component={DashboardPaciente} options={{ headerShown: false }} />
           <Stack.Screen name="DashboardCuidador" component={DashboardCuidador} options={{ headerShown: false }} />
