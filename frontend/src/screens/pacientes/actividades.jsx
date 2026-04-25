@@ -19,6 +19,7 @@ import NivelesMemoriaMusical from './juegos/memoria/nivelesMemoriaMusical';
 import MenuAtencion from './juegos/atencion/menuAtencion';
 import NivelesAtencion from './juegos/atencion/nivelesAtencion';
 import NivelesAtencionReaccion from './juegos/atencion/nivelesAtencionReaccion';
+import NivelesTrivia from './juegos/lenguaje/nivelesTrivia';
 import MenuLenguaje from './juegos/lenguaje/menuLenguaje';
 import MenuOrientacion from './juegos/orientacion/menuOrientacion';
 import MenuFuncionesEjecutivas from './juegos/funcionesEjecutivas/menuFuncionesEjecutivas';
@@ -113,6 +114,15 @@ export default function EstimulacionCognitiva() {
       );
     }
 
+    if (selectedGame === 'NivelesTrivia') {
+      return (
+        <NivelesTrivia
+          onBack={() => setSelectedGame(null)}
+          onSelectDifficulty={(difficulty) => setSelectedGame({ id: 'Trivia', difficulty })}
+        />
+      );
+    }
+
     const gameId = typeof selectedGame === 'string' ? selectedGame : selectedGame.id;
     const props = {
       onBack: () =>
@@ -125,13 +135,16 @@ export default function EstimulacionCognitiva() {
                 ? 'NivelesAtencion'
                 : gameId === 'AtencionReaccion'
                 ? 'NivelesAtencionReaccion'
+                : gameId === 'Trivia'
+                ? 'NivelesTrivia'
                 : null
         ),
       ...(
         gameId === 'MemoriaNumerica' ||
         gameId === 'MemoriaMusical' ||
         gameId === 'Atencion' ||
-        gameId === 'AtencionReaccion'
+        gameId === 'AtencionReaccion' ||
+        gameId === 'Trivia'
           ? { difficulty: selectedGame.difficulty }
           : {}
       ),
@@ -172,6 +185,8 @@ export default function EstimulacionCognitiva() {
               ? 'NivelesAtencion'
               : game === 'AtencionReaccion'
               ? 'NivelesAtencionReaccion'
+              : game === 'Trivia'
+              ? 'NivelesTrivia'
               : game
       ),
     };
