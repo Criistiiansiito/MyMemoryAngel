@@ -71,8 +71,8 @@ export default function Orientacion({ onBack, difficulty = 'orientacion_facil' }
       return;
     }
     Alert.alert(
-      '¿Salir del juego?',
-      'Se perderá tu progreso actual.',
+     '¿Salir de la partida?',
+      'Si sales ahora, perderás el progreso de esta partida.',
       [
         { text: 'Cancelar', style: 'cancel' },
         { text: 'Salir', style: 'destructive', onPress: onBack },

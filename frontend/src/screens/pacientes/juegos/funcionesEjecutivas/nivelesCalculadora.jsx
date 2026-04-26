@@ -10,32 +10,32 @@ import { progresoJuegosService } from '../../../../services/progresoJuegosServic
 
 const LEVELS = [
   {
-    id: 'facil',
-    title: 'Nivel Facil',
-    description: 'Secuencias de 2 digitos.',
+    id: 'calculadora_facil',
+    title: 'Nivel Básico',
+    description: 'Sumas y restas sencillas.',
     icon: 'circle-outline',
-    color: '#FCE7F3',
-    iconColor: '#DB2777',
+    color: '#EFF6FF',
+    iconColor: '#3B82F6',
   },
   {
-    id: 'medio',
-    title: 'Nivel Medio',
-    description: 'Secuencias de 3 digitos.',
+    id: 'calculadora_medio',
+    title: 'Nivel Intermedio',
+    description: 'Operaciones más complicadas.',
     icon: 'circle-half-full',
-    color: '#FCE7F3',
-    iconColor: '#DB2777',
+    color: '#EFF6FF',
+    iconColor: '#3B82F6',
   },
   {
-    id: 'dificil',
-    title: 'Nivel Dificil',
-    description: 'Secuencias de 4 digitos.',
+    id: 'calculadora_dificil',
+    title: 'Nivel Avanzado',
+    description: 'Cálculo con números mayores.',
     icon: 'checkbox-blank-circle',
-    color: '#FCE7F3',
-    iconColor: '#DB2777',
+    color: '#EFF6FF',
+    iconColor: '#3B82F6',
   },
 ];
 
-const MEMORY_KEYS = ['memoria_facil', 'memoria_medio', 'memoria_dificil'];
+const CALCULADORA_KEYS = ['calculadora_facil', 'calculadora_medio', 'calculadora_dificil'];
 
 const normalizeGameKey = (value = '') =>
   String(value)
@@ -44,28 +44,17 @@ const normalizeGameKey = (value = '') =>
     .toLowerCase()
     .trim();
 
-const formatDate = (value) => {
-  if (!value) return 'Sin datos';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'Sin datos';
-  return date.toLocaleDateString('es-ES', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
-};
-
-export default function NivelesMemoria({ onBack, onSelectDifficulty }) {
+export default function NivelesCalculadora({ onBack, onSelectDifficulty }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
   const juegosStyles = getJuegosStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
+  
   const [progressMap, setProgressMap] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
-
     const cargarDatos = async () => {
       try {
         setLoading(true);
@@ -76,7 +65,7 @@ export default function NivelesMemoria({ onBack, onSelectDifficulty }) {
 
         const nextProgressMap = rows.reduce((acc, item) => {
           const key = normalizeGameKey(item.juego);
-          if (MEMORY_KEYS.includes(key)) {
+          if (CALCULADORA_KEYS.includes(key)) {
             acc[key] = item;
           }
           return acc;
@@ -84,26 +73,20 @@ export default function NivelesMemoria({ onBack, onSelectDifficulty }) {
 
         setProgressMap(nextProgressMap);
       } catch (_error) {
-        if (!cancelled) {
-          setProgressMap({});
-        }
+        if (!cancelled) setProgressMap({});
       } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        if (!cancelled) setLoading(false);
       }
     };
 
     cargarDatos();
-
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
   const summary = useMemo(() => {
-    const rows = MEMORY_KEYS.map((key) => progressMap[key]).filter(Boolean);
+    const rows = CALCULADORA_KEYS.map((key) => progressMap[key]).filter(Boolean);
     const partidasTotales = rows.reduce((acc, item) => acc + Number(item.partidas_jugadas || 0), 0);
+    
     const totalAciertosEstimados = rows.reduce(
       (acc, item) => acc + (Number(item.promedio_puntuacion || 0) * Number(item.partidas_jugadas || 0)),
       0
@@ -125,11 +108,10 @@ export default function NivelesMemoria({ onBack, onSelectDifficulty }) {
       accuracy,
       ultimoResultado: latestRow?.ultimo_resultado || '0/10',
       mejorPuntuacion: `${Math.max(...rows.map((item) => Number(item.mejor_puntuacion || 0)), 0)}/10`,
-      ultimaFecha: latestRow?.ultima_fecha || null,
     };
   }, [progressMap]);
 
-  const accuracyIsGood = summary.accuracy > 25;
+  const accuracyIsGood = summary.accuracy > 50;
 
   return (
     <View style={styles.container}>
@@ -140,7 +122,7 @@ export default function NivelesMemoria({ onBack, onSelectDifficulty }) {
           <TouchableOpacity onPress={onBack}>
             <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
           </TouchableOpacity>
-          <Text style={styles.brandName}>Memoria Numerica</Text>
+          <Text style={styles.brandName}>Cálculo Mental</Text>
         </View>
       </View>
 
@@ -165,53 +147,44 @@ export default function NivelesMemoria({ onBack, onSelectDifficulty }) {
 
         {loading ? (
           <View style={[styles.settingsCard, { marginTop: 8, alignItems: 'center', paddingVertical: 24 }]}>
-            <ActivityIndicator color="#DB2777" />
+            <ActivityIndicator color="#0EA5E9" />
           </View>
         ) : !summary.hasData ? (
           <View style={[styles.settingsCard, { marginTop: 8, alignItems: 'center', paddingVertical: 24 }]}>
             <MaterialCommunityIcons name="chart-box-outline" size={40} color="#CBD5E1" />
-            <Text style={[styles.sectionTitle, { marginTop: 12 }]}>Tu progreso en memoria</Text>
-            <Text style={[styles.menuSubtitle, { marginTop: 8, textAlign: 'center' }]}>
-              Cuando juegues partidas, aqui veras el porcentaje de aciertos, las partidas jugadas y la ultima partida global.
+            <Text style={[styles.sectionTitle, { marginTop: 12, textAlign: 'center' }]}>Tu progreso en Cálculo</Text>
+            <Text style={[styles.menuSubtitle, { marginTop: 8, textAlign: 'center', paddingHorizontal: 10 }]}>
+              Cuando juegues partidas, aquí verás el porcentaje de aciertos, las partidas jugadas y tu rendimiento global.
             </Text>
           </View>
         ) : (
           <View style={[styles.settingsCard, { marginTop: 8 }]}>
-            <Text style={[styles.sectionTitle, {marginLeft:0}]}>Resumen rapido</Text>
-            <Text style={[styles.menuSubtitle, { marginTop: 8, marginBottom: 0 }]}>
-              Tu resumen global de memoria.
+            <Text style={[styles.sectionTitle, { marginLeft: 0 }]}>Resumen rápido</Text>
+            <Text style={[styles.menuSubtitle, { marginTop: 8, marginBottom: 5 }]}>
+              Tu resumen global de agilidad matemática.
             </Text>
 
             <View style={juegosStyles.statsRow}>
-                <View
-                  style={[
-                    juegosStyles.cardBase,
-                    accuracyIsGood ? juegosStyles.cardAccuracyGood : juegosStyles.cardAccuracyBad
-                  ]}
-                >
+              <View
+                style={[
+                  juegosStyles.cardBase,
+                  accuracyIsGood ? juegosStyles.cardAccuracyGood : juegosStyles.cardAccuracyBad,
+                ]}
+              >
                 <MaterialCommunityIcons
                   name="percent-outline"
                   size={24}
                   color={accuracyIsGood ? '#16A34A' : '#DC2626'}
                 />
-                <Text style={[styles.menuSubtitle, juegosStyles.statTitle]}>
-                  % de aciertos
-                </Text>
+                <Text style={[styles.menuSubtitle, juegosStyles.statTitle]}>% de aciertos</Text>
                 <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }]}>
                   {summary.accuracy}%
                 </Text>
               </View>
 
-              <View
-                style={[
-                  juegosStyles.cardBase,
-                  juegosStyles.cardNeutral
-                ]}
-              >
+              <View style={[juegosStyles.cardBase, juegosStyles.cardNeutral]}>
                 <MaterialCommunityIcons name="counter" size={24} color="#4D6BFE" />
-                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }]}>
-                  Partidas jugadas
-                </Text>
+                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }]}>Partidas jugadas</Text>
                 <Text style={{ fontSize: aplicarEscala(24), fontWeight: '800', color: '#1E293B' }}>
                   {summary.partidasTotales}
                 </Text>
@@ -219,31 +192,17 @@ export default function NivelesMemoria({ onBack, onSelectDifficulty }) {
             </View>
 
             <View style={juegosStyles.statsRowSmall}>
-              <View
-                style={[
-                  juegosStyles.cardBase,
-                  juegosStyles.cardNeutral
-                ]}
-              >
+              <View style={[juegosStyles.cardBase, juegosStyles.cardNeutral]}>
                 <MaterialCommunityIcons name="clock-outline" size={22} color="#4D6BFE" />
-                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }]}>
-                  Última partida
-                </Text>
+                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }]}>Última partida</Text>
                 <Text style={[juegosStyles.statNumberSmall, { fontSize: aplicarEscala(20) }]}>
                   {summary.ultimoResultado}
                 </Text>
               </View>
 
-              <View
-                style={[
-                  juegosStyles.cardBase,
-                  juegosStyles.cardWarning
-                ]}
-              >
+              <View style={[juegosStyles.cardBase, juegosStyles.cardWarning]}>
                 <MaterialCommunityIcons name="trophy-outline" size={22} color="#F97316" />
-                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }]}>
-                  Mejor puntuacion
-                </Text>
+                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }]}>Mejor puntuación</Text>
                 <Text style={{ fontSize: aplicarEscala(20), fontWeight: '800', color: '#1E293B' }}>
                   {summary.mejorPuntuacion}
                 </Text>

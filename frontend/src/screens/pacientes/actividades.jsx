@@ -21,6 +21,7 @@ import NivelesAtencion from './juegos/atencion/nivelesAtencion';
 import NivelesAtencionReaccion from './juegos/atencion/nivelesAtencionReaccion';
 import NivelesTrivia from './juegos/lenguaje/nivelesTrivia';
 import NivelesOrientacion from './juegos/orientacion/nivelesOrientacion';
+import NivelesCalculadora from './juegos/funcionesEjecutivas/nivelesCalculadora';
 import MenuLenguaje from './juegos/lenguaje/menuLenguaje';
 import MenuOrientacion from './juegos/orientacion/menuOrientacion';
 import MenuFuncionesEjecutivas from './juegos/funcionesEjecutivas/menuFuncionesEjecutivas';
@@ -133,6 +134,15 @@ export default function EstimulacionCognitiva() {
       );
     }
 
+        if (selectedGame === 'NivelesCalculadora') {
+      return (
+        <NivelesCalculadora
+          onBack={() => setSelectedGame(null)}
+          onSelectDifficulty={(difficulty) => setSelectedGame({ id: 'Calculadora', difficulty })}
+        />
+      );
+    }
+
     const gameId = typeof selectedGame === 'string' ? selectedGame : selectedGame.id;
     const props = {
       onBack: () =>
@@ -149,6 +159,8 @@ export default function EstimulacionCognitiva() {
                 ? 'NivelesTrivia'
                 : gameId === 'Orientacion'
                 ? 'NivelesOrientacion'
+                : gameId === 'Calculadora'
+                ? 'NivelesCalculadora'
                 : null
         ),
       ...(
@@ -157,7 +169,8 @@ export default function EstimulacionCognitiva() {
         gameId === 'Atencion' ||
         gameId === 'AtencionReaccion' ||
         gameId === 'Trivia' ||
-        gameId === 'Orientacion'
+        gameId === 'Orientacion' ||
+        gameId === 'Calculadora'
           ? { difficulty: selectedGame.difficulty }
           : {}
       ),
@@ -202,6 +215,8 @@ export default function EstimulacionCognitiva() {
               ? 'NivelesTrivia'
               : game === 'Orientacion'
               ? 'NivelesOrientacion'
+              : game === 'Calculadora'
+              ? 'NivelesCalculadora'
               : game
       ),
     };
