@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   View, Text, TouchableOpacity, TextInput, ScrollView, 
-  KeyboardAvoidingView, Platform, StatusBar, Alert, StyleSheet 
+  KeyboardAvoidingView, Platform, StatusBar, Alert, 
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Speech from 'expo-speech';
-import * as SecureStore from 'expo-secure-store'; 
 import { getStyles } from '../../../style/styles';
 import { useAccesibilidad } from '../../../services/accesibilidadContext';
 import { escrituraService } from '../../../services/escrituraService';

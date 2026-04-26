@@ -22,6 +22,7 @@ import NivelesAtencionReaccion from './juegos/atencion/nivelesAtencionReaccion';
 import NivelesTrivia from './juegos/lenguaje/nivelesTrivia';
 import NivelesOrientacion from './juegos/orientacion/nivelesOrientacion';
 import NivelesCalculadora from './juegos/funcionesEjecutivas/nivelesCalculadora';
+import NivelesVisual from './juegos/visual/nivelesVisual';
 import MenuLenguaje from './juegos/lenguaje/menuLenguaje';
 import MenuOrientacion from './juegos/orientacion/menuOrientacion';
 import MenuFuncionesEjecutivas from './juegos/funcionesEjecutivas/menuFuncionesEjecutivas';
@@ -134,11 +135,20 @@ export default function EstimulacionCognitiva() {
       );
     }
 
-        if (selectedGame === 'NivelesCalculadora') {
+    if (selectedGame === 'NivelesCalculadora') {
       return (
         <NivelesCalculadora
           onBack={() => setSelectedGame(null)}
           onSelectDifficulty={(difficulty) => setSelectedGame({ id: 'Calculadora', difficulty })}
+        />
+      );
+    }
+
+    if (selectedGame === 'NivelesVisual') {
+      return (
+        <NivelesVisual
+          onBack={() => setSelectedGame(null)}
+          onSelectDifficulty={(difficulty) => setSelectedGame({ id: 'Visual', difficulty })}
         />
       );
     }
@@ -161,6 +171,8 @@ export default function EstimulacionCognitiva() {
                 ? 'NivelesOrientacion'
                 : gameId === 'Calculadora'
                 ? 'NivelesCalculadora'
+                : gameId === 'Visual'
+                ? 'NivelesVisual'
                 : null
         ),
       ...(
@@ -170,7 +182,8 @@ export default function EstimulacionCognitiva() {
         gameId === 'AtencionReaccion' ||
         gameId === 'Trivia' ||
         gameId === 'Orientacion' ||
-        gameId === 'Calculadora'
+        gameId === 'Calculadora' ||
+        gameId === 'Visual'
           ? { difficulty: selectedGame.difficulty }
           : {}
       ),
@@ -217,6 +230,8 @@ export default function EstimulacionCognitiva() {
               ? 'NivelesOrientacion'
               : game === 'Calculadora'
               ? 'NivelesCalculadora'
+              : game === 'Visual'
+              ? 'NivelesVisual'
               : game
       ),
     };
