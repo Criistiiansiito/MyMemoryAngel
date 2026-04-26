@@ -389,7 +389,7 @@ export default function MemoriaMusical({ onBack, difficulty = 'dificil' }) {
             </>
           ) : (
             <View style={juegosStyles.finishedContent}>
-              <MaterialCommunityIcons name="music" size={60} color="#10B981" />
+              <MaterialCommunityIcons name="trophy" size={60} color="#10B981" />
               <Text style={juegosStyles.finishedTitle}>Juego completado</Text>
               <Text style={juegosStyles.finishedSubtitle}>
                 Has acertado {score} de {TOTAL_ROUNDS} rondas

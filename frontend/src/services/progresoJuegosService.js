@@ -33,6 +33,11 @@ export const progresoJuegosService = {
     return response.data;
   },
 
+  obtenerProgresoPorPaciente: async (pacienteUid) => {
+    if (!pacienteUid) throw new Error('UID del paciente es requerido');
+    return await progresoJuegosService.obtenerProgreso(pacienteUid);
+  },
+
   obtenerMiProgreso: async () => {
     const currentUserUid = auth.currentUser?.uid;
     if (!currentUserUid) {

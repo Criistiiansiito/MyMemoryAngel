@@ -102,7 +102,7 @@ export default function InformacionPaciente({ paciente, onBack, styles }) {
         {/* CARD: PROGRESO DE LOS JUEGOS */}
         <TouchableOpacity 
           style={styles.menuCard} 
-          onPress={() => console.log("Ir a Progreso de los juegos")}
+          onPress={() => navigation.navigate('GestionarProgresoJuegosPaciente', { paciente: paciente })}
         >
           <View style={[styles.menuIconContainer, { backgroundColor: '#E0F2FE' }]}>
             <MaterialCommunityIcons name="controller-classic-outline" size={28} color="#0EA5E9" />
