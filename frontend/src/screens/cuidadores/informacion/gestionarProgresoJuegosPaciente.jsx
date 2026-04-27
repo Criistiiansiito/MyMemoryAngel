@@ -17,8 +17,8 @@ const AREAS = [
 ];
 
 export default function GestionarProgresoJuegosPaciente({ route, navigation }) {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
   const insets = useSafeAreaInsets();
 
   const { paciente } = route.params;

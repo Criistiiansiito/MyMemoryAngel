@@ -13,8 +13,8 @@ import { useStoredUser } from '../../../hooks/storedUser';
 import MenuCategoriaEstimulacion from '../../../components/estimulacion/MenuCardEstimulacion';
 
 export default function Escritura({ onBack }) {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
   const insets = useSafeAreaInsets();
 
   const [vista, setVista] = useState('menu'); 

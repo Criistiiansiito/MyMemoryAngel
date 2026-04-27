@@ -33,8 +33,8 @@ const IMAGENES_LECTURA = {
 };
 
 export default function Lectura({ onBack }) {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
   const insets = useSafeAreaInsets();
 
   const [vistaActual, setVistaActual] = useState('menu'); 

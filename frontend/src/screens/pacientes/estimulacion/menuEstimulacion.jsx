@@ -8,8 +8,8 @@ import { getStyles } from '../../../style/styles';
 import { useAccesibilidad } from '../../../services/accesibilidadContext';
 
 export default function MenuEstimulacion({ onBack, onSelectActivity }) {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
   
   // Hook para obtener los espacios seguros del dispositivo
   const insets = useSafeAreaInsets();

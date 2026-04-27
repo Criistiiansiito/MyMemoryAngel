@@ -18,8 +18,8 @@ const formatRecurrencia = (recurrencia = 'puntual') => {
 };
 
 export default function GestionarListaRecordatoriosPaciente({ route, navigation }) {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
   const insets = useSafeAreaInsets();
   const { paciente } = route.params;
 
@@ -77,7 +77,7 @@ export default function GestionarListaRecordatoriosPaciente({ route, navigation 
           </View>
         ) : (
           recordatorios.map((item) => {
-            const config = getIconConfig(item.tipo);
+            const config = getIconConfig(item.tipo, isDarkMode);
             const { fecha, hora } = formatearFechaYHora(item.fecha_hora);
 
             return (

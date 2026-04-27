@@ -10,8 +10,8 @@ export default function MenuCategoriaEstimulacion({
   onSelectItem,
   containerStyle,
 }) {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
 
   return (
     <ScrollView

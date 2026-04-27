@@ -23,8 +23,8 @@ const CATEGORIAS_COMPLETA = [
 const MENSAJE_INICIAL = 'Hola. Estoy aquí para ayudarte. Puedes preguntarme sobre memoria, ejercicios o consejos. También puedes elegir un tema para empezar.';
 
 export default function ChatbotScreen() {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
   const insets = useSafeAreaInsets();
 
   const [mensaje, setMensaje] = useState('');

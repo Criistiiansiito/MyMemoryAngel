@@ -26,8 +26,8 @@ const renderEstado = (estado) => {
 };
 
 export default function HistorialRecordatoriosPaciente({ route, navigation }) {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
   const insets = useSafeAreaInsets();
   const { paciente } = route.params;
 
@@ -85,7 +85,7 @@ export default function HistorialRecordatoriosPaciente({ route, navigation }) {
           </View>
         ) : (
           historial.map((item) => {
-            const config = getIconConfig(item.tipo);
+            const config = getIconConfig(item.tipo, isDarkMode);
             const estado = renderEstado(item.estado_calendario);
             const { hora } = formatearFechaYHora(item.fecha_hora);
 

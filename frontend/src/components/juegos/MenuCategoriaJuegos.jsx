@@ -15,8 +15,8 @@ export default function MenuCategoriaJuegos({
   games = [],
   onSelectGame,
 }) {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
   const insets = useSafeAreaInsets();
   const GameCard = ({ game }) => {
     return (
