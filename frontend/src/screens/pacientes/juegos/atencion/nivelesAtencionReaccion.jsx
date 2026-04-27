@@ -160,16 +160,16 @@ export default function NivelesAtencionReaccion({ onBack, onSelectDifficulty }) 
             <View style={juegosStyles.statsRow}>
               <View style={[juegosStyles.cardBase, juegosStyles.cardNeutral]}>
                 <MaterialCommunityIcons name="counter" size={24} color="#6366F1" />
-                <Text style={[styles.menuSubtitle, juegosStyles.statTitle]}>Partidas</Text>
-                <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }]}>
+                <Text style={[styles.menuSubtitle, juegosStyles.statTitle, isDarkMode && { color: '#000000' }]}>Partidas</Text>
+                <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }, isDarkMode && { color: '#000000' }]}>
                   {summary.partidasTotales}
                 </Text>
               </View>
 
               <View style={[juegosStyles.cardBase, juegosStyles.cardWarning]}>
                 <MaterialCommunityIcons name="trophy-outline" size={24} color="#F97316" />
-                <Text style={[styles.menuSubtitle, juegosStyles.statTitle]}>Récord</Text>
-                <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }]}>
+                <Text style={[styles.menuSubtitle, juegosStyles.statTitle, isDarkMode && { color: '#FFFFFF' }]}>Récord</Text>
+                <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }, isDarkMode && { color: '#FFFFFF' }]}>
                   {summary.mejorPuntuacion}
                 </Text>
               </View>
@@ -180,9 +180,9 @@ export default function NivelesAtencionReaccion({ onBack, onSelectDifficulty }) 
               <View style={[juegosStyles.cardBase, juegosStyles.cardNeutral, { flex: 1 }]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <MaterialCommunityIcons name="history" size={22} color="#6366F1" />
-                    <Text style={[styles.menuSubtitle, juegosStyles.statTitle, { marginLeft: 10 }]}>Último resultado</Text>
+                    <Text style={[styles.menuSubtitle, juegosStyles.statTitle, { marginLeft: 10 }, isDarkMode && { color: '#000000' }]}>Último resultado</Text>
                 </View>
-                <Text style={[juegosStyles.statNumberSmall, { fontSize: aplicarEscala(20), marginTop: 5 }]}>
+                <Text style={[juegosStyles.statNumberSmall, { fontSize: aplicarEscala(20), marginTop: 5 }, isDarkMode && { color: '#000000' }]}>
                   {summary.ultimoResultado}
                 </Text>
               </View>
@@ -193,3 +193,4 @@ export default function NivelesAtencionReaccion({ onBack, onSelectDifficulty }) 
     </View>
   );
 }
+
