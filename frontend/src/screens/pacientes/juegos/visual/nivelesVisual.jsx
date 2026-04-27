@@ -152,8 +152,8 @@ export default function NivelesVisual({ onBack, onSelectDifficulty }) {
                   size={24}
                   color={accuracyIsGood ? '#16A34A' : '#DC2626'}
                 />
-                <Text style={[styles.menuSubtitle, juegosStyles.statTitle, isDarkMode && { color: '#FFFFFF' }]}>% de aciertos</Text>
-                <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }, isDarkMode && { color: '#FFFFFF' }]}>
+                <Text style={[styles.menuSubtitle, juegosStyles.statTitle, isDarkMode && { color: '#000000' }]}>% de aciertos</Text>
+                <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }, isDarkMode && { color: '#000000' }]}>
                   {summary.accuracy}%
                 </Text>
               </View>
@@ -178,8 +178,8 @@ export default function NivelesVisual({ onBack, onSelectDifficulty }) {
 
               <View style={[juegosStyles.cardBase, juegosStyles.cardWarning]}>
                 <MaterialCommunityIcons name="trophy-outline" size={22} color="#F97316" />
-                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }, isDarkMode && { color: '#FFFFFF' }]}>Mejor puntuación</Text>
-                <Text style={{ fontSize: aplicarEscala(20), fontWeight: '800', color: isDarkMode ? '#FFFFFF' : '#1E293B' }}>
+                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }, isDarkMode && { color: '#000000' }]}>Mejor puntuación</Text>
+                <Text style={{ fontSize: aplicarEscala(20), fontWeight: '800', color: isDarkMode ? '#000000' : '#1E293B' }}>
                   {summary.mejorPuntuacion}
                 </Text>
               </View>
@@ -190,6 +190,7 @@ export default function NivelesVisual({ onBack, onSelectDifficulty }) {
     </View>
   );
 }
+
 
 
 

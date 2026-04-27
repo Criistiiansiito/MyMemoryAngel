@@ -152,13 +152,13 @@ export default function Recordatorios({ navigation }) {
                   </View>
                 </View>
 
-                <View style={[styles.reminderActionButton, { width: 30, height: 30 }]}>
+                <View style={[styles.reminderActionButton, { width: 32, height: 32, borderRadius: 16, marginLeft: 12, alignSelf: 'center' }]}>
                   {updatingId === item.id_recordatorio ? (
                     <ActivityIndicator size="small" color="#16A34A" />
                   ) : (
                     <MaterialCommunityIcons
                       name={item.cumplido ? 'check-circle' : 'check-circle-outline'}
-                      size={32}
+                      size={26}
                       color={item.cumplido ? '#16A34A' : '#94A3B8'}
                     />
                   )}
