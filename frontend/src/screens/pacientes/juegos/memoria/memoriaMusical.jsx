@@ -63,9 +63,9 @@ const getSequenceLength = (round, difficulty) => {
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default function MemoriaMusical({ onBack, difficulty = 'dificil' }) {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
-  const juegosStyles = getJuegosStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
+  const juegosStyles = getJuegosStyles(aplicarEscala, isDarkMode);
   const insets = useSafeAreaInsets();
 
   const [round, setRound] = useState(1);
@@ -329,11 +329,11 @@ export default function MemoriaMusical({ onBack, difficulty = 'dificil' }) {
                 color="#8B5CF6"
               />
 
-              <Text style={[styles.menuSubtitle, juegosStyles.phaseText]}>
+              <Text style={[styles.menuSubtitle, juegosStyles.phaseText, isDarkMode && { color: '#000000' }]}>
                 {showSequence ? 'Escucha la secuencia:' : 'Repite los sonidos:'}
               </Text>
 
-              <Text style={[styles.inputLabel, juegosStyles.difficultyText]}>
+              <Text style={[styles.inputLabel, juegosStyles.difficultyText, isDarkMode && { color: '#000000' }]}>
                 Dificultad: {sequence.length} sonidos
               </Text>
 

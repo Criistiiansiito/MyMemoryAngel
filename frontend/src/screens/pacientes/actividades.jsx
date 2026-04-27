@@ -43,8 +43,8 @@ import Orientacion from './juegos/orientacion/orientacion';
 import Visual from './juegos/visual/visual';
 
 export default function EstimulacionCognitiva() {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
   const insets = useSafeAreaInsets();
   const currentDate = useCurrentDate();
   const todayLabel = formatMadridDate(currentDate, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -308,7 +308,7 @@ export default function EstimulacionCognitiva() {
           <Text style={styles.brandName}>Estimulación</Text>
           <View style={styles.headerButtonsGroup}>
             <TouchableOpacity style={styles.headerIconButton} onPress={leerResumen}>
-              <MaterialCommunityIcons name={isSpeaking ? 'stop' : 'volume-high'} size={24} color="#334155" />
+              <MaterialCommunityIcons name={isSpeaking ? 'stop' : 'volume-high'} style={styles.iconosHeaders} size={24} />
             </TouchableOpacity>
           </View>
         </View>
@@ -323,32 +323,32 @@ export default function EstimulacionCognitiva() {
         </View>
 
         <TouchableOpacity
-          style={[styles.menuCard, { height: 120, borderLeftWidth: 0, borderLeftColor: '#F97316' }]}
+          style={[styles.menuCard, { height: 120, borderLeftWidth: 0, borderLeftColor: '#F97316' }, isDarkMode && { backgroundColor: '#54537e' }]}
           onPress={() => setView('actividades')}
         >
           <View style={[styles.menuIconContainer, { backgroundColor: '#FFEDD5' }]}>
             <MaterialCommunityIcons name="palette-outline" size={35} color="#F97316" />
           </View>
           <View style={{ flex: 1, marginLeft: 15 }}>
-            <Text style={styles.menuTitle}>Actividades</Text>
-            <Text style={styles.menuSubtitle}>Arte, música y lectura</Text>
+            <Text style={[styles.menuTitle, isDarkMode && { color: '#FFFFFF' }]}>Actividades</Text>
+            <Text style={[styles.menuSubtitle, isDarkMode && { color: '#FFFFFF' }]}>Arte, música y lectura</Text>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.menuCard, { height: 120, borderLeftWidth: 0, borderLeftColor: '#4D6BFE' }]}
+          style={[styles.menuCard, { height: 120, borderLeftWidth: 0, borderLeftColor: '#4D6BFE' }, isDarkMode && { backgroundColor: '#54537e' }]}
           onPress={() => setView('juegos')}
         >
           <View style={[styles.menuIconContainer, { backgroundColor: '#E8F0FE' }]}>
             <MaterialCommunityIcons name="controller-classic-outline" size={35} color="#4D6BFE" />
           </View>
           <View style={{ flex: 1, marginLeft: 15 }}>
-            <Text style={styles.menuTitle}>Juegos</Text>
-            <Text style={styles.menuSubtitle}>6 áreas cognitivas y sus juegos</Text>
+            <Text style={[styles.menuTitle, isDarkMode && { color: '#FFFFFF' }]}>Juegos</Text>
+            <Text style={[styles.menuSubtitle, isDarkMode && { color: '#FFFFFF' }]}>6 áreas cognitivas y sus juegos</Text>
           </View>
         </TouchableOpacity>
 
-        <View style={styles.infoBox}>
+        <View style={[styles.infoBox, isDarkMode && { borderColor: '#FFFFFF' }]}>
           <View style={styles.infoIconCircle}>
             <MaterialCommunityIcons name="lightbulb-on" size={24} color="#F59E0B" />
           </View>

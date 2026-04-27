@@ -1,14 +1,18 @@
 import { StyleSheet, Platform, Dimensions } from 'react-native';
+import { getAccesibilidadColors } from '../services/accesibilidadColors';
 
 const { height } = Dimensions.get('window');
 const { width } = Dimensions.get('window');
 const CANVAS_SIZE = width - 20;
 
-export const getStyles = (aplicarEscala) => StyleSheet.create({
+export const getStyles = (aplicarEscala, isDarkMode = false) => {
+  const colors = getAccesibilidadColors(isDarkMode);
+
+  return StyleSheet.create({
   // --- ESTILOS GENERALES Y CONTENEDORES ---
   container: { 
     flex: 1, 
-    backgroundColor: '#F0F5FA',
+    backgroundColor: colors.background,
   },
   contentCenter: {
     flex: 1,
@@ -24,13 +28,13 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
 
   // --- TOP BAR / HEADER ---
   topBar: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface2,
     width: '100%',
     paddingTop: Platform.OS === 'ios' ? 30 : 20, 
     paddingBottom: 20,
     paddingHorizontal: 25,
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: colors.border,
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -39,7 +43,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
   },
   topBarArrow:{
     fontSize:aplicarEscala(26),
-    color:"#334155"
+    color: colors.text
   },
   logoRow: { 
     flexDirection: 'row',
@@ -52,7 +56,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     height: 130,  
   },
   cuadradoLogoHeader: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     padding: 10,
     borderRadius: 35, 
     elevation: 5,    
@@ -65,15 +69,21 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
   textContainer: {
     justifyContent: 'center',
   },
+  iconosHeaders: {
+    color:colors.iconosHeaders
+  },
+  iconosRecordatorios: {
+    color:colors.iconosRecordatorios
+  },
   brandName: { 
     fontSize: aplicarEscala(22), 
     fontWeight: '800', 
-    color: '#1A202C',
+    color: colors.textStrong,
     marginLeft: 15
   },
   subtitle: { 
     fontSize: aplicarEscala(13), 
-    color: '#718096', 
+    color: colors.textMuted, 
     fontWeight: '400'
   },
 
@@ -84,7 +94,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
   cardButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     padding: 20,
     borderRadius: 18,
     marginBottom: 16,
@@ -105,7 +115,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
   cardButtonText: { 
     fontSize: aplicarEscala(18), 
     fontWeight: '600', 
-    color: '#2D3748',
+    color: colors.text,
     marginLeft: 40
   },
 
@@ -113,16 +123,16 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
   label: {
     fontSize: aplicarEscala(14),
     fontWeight: '600',
-    color: '#4A5568',
+    color: colors.text,
     marginBottom: 8,
     marginTop: 15,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: colors.border,
     borderRadius: 12,
     paddingHorizontal: 15,
     height: 60,
@@ -130,11 +140,11 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
   inputIcon: {
     marginRight: 10,
     fontSize: aplicarEscala(22),      
-    color: '#94A3B8'
+    color: colors.inactive
   },
   input: {
     flex: 1,
-    color: '#2D3748',
+    color: colors.text,
     fontSize: aplicarEscala(16),
   },
   eyeIcon: {
@@ -145,15 +155,18 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     fontSize: aplicarEscala(16),
     textAlignVertical: 'center',
   },
+  textoColorNormal:{
+    color: colors.textoColorNormal,
+  },
 
   // --- BOTONES DE ACCIÓN (Bottom) ---
   footer: {
     paddingHorizontal: 25,
     paddingBottom: 30, 
-    backgroundColor: '#F0F5FA',
+    backgroundColor: colors.background,
   },
   mainButton: {
-    backgroundColor: '#334155',
+    backgroundColor: colors.primary,
     height: 55,
     borderRadius: 15,
     justifyContent: 'center',
@@ -165,7 +178,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     shadowRadius: 5,
   },
   mainButtonText: {
-    color: '#FFFFFF',
+    color: colors.onPrimary,
     fontSize: aplicarEscala(16),
     fontWeight: '700',
   },
@@ -174,7 +187,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     alignItems: 'center'
   },
   loginText: { 
-    color: '#334155', 
+    color: colors.text, 
     fontSize: aplicarEscala(15), 
     fontWeight: '500',
     textDecorationLine: 'underline'
@@ -227,7 +240,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     shadowRadius: 5,
   },
   dateText: {
-    color: '#718096',
+    color: colors.menuSubtitle,
     fontSize: aplicarEscala(16),
     left: 60,
     fontWeight: '500',
@@ -235,11 +248,11 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
   headerIconButton: {
     padding: 8,
     borderRadius: 12,
-    backgroundColor: '#F7FAFC',
+    backgroundColor: colors.headerIconButton,
     marginLeft: 10,
   },
   menuCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cards,
     borderRadius: 15, 
     padding: 10,
     flexDirection: 'row',
@@ -263,11 +276,11 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
   menuTitle: {
     fontSize: aplicarEscala(18),
     fontWeight: '700',
-    color: '#2D3748',
+    color: colors.menuTitle,
   },
   menuSubtitle: {
     fontSize: aplicarEscala(14),
-    color: '#718096',
+    color: colors.menuSubtitle,
     marginTop: 2,
   },
   scrollContent: {
@@ -299,14 +312,14 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     marginHorizontal: 15,
     fontSize: aplicarEscala(14),
     fontWeight: '700',
-    color: '#94A3B8',
+    color: colors.inactive,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
 
   // --- TARJETAS DE CONFIGURACIÓN (Mantienen el estilo card) ---
   settingsCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 20,
     padding: 20,
     marginBottom: 15,
@@ -325,21 +338,21 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
   sectionTitle: {
     fontSize: aplicarEscala(18),
     fontWeight: '700',
-    color: '#2D3748',
+    color: colors.text,
     marginLeft: 10,
   },
   optionButtonActive: {
-    borderColor: '#4D6BFE',
-    backgroundColor: '#F0F5FF',
+    borderColor: colors.primary,
+    backgroundColor: colors.primarySoft,
     borderWidth: 2,
   },
   optionText: {
     fontSize: aplicarEscala(16),
-    color: '#4A5568',
+    color: colors.text,
     fontWeight: '600',
   },
   optionTextActive: {
-    color: '#4D6BFE',
+    color: colors.primary,
     fontWeight: '700',
   },
   rowSpace: {
@@ -351,7 +364,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     width: 140,
     height: 140,
     borderRadius: 70,
-    backgroundColor: '#E8F0FE',
+    backgroundColor: colors.primarySoft,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
@@ -367,7 +380,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     width: 130,
     height: 130,
     borderRadius: 65,
-    backgroundColor: '#E8F0FE', 
+    backgroundColor: colors.primarySoft, 
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
@@ -380,7 +393,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: '#334155',
+    backgroundColor: colors.primary,
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -395,7 +408,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     paddingHorizontal: 5,
   },
   typeCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     width: '48%', 
     borderRadius: 24,
     padding: 20,
@@ -408,8 +421,8 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     shadowRadius: 8,
   },
   typeCardActive: {
-    borderColor: '#4D6BFE',
-    backgroundColor: '#F0F5FF',
+    borderColor: colors.primary,
+    backgroundColor: colors.primarySoft,
     borderWidth: 2,
   },
   badgeText: {
@@ -433,7 +446,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     textAlign: 'center',
   },
   typeTextActive: {
-    color: '#4D6BFE',
+    color: colors.primary,
     fontWeight: '700',
   },
   gridRecordatorios: {
@@ -464,11 +477,11 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
   // --- ESTILOS DEL CHATBOT ---
   chatContainer: {
     flex: 1,
-    backgroundColor: '#FFFCF5', 
+    backgroundColor: colors.background, 
   },
 bubbleBot: {
     alignSelf: 'flex-start',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 20,
@@ -490,7 +503,7 @@ bubbleUser: {
     maxWidth: '85%',
   },
   textBot: {
-    color: '#4A5568',
+    color: colors.text,
     fontSize: aplicarEscala(16),
     lineHeight: 22,
   },
@@ -503,17 +516,18 @@ chatInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 5,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: colors.border,
   },
  inputChatWrapper: {
     flex: 1,
     height: 35,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: colors.surfaceSoft,
     borderRadius: 20,
     paddingHorizontal: 15,
     marginRight: 10,
+    color: colors.text,
   },
   sendButton: {
     backgroundColor: '#334155',
@@ -529,9 +543,9 @@ chatInputContainer: {
   tabBar: {
     flexDirection: 'row',
     height: 90,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface2,
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
+    borderTopColor: colors.borderSoft,
     justifyContent: 'space-around',
     alignItems: 'center',
     paddingBottom: Platform.OS === 'ios' ? 20 : 10,
@@ -548,7 +562,7 @@ chatInputContainer: {
     fontWeight: '500',
   },
   tabTextActive: {
-    color: '#4D6BFE',
+    color: colors.primary,
     fontWeight: '700',
   },
 
@@ -557,7 +571,7 @@ chatInputContainer: {
     width: 45,
     height: 45,
     borderRadius: 22.5,
-    backgroundColor: '#FEF3C7',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
@@ -566,19 +580,19 @@ chatInputContainer: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#22C55E',
+    backgroundColor: colors.successStrong,
     position: 'absolute',
     bottom: 0,
     right: 0,
     borderWidth: 2,
-    borderColor: '#FFFFFF',
+    borderColor: colors.surface,
   },
   activityCanvas: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: '#E2E8F0',
+    borderColor: colors.border,
     borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
@@ -590,19 +604,19 @@ chatInputContainer: {
     shadowRadius: 4,
   },
   canvasHint: {
-    color: '#94A3B8',
+    color: colors.inactive,
     marginTop: 12,
     fontSize: aplicarEscala(16),
     fontWeight: '500',
     textAlign: 'center',
   },
   actionPanel: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     padding: 20,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     borderWidth: 1,
-    borderColor: '#F1F5F9',
+    borderColor: colors.borderSoft,
     elevation: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -3 },
@@ -621,14 +635,14 @@ chatInputContainer: {
   },
 
   colorPickerSelected: {
-    borderColor: '#334155',
+    borderColor: colors.text,
     transform: [{ scale: 1.1 }], 
   },
   iconButton: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#6366F1',
+    backgroundColor: colors.accent,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
@@ -653,13 +667,13 @@ chatInputContainer: {
     marginTop: 50,
   },
   emptyStateText: {
-    color: '#718096', 
+    color: colors.textMuted, 
     marginTop: 10,
     fontSize: aplicarEscala(16),
     fontWeight: '500',
   },
   menuCardCompleted: {
-    borderColor: '#4ADE80', 
+    borderColor: colors.success, 
     borderWidth: 1.5, 
     opacity: 0.8,
   },
@@ -677,7 +691,7 @@ chatInputContainer: {
     marginBottom: 6,
   },
   timeBadge: {
-    backgroundColor: '#F1F5F9', 
+    backgroundColor: colors.surfaceSoft, 
     paddingHorizontal: 8, 
     paddingVertical: 3, 
     borderRadius: 6, 
@@ -686,19 +700,19 @@ chatInputContainer: {
     alignItems: 'center',
   },
   timeBadgeText: {
-    color: '#4D6BFE', 
+    color: colors.primary, 
     fontWeight: 'bold', 
     fontSize: aplicarEscala(11), 
     marginLeft: 4,
   },
   completedBadge: {
-    backgroundColor: '#DCFCE7', 
+    backgroundColor: colors.successSoft, 
     paddingHorizontal: 6, 
     paddingVertical: 2, 
     borderRadius: 4,
   },
   completedCheck: {
-    color: '#16A34A', 
+    color: colors.successStrong, 
     fontSize: aplicarEscala(10), 
     fontWeight: 'bold',
   },
@@ -715,7 +729,7 @@ chatInputContainer: {
   },
   typeTabText: {
     fontSize: aplicarEscala(11), 
-    color: '#94A3B8', 
+    color: colors.inactive, 
     fontWeight: '600',
     textTransform: 'capitalize',
   },
@@ -726,13 +740,13 @@ chatInputContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 20,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: colors.surfaceSoft,
   },
   centeredLoader: {
     marginTop: 50,
   },
   calendarCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 20,
     padding: 10,
     marginBottom: 5,
@@ -743,31 +757,35 @@ chatInputContainer: {
     elevation: 3,
   },
   calendarTheme: {
-    calendarBackground: '#FFFFFF',
-    selectedDayBackgroundColor: '#4D6BFE',
-    todayTextColor: '#4D6BFE',
-    arrowColor: '#4D6BFE',
+    calendarBackground: colors.surface,
+    textSectionTitleColor: colors.textMuted,
+    dayTextColor: colors.text,
+    monthTextColor: colors.textStrong,
+    textDisabledColor: colors.inactive,
+    selectedDayBackgroundColor: colors.primary,
+    todayTextColor: colors.primary,
+    arrowColor: colors.primary,
     textMonthFontWeight: '800',
     textDayHeaderFontWeight: '600',
     dotStyle: { width: 6, height: 6, borderRadius: 3 }
   },
   inputLabel: {
     fontSize: aplicarEscala(13),
-    color: '#64748B',
+    color: colors.textSoft,
     marginBottom: 8,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   textInput: {
-    backgroundColor: '#F1F5F9',
+    backgroundColor: colors.surfaceSoft,
     padding: 14,
     borderRadius: 12,
     marginBottom: 20,
     fontSize: aplicarEscala(16),
-    color: '#1E293B',
+    color: colors.text,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: colors.border,
   },
   textArea: {
     minHeight: 100,
@@ -779,7 +797,7 @@ chatInputContainer: {
     marginBottom: 25,
   },
   dateTimeButton: {
-    backgroundColor: '#EEF2FF',
+    backgroundColor: colors.primarySoft,
     padding: 15,
     borderRadius: 12,
     flex: 0.48,
@@ -788,12 +806,12 @@ chatInputContainer: {
     justifyContent: 'center',
   },
   dateTimeText: {
-    color: '#4D6BFE',
+    color: colors.primary,
     fontWeight: 'bold',
     marginLeft: 8,
   },
   btnPrimary: {
-    backgroundColor: '#4D6BFE',
+    backgroundColor: colors.primary,
     padding: 18,
     borderRadius: 15,
     alignItems: 'center',
@@ -811,9 +829,9 @@ chatInputContainer: {
   },
   gridContainer: {
     padding: 10,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderColor: '#eee',
+    borderColor: colors.border,
   },
   gridRow: {
     flexDirection: 'row',
@@ -823,18 +841,18 @@ chatInputContainer: {
   chipTema: {
     width: '31%', 
     height: 40,
-    backgroundColor: '#F0F4FF',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#E0E7FF',
+    borderColor: colors.primary,
   },
   chipTemaText: {
     fontSize: aplicarEscala(13),
     fontWeight: 'bold',
-    color: '#334155',
+    color: '#000000',
     textAlign: 'center',
   },
   subtemasContainer: {
@@ -881,7 +899,7 @@ writingIndicator: {
   headerTitle: {
     fontSize: aplicarEscala(17),
     fontWeight: '700',
-    color: '#1E293B',
+    color: colors.textStrong,
   },
   headerStatus: {
     fontSize: aplicarEscala(11),
@@ -898,13 +916,13 @@ writingIndicator: {
   },
   infoBox: {
     marginTop: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 20,
     padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: colors.border,
     borderStyle: 'dashed', 
   },
   infoIconCircle: {
@@ -919,12 +937,12 @@ writingIndicator: {
   infoTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#1E293B',
+    color: colors.textStrong,
     marginBottom: 4,
   },
   infoText: {
     fontSize: 14,
-    color: '#64748B',
+    color: colors.textSoft,
     lineHeight: 20,
     fontStyle: 'italic',
   },
@@ -1061,7 +1079,7 @@ writingIndicator: {
   },
   canvasDeleteButton: {
     padding: 8,
-    backgroundColor: '#FFF1F2',
+    backgroundColor: colors.canvasDeleteButton,
     borderRadius: 12,
   },
   canvasWrapper: {
@@ -1292,7 +1310,7 @@ writingIndicator: {
   },
   musicaUploadButton: {
     flexDirection: 'row',
-    backgroundColor: '#6366F1',
+    backgroundColor: colors.accent,
     padding: 15,
     borderRadius: 15,
     alignItems: 'center',
@@ -1337,12 +1355,12 @@ writingIndicator: {
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
-  escrituraFechaHistorial: { fontSize: 13, fontWeight: 'bold', color: '#6366F1', marginBottom: 2 },
+  escrituraFechaHistorial: { fontSize: 13, fontWeight: 'bold', color: colors.accent, marginBottom: 2 },
   escrituraTextoHistorial: { fontSize: 16, color: '#475569' },
   escrituraBotonAccionHistorial: { padding: 8 },
   nombreCuidador: {
     fontSize: aplicarEscala(17),  
-    color: '#1e293b',
+    color: colors.nombreCuidador,
     marginLeft: 5
   },
   qrCard: {
@@ -1419,4 +1437,5 @@ writingIndicator: {
     height: '100%',
     borderRadius: 35
   }
-});
+  });
+};

@@ -160,7 +160,7 @@ export default function InicioSesion({ navigation }) {
         </TouchableOpacity>
 
          <TouchableOpacity 
-          style={[styles.mainButton, { marginTop: 40, height: 60, justifyContent: 'center',backgroundColor: styles.mainButton.backgroundColor || '#4A90E2'}]} 
+          style={[styles.mainButton, { marginTop: 40, height: 60, justifyContent: 'center',backgroundColor: styles.mainButton.backgroundColor || '#1A202C'}]} 
           onPress={handleLogin} 
           disabled={loading}
         >

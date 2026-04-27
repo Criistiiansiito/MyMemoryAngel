@@ -15,12 +15,12 @@ export default function MenuCategoriaJuegos({
   games = [],
   onSelectGame,
 }) {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
   const insets = useSafeAreaInsets();
   const GameCard = ({ game }) => {
     return (
-      <View style={[styles.settingsCard, { marginBottom: 16, paddingVertical: 16 }]}>
+      <View style={[styles.settingsCard, { marginBottom: 16, paddingVertical: 16 }, isDarkMode && { backgroundColor: '#54537e' }]}>
         <TouchableOpacity
           style={{ flexDirection: 'row', alignItems: 'center' }}
           onPress={() => onSelectGame(game.id)}
@@ -30,8 +30,8 @@ export default function MenuCategoriaJuegos({
             <MaterialCommunityIcons name={game.icon} size={30} color={game.iconColor} />
           </View>
           <View style={{ flex: 1, marginLeft: 15 }}>
-            <Text style={styles.menuTitle}>{game.title}</Text>
-            <Text style={styles.menuSubtitle}>{game.description}</Text>
+            <Text style={[styles.menuTitle, isDarkMode && { color: '#FFFFFF' }]}>{game.title}</Text>
+            <Text style={[styles.menuSubtitle, isDarkMode && { color: '#FFFFFF' }]}>{game.description}</Text>
           </View>
           <MaterialCommunityIcons name="chevron-right" size={24} color="#CBD5E1" />
         </TouchableOpacity>

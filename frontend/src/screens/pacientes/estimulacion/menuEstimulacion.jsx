@@ -8,21 +8,21 @@ import { getStyles } from '../../../style/styles';
 import { useAccesibilidad } from '../../../services/accesibilidadContext';
 
 export default function MenuEstimulacion({ onBack, onSelectActivity }) {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
   
   // Hook para obtener los espacios seguros del dispositivo
   const insets = useSafeAreaInsets();
 
   const ActivityCard = ({ title, icon, color, iconColor, label, onPress }) => (
-    <TouchableOpacity style={styles.typeCard} onPress={onPress}>
+    <TouchableOpacity style={[styles.typeCard, isDarkMode && { backgroundColor: '#54537e' }]} onPress={onPress}>
       <View style={[styles.typeIconCircle, { backgroundColor: color }]}>
         <MaterialCommunityIcons name={icon} size={36} color={iconColor} />
       </View>
       <View>
-        <Text style={[styles.badgeText, { color: iconColor }]}>{label}</Text>
+        <Text style={[styles.badgeText, isDarkMode ? { color: '#FFFFFF' } : { color: iconColor }]}>{label}</Text>
       </View>
-      <Text style={[styles.typeText, { marginTop: 10, fontWeight: '700' }]}>{title}</Text>
+      <Text style={[styles.typeText, { marginTop: 10, fontWeight: '700' }, isDarkMode && { color: '#FFFFFF' }]}>{title}</Text>
     </TouchableOpacity>
   );
 
@@ -37,7 +37,7 @@ export default function MenuEstimulacion({ onBack, onSelectActivity }) {
       ]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={onBack}>
-              <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
+              <MaterialCommunityIcons name="arrow-left" style={styles.iconosHeaders} size={24} />
           </TouchableOpacity>
           <Text style={styles.brandName}>Actividades</Text>
         </View>
@@ -84,7 +84,7 @@ export default function MenuEstimulacion({ onBack, onSelectActivity }) {
         </View>
 
         {/* PANEL DE INFORMACIÓN */}
-        <View style={styles.infoBox}>
+        <View style={[styles.infoBox, isDarkMode && { borderColor: '#FFFFFF' }]}>
           <View style={styles.infoIconCircle}>
             <MaterialCommunityIcons name="lightbulb-on" size={24} color="#F59E0B" />
           </View>
