@@ -58,7 +58,7 @@ export default function HistorialRecordatoriosPaciente({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
 
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -71,7 +71,7 @@ export default function HistorialRecordatoriosPaciente({ route, navigation }) {
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}>
         <View style={{ paddingTop: 10, paddingBottom: 20 }}>
-          <Text style={{ color: '#64748B', fontSize: 14, lineHeight: 22, textAlign: 'center' }}>
+          <Text style={{ color: isDarkMode ? '#FFFFFF' : '#64748B', fontSize: 14, lineHeight: 22, textAlign: 'center' }}>
             Consulta como ha ido {paciente?.nombre} con sus recordatorios durante el ultimo mes.
           </Text>
         </View>
@@ -97,7 +97,7 @@ export default function HistorialRecordatoriosPaciente({ route, navigation }) {
 
                 <View style={styles.reminderInfoBody}>
                   <View style={[styles.reminderBadge, { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }]}>
-                    <Text style={[styles.reminderBadgeText, {color: '#718096', fontSize: aplicarEscala(12)}]}>
+                    <Text style={[styles.reminderBadgeText, {color: isDarkMode ? '#FFFFFF' : '#718096', fontSize: aplicarEscala(12)}]}>
                       {formatDateLabel(item.fecha_ocurrencia)} | {hora}
                     </Text>
                     <Text

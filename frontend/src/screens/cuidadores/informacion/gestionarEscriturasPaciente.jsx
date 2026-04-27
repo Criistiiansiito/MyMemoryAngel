@@ -59,7 +59,7 @@ export default function GestionarEscriturasPaciente({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
 
       <View
         style={[
@@ -78,7 +78,7 @@ export default function GestionarEscriturasPaciente({ route, navigation }) {
       <View style={{ paddingHorizontal: 30, paddingTop: 10 }}>
         <Text
           style={{
-            color: '#64748B',
+            color: isDarkMode ? '#FFFFFF' : '#64748B',
             fontSize: 14,
             lineHeight: 22,
             textAlign: 'center',
@@ -148,13 +148,13 @@ export default function GestionarEscriturasPaciente({ route, navigation }) {
                       marginTop: 10,
                       paddingTop: 10,
                       borderTopWidth: 1,
-                      borderTopColor: '#F1F5F9',
+                      borderTopColor: isDarkMode ? '#FFFFFF' : '#F1F5F9',
                     }}
                   >
                     <Text
                       style={[
                         styles.escrituraTextoHistorial,
-                        { color: '#334155', lineHeight: 22 },
+                        { color: isDarkMode ? '#FFFFFF' : '#334155', lineHeight: 22 },
                       ]}
                     >
                       {item.texto}

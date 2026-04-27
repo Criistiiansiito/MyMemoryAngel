@@ -50,7 +50,7 @@ export default function GestionarListaRecordatoriosPaciente({ route, navigation 
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
 
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -63,7 +63,7 @@ export default function GestionarListaRecordatoriosPaciente({ route, navigation 
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}>
         <View style={{ paddingTop: 10, paddingBottom: 20 }}>
-          <Text style={{ color: '#64748B', fontSize: 14, lineHeight: 22, textAlign: 'center' }}>
+          <Text style={{ color: isDarkMode ? '#FFFFFF' : '#64748B', fontSize: 14, lineHeight: 22, textAlign: 'center' }}>
             Revisa los recordatorios de {paciente?.nombre} y entra en cada uno para modificarlo o eliminarlo.
           </Text>
         </View>

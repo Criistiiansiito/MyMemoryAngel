@@ -85,7 +85,7 @@ export default function GestionarProgresoJuegosPaciente({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
 
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -102,7 +102,7 @@ export default function GestionarProgresoJuegosPaciente({ route, navigation }) {
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}>
         <View style={{ paddingTop: 10, paddingBottom: 20 }}>
-          <Text style={{ color: '#64748B', fontSize: 14, textAlign: 'center', lineHeight: 20 }}>
+          <Text style={{ color: isDarkMode ? '#FFFFFF' : '#64748B', fontSize: 14, textAlign: 'center', lineHeight: 20 }}>
             {areaSeleccionada 
               ? `Estadísticas de ${paciente?.nombre} en ${areaSeleccionada.title}.`
               : `Selecciona un área para revisar el progreso de ${paciente?.nombre}.`}
@@ -118,15 +118,15 @@ export default function GestionarProgresoJuegosPaciente({ route, navigation }) {
             {AREAS.map((area) => (
               <TouchableOpacity
                 key={area.id}
-                style={styles.menuCard}
+                style={[styles.menuCard, isDarkMode && { backgroundColor: '#54537e' }]}
                 onPress={() => setAreaSeleccionada(area)}
               >
                 <View style={[styles.menuIconContainer, { backgroundColor: area.color }]}>
                   <MaterialCommunityIcons name={area.icon} size={28} color={area.iconColor} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.menuTitle}>{area.title}</Text>
-                  <Text style={styles.menuSubtitle}>Aciertos y frecuencia de juego</Text>
+                  <Text style={[styles.menuTitle, isDarkMode && { color: '#FFFFFF' }]}>{area.title}</Text>
+                  <Text style={[styles.menuSubtitle, isDarkMode && { color: '#FFFFFF' }]}>Aciertos y frecuencia de juego</Text>
                 </View>
                 <MaterialCommunityIcons name="chevron-right" size={24} color="#CBD5E1" />
               </TouchableOpacity>
@@ -137,30 +137,30 @@ export default function GestionarProgresoJuegosPaciente({ route, navigation }) {
             {juegosFiltrados.length > 0 ? (
               juegosFiltrados.map((item, index) => (
                 <View key={index} style={[styles.settingsCard, { marginBottom: 15, padding: 15 }]}>
-                  <Text style={[styles.menuTitle, { color: '#1E293B', marginBottom: 15, fontSize: aplicarEscala(16) }]}>
+                  <Text style={[styles.menuTitle, { color: isDarkMode ? '#FFFFFF' : '#1E293B', marginBottom: 15, fontSize: aplicarEscala(16) }]}>
                     {formatNombreCompleto(item.juego)}
                   </Text>
                   
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <View style={{ alignItems: 'center', flex: 1 }}>
-                      <Text style={{ color: '#64748B', fontSize: 11 }}>Partidas</Text>
-                      <Text style={{ fontWeight: 'bold', fontSize: 20 }}>{item.partidas_jugadas}</Text>
+                      <Text style={{ color: isDarkMode ? '#FFFFFF' : '#64748B', fontSize: 11 }}>Partidas</Text>
+                      <Text style={{ fontWeight: 'bold', fontSize: 20, color: isDarkMode ? '#FFFFFF' : '#334155' }}>{item.partidas_jugadas}</Text>
                     </View>
 
-                    <View style={{ alignItems: 'center', flex: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#F1F5F9' }}>
-                      <Text style={{ color: '#64748B', fontSize: 11 }}>Mejor</Text>
+                    <View style={{ alignItems: 'center', flex: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: isDarkMode ? '#FFFFFF' : '#F1F5F9' }}>
+                      <Text style={{ color: isDarkMode ? '#FFFFFF' : '#64748B', fontSize: 11 }}>Mejor</Text>
                       <Text style={{ fontWeight: 'bold', fontSize: 18, color: '#16A34A' }}>
                         {item.ultimo_resultado ? item.ultimo_resultado.split(' ')[0] : item.mejor_puntuacion}
                       </Text>
                     </View>
 
                     <View style={{ alignItems: 'center', flex: 1 }}>
-                      <Text style={{ color: '#64748B', fontSize: 11 }}>Promedio</Text>
+                      <Text style={{ color: isDarkMode ? '#FFFFFF' : '#64748B', fontSize: 11 }}>Promedio</Text>
                       <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
                         <Text style={{ fontWeight: 'bold', fontSize: 18, color: '#6366F1' }}>
                           {Number(item.promedio_puntuacion || 0).toFixed(1)}
                         </Text>
-                        <Text style={{ fontSize: 12, color: '#94A3B8', fontWeight: 'bold' }}>
+                        <Text style={{ fontSize: 12, color: isDarkMode ? '#FFFFFF' : '#94A3B8', fontWeight: 'bold' }}>
                           {item.ultimo_resultado?.includes('/') 
                             ? `/${item.ultimo_resultado.split('/')[1].split(' ')[0]}` 
                             : '/10'}
@@ -173,7 +173,7 @@ export default function GestionarProgresoJuegosPaciente({ route, navigation }) {
             ) : (
               <View style={{ alignItems: 'center', marginTop: 60 }}>
                 <MaterialCommunityIcons name="clipboard-text-search-outline" size={70} color="#E2E8F0" />
-                <Text style={{ color: '#94A3B8', marginTop: 15, textAlign: 'center' }}>
+                <Text style={{ color: isDarkMode ? '#FFFFFF' : '#94A3B8', marginTop: 15, textAlign: 'center' }}>
                   No hay datos registrados aún para esta área.
                 </Text>
               </View>
