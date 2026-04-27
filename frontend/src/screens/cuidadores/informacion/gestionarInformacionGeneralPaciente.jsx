@@ -317,7 +317,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
         <View style={styles.settingsCard}>
           <View style={styles.sectionHeader}>
             <MaterialCommunityIcons
-              name="theme-light-dark"
+              name="eye-outline"
               size={22}
               color={isPatientDarkMode ? '#60A5FA' : '#F59E0B'}
             />

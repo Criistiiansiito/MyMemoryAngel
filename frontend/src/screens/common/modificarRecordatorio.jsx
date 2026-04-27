@@ -153,7 +153,9 @@ export default function ModificarRecordatorio({ route, navigation }) {
                 <Text
                   style={[
                     styles.textoTipo,
+                    !esSeleccionado && isDarkMode && { color: '#000000' },
                     esSeleccionado && { fontWeight: 'bold', color: colors.primary },
+                    esSeleccionado && isDarkMode && { color: '#FFFFFF' },
                   ]}
                 >
                   {item.id}
@@ -175,7 +177,14 @@ export default function ModificarRecordatorio({ route, navigation }) {
                 frecuencia === item && styles.optionButtonActive,
               ]}
             >
-              <Text style={[styles.optionText, frecuencia === item && styles.optionTextActive]}>
+              <Text
+                style={[
+                  styles.optionText,
+                  isDarkMode && frecuencia !== item && { color: '#000000' },
+                  frecuencia === item && styles.optionTextActive,
+                  isDarkMode && frecuencia === item && { color: '#FFFFFF' },
+                ]}
+              >
                 {item}
               </Text>
             </TouchableOpacity>
@@ -186,12 +195,12 @@ export default function ModificarRecordatorio({ route, navigation }) {
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <TouchableOpacity onPress={() => showMode('date')} style={[styles.inputContainer, { flex: 0.52, marginRight: 10 }]}>
             <MaterialCommunityIcons name="calendar" size={20} color="#4D6BFE" style={{ marginRight: 8 }} />
-            <Text style={{ color: '#1E293B' }}>{date.toLocaleDateString()}</Text>
+            <Text style={{ color: isDarkMode ? '#FFFFFF' : '#1E293B' }}>{date.toLocaleDateString()}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => showMode('time')} style={[styles.inputContainer, { flex: 0.43 }]}>
             <MaterialCommunityIcons name="clock-outline" size={20} color="#4D6BFE" style={{ marginRight: 8 }} />
-            <Text style={{ color: '#1E293B' }}>
+            <Text style={{ color: isDarkMode ? '#FFFFFF' : '#1E293B' }}>
               {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </Text>
           </TouchableOpacity>
@@ -259,10 +268,10 @@ export default function ModificarRecordatorio({ route, navigation }) {
                 />
               </View>
               <View>
-                <Text style={{ fontSize: 15, fontWeight: '700', color: '#1E293B' }}>
+                <Text style={{ fontSize: 15, fontWeight: '700', color: isDarkMode ? '#FFFFFF' : '#1E293B' }}>
                   {alertaSonora ? 'Sonido Activado' : 'Modo Silencioso'}
                 </Text>
-                <Text style={{ fontSize: 12, color: '#64748B' }}>
+                <Text style={{ fontSize: 12, color: isDarkMode ? '#FFFFFF' : '#64748B' }}>
                   {alertaSonora ? 'Recibirás un aviso con sonido' : 'Solo notificación visual'}
                 </Text>
               </View>
