@@ -31,6 +31,7 @@ import GestionarInformacionGeneralPaciente from './screens/cuidadores/informacio
 import GestionarRecordatoriosPaciente from './screens/cuidadores/informacion/gestionRecordatorios/gestionarRecordatoriosPaciente';
 import GestionarListaRecordatoriosPaciente from './screens/cuidadores/informacion/gestionRecordatorios/gestionarListaRecordatoriosPaciente';
 import GestionarHistorialRecordatoriosPaciente from './screens/cuidadores/informacion/gestionRecordatorios/gestionarHistorialRecordatoriosPaciente';
+import GestionarProgresoJuegosPaciente from './screens/cuidadores/informacion/gestionarProgresoJuegosPaciente';
 
 // Common
 import ModificarRecordatorio from './screens/common/modificarRecordatorio';
@@ -62,9 +63,9 @@ export default function App() {
           }}
         >
           <Stack.Screen name="Bienvenida" component={Bienvenida} options={{ headerShown: false }} />
-          <Stack.Screen name="RegistroPaciente" component={RegistroPaciente} />
-          <Stack.Screen name="RegistroCuidador" component={RegistroCuidador} />
-          <Stack.Screen name="InicioSesion" component={InicioSesion} />
+          <Stack.Screen name="RegistroPaciente" component={RegistroPaciente} options={{ headerTitle: "" }}/>
+          <Stack.Screen name="RegistroCuidador" component={RegistroCuidador} options={{ headerTitle: "" }}/>
+          <Stack.Screen name="InicioSesion" component={InicioSesion} options={{ headerTitle: "" }}/>
 
           <Stack.Screen name="DashboardPaciente" component={DashboardPaciente} options={{ headerShown: false }} />
           <Stack.Screen name="DashboardCuidador" component={DashboardCuidador} options={{ headerShown: false }} />
@@ -88,6 +89,7 @@ export default function App() {
           <Stack.Screen name="GestionarRecordatoriosPaciente" component={GestionarRecordatoriosPaciente} options={{ headerShown: false }} />
           <Stack.Screen name="GestionarListaRecordatoriosPaciente" component={GestionarListaRecordatoriosPaciente} options={{ headerShown: false }} />
           <Stack.Screen name="GestionarHistorialRecordatoriosPaciente" component={GestionarHistorialRecordatoriosPaciente} options={{ headerShown: false }} />
+          <Stack.Screen name="GestionarProgresoJuegosPaciente" component={GestionarProgresoJuegosPaciente} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </AccesibilidadProvider>

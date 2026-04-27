@@ -12,7 +12,7 @@ export default function MenuLenguaje({ onBack, onSelectGame }) {
         {
           id: 'Trivia',
           title: 'Trivia Cognitiva',
-          description: 'Responde preguntas sencillas y refuerza conocimientos cotidianos.',
+          description: 'Responde preguntas y refuerza conocimientos.',
           icon: 'help-circle',
           color: '#FFFBEB',
           iconColor: '#F59E0B',

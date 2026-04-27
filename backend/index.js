@@ -4,6 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
+const { iniciarCron } = require('./notificationsWorker');
 
 app.use(cors({ origin: true }));
 app.use(express.json());
@@ -26,6 +27,8 @@ app.use('/api/lecturas', authRoutes);
 app.use('/api/escritura', authRoutes);
 app.use('/api/vinculaciones', authRoutes);
 
+iniciarCron();
+
 // Arrancar servidor en IP local
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.API_PORT || 5000;
 app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));

@@ -14,7 +14,15 @@ import { formatMadridDate } from '../../utils/dateMadrid';
 import MenuEstimulacion from './estimulacion/menuEstimulacion';
 import MenuJuegos from './juegos/menuJuegos';
 import MenuMemoria from './juegos/memoria/menuMemoria';
+import NivelesMemoriaNumerica from './juegos/memoria/nivelesMemoriaNumerica';
+import NivelesMemoriaMusical from './juegos/memoria/nivelesMemoriaMusical';
 import MenuAtencion from './juegos/atencion/menuAtencion';
+import NivelesAtencion from './juegos/atencion/nivelesAtencion';
+import NivelesAtencionReaccion from './juegos/atencion/nivelesAtencionReaccion';
+import NivelesTrivia from './juegos/lenguaje/nivelesTrivia';
+import NivelesOrientacion from './juegos/orientacion/nivelesOrientacion';
+import NivelesCalculadora from './juegos/funcionesEjecutivas/nivelesCalculadora';
+import NivelesVisual from './juegos/visual/nivelesVisual';
 import MenuLenguaje from './juegos/lenguaje/menuLenguaje';
 import MenuOrientacion from './juegos/orientacion/menuOrientacion';
 import MenuFuncionesEjecutivas from './juegos/funcionesEjecutivas/menuFuncionesEjecutivas';
@@ -25,10 +33,12 @@ import Arte from './estimulacion/arte';
 import Lectura from './estimulacion/lectura';
 import Escritura from './estimulacion/escritura';
 
-import Memoria from './juegos/memoria/memoria';
+import MemoriaNumerica from './juegos/memoria/memoriaNumerica';
+import MemoriaMusical from './juegos/memoria/memoriaMusical';
 import Calculadora from './juegos/funcionesEjecutivas/calculadora';
 import Trivia from './juegos/lenguaje/trivia';
 import Atencion from './juegos/atencion/atencion';
+import AtencionReaccion from './juegos/atencion/atencionReaccion';
 import Orientacion from './juegos/orientacion/orientacion';
 import Visual from './juegos/visual/visual';
 
@@ -67,16 +77,131 @@ export default function EstimulacionCognitiva() {
   }, [view, selectedGame, selectedGameMenu, selectedActivity]);
 
   if (selectedGame) {
-    const props = { onBack: () => setSelectedGame(null) };
-    switch (selectedGame) {
-      case 'Memoria':
-        return <Memoria {...props} />;
+    if (selectedGame === 'NivelesMemoriaNumerica') {
+      return (
+        <NivelesMemoriaNumerica
+          onBack={() => setSelectedGame(null)}
+          onSelectDifficulty={(difficulty) =>
+            setSelectedGame({ id: 'MemoriaNumerica', difficulty })
+          }
+        />
+      );
+    }
+
+    if (selectedGame === 'NivelesMemoriaMusical') {
+      return (
+        <NivelesMemoriaMusical
+          onBack={() => setSelectedGame(null)}
+          onSelectDifficulty={(difficulty) =>
+            setSelectedGame({ id: 'MemoriaMusical', difficulty })
+          }
+        />
+      );
+    }
+
+    if (selectedGame === 'NivelesAtencion') {
+      return (
+        <NivelesAtencion
+          onBack={() => setSelectedGame(null)}
+          onSelectDifficulty={(difficulty) => setSelectedGame({ id: 'Atencion', difficulty })}
+        />
+      );
+    }
+
+    if (selectedGame === 'NivelesAtencionReaccion') {
+      return (
+        <NivelesAtencionReaccion
+          onBack={() => setSelectedGame(null)}
+          onSelectDifficulty={(difficulty) => setSelectedGame({ id: 'AtencionReaccion', difficulty })}
+        />
+      );
+    }
+
+    if (selectedGame === 'NivelesTrivia') {
+      return (
+        <NivelesTrivia
+          onBack={() => setSelectedGame(null)}
+          onSelectDifficulty={(difficulty) => setSelectedGame({ id: 'Trivia', difficulty })}
+        />
+      );
+    }
+
+    if (selectedGame === 'NivelesOrientacion') {
+      return (
+        <NivelesOrientacion
+          onBack={() => setSelectedGame(null)}
+          onSelectDifficulty={(difficulty) => setSelectedGame({ id: 'Orientacion', difficulty })}
+        />
+      );
+    }
+
+    if (selectedGame === 'NivelesCalculadora') {
+      return (
+        <NivelesCalculadora
+          onBack={() => setSelectedGame(null)}
+          onSelectDifficulty={(difficulty) => setSelectedGame({ id: 'Calculadora', difficulty })}
+        />
+      );
+    }
+
+    if (selectedGame === 'NivelesVisual') {
+      return (
+        <NivelesVisual
+          onBack={() => setSelectedGame(null)}
+          onSelectDifficulty={(difficulty) => setSelectedGame({ id: 'Visual', difficulty })}
+        />
+      );
+    }
+
+    const gameId = typeof selectedGame === 'string' ? selectedGame : selectedGame.id;
+    const props = {
+      onBack: () =>
+        setSelectedGame(
+          gameId === 'MemoriaNumerica'
+            ? 'NivelesMemoriaNumerica'
+            : gameId === 'MemoriaMusical'
+              ? 'NivelesMemoriaMusical'
+              : gameId === 'Atencion'
+                ? 'NivelesAtencion'
+                : gameId === 'AtencionReaccion'
+                ? 'NivelesAtencionReaccion'
+                : gameId === 'Trivia'
+                ? 'NivelesTrivia'
+                : gameId === 'Orientacion'
+                ? 'NivelesOrientacion'
+                : gameId === 'Calculadora'
+                ? 'NivelesCalculadora'
+                : gameId === 'Visual'
+                ? 'NivelesVisual'
+                : null
+        ),
+      ...(
+        gameId === 'MemoriaNumerica' ||
+        gameId === 'MemoriaMusical' ||
+        gameId === 'Atencion' ||
+        gameId === 'AtencionReaccion' ||
+        gameId === 'Trivia' ||
+        gameId === 'Orientacion' ||
+        gameId === 'Calculadora' ||
+        gameId === 'Visual'
+          ? { difficulty: selectedGame.difficulty }
+          : {}
+      ),
+    };
+
+    switch (gameId) {
+      case 'MemoriaNumerica':
+        return <MemoriaNumerica {...props} />;
+      case 'MemoriaMusical':
+        return <MemoriaMusical {...props} />;
       case 'Calculadora':
         return <Calculadora {...props} />;
       case 'Trivia':
         return <Trivia {...props} />;
       case 'Atencion':
         return <Atencion {...props} />;
+      case 'AtencionReaccion':
+        return <AtencionReaccion {...props} />;
       case 'Orientacion':
         return <Orientacion {...props} />;
       case 'Visual':
@@ -89,7 +214,26 @@ export default function EstimulacionCognitiva() {
   if (selectedGameMenu) {
     const props = {
       onBack: () => setSelectedGameMenu(null),
-      onSelectGame: (game) => setSelectedGame(game),
+      onSelectGame: (game) =>
+      setSelectedGame(
+        game === 'MemoriaNumerica'
+          ? 'NivelesMemoriaNumerica'
+          : game === 'MemoriaMusical'
+            ? 'NivelesMemoriaMusical'
+            : game === 'Atencion'
+              ? 'NivelesAtencion'
+              : game === 'AtencionReaccion'
+              ? 'NivelesAtencionReaccion'
+              : game === 'Trivia'
+              ? 'NivelesTrivia'
+              : game === 'Orientacion'
+              ? 'NivelesOrientacion'
+              : game === 'Calculadora'
+              ? 'NivelesCalculadora'
+              : game === 'Visual'
+              ? 'NivelesVisual'
+              : game
+      ),
     };
 
     switch (selectedGameMenu) {

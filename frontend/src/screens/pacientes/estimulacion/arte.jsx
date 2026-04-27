@@ -1,8 +1,6 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { 
-  View, Text, TouchableOpacity, ScrollView, PanResponder, 
-  Dimensions, StyleSheet, Platform, StatusBar 
-} from 'react-native';
+  View, Text, TouchableOpacity, ScrollView, PanResponder, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Svg, { Path } from 'react-native-svg';

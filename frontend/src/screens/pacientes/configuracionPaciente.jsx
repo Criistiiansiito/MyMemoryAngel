@@ -13,8 +13,8 @@ import { useAccesibilidad } from '../../services/accesibilidadContext';
 import { configuracionPerfil } from '../../services/configuracionPerfil';
 
 export default function ConfiguracionPaciente({ navigation }) {
-    const { aplicarEscala, textSizeLabel, setTextSizeLabel, isDaltonic, setIsDaltonic, cargarDesdeServidor } = useAccesibilidad();
-    const styles = getStyles(aplicarEscala, isDaltonic);
+    const { aplicarEscala, textSizeLabel, setTextSizeLabel, isDarkMode, setIsDarkMode, cargarDesdeServidor } = useAccesibilidad();
+    const styles = getStyles(aplicarEscala, isDarkMode);
     
     const insets = useSafeAreaInsets();
     
@@ -72,11 +72,11 @@ export default function ConfiguracionPaciente({ navigation }) {
         }
     };
 
-    const autoGuardarAccesibilidad = async (nuevoTamano, nuevoDaltonismo) => {
+    const autoGuardarAccesibilidad = async (nuevoTamano, nuevoTemaOscuro) => {
         try {
             await configuracionPerfil.actualizarAccesibilidad({
                 tamano_texto: nuevoTamano,
-                modo_daltonico: nuevoDaltonismo ? 1 : 0
+                modo_daltonico: nuevoTemaOscuro ? 1 : 0
             });
         } catch (error) {
             console.error("Error en el auto-guardado:", error);
@@ -85,11 +85,11 @@ export default function ConfiguracionPaciente({ navigation }) {
 
     const manejarCambioTamano = (size) => {
         setTextSizeLabel(size); 
-        autoGuardarAccesibilidad(size, isDaltonic); 
+        autoGuardarAccesibilidad(size, isDarkMode); 
     };
 
-    const manejarCambioDaltonismo = (val) => {
-        setIsDaltonic(val); 
+    const manejarCambioTema = (val) => {
+        setIsDarkMode(val); 
         autoGuardarAccesibilidad(textSizeLabel, val); 
     };
 
@@ -317,14 +317,14 @@ export default function ConfiguracionPaciente({ navigation }) {
 
                 <View style={styles.settingsCard}>
                     <View style={styles.sectionHeader}>
-                        <MaterialCommunityIcons name="eye-outline" size={22} color={isDaltonic ? "#000" : "#8B5CF6"} />
-                        <Text style={styles.sectionTitle}>Modo Daltónico</Text>
+                         <MaterialCommunityIcons name="eye-outline" size={22} color={isDarkMode ? "#60A5FA" : "#F59E0B"} />
+                         <Text style={styles.sectionTitle}>Modo oscuro</Text>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Text style={{ fontSize: aplicarEscala(16) }}>Activar filtros de color</Text>
+                        <Text style={{ fontSize: aplicarEscala(16) }}>Activar tema oscuro</Text>
                         <Switch 
-                            onValueChange={manejarCambioDaltonismo} 
-                            value={isDaltonic} 
+                            onValueChange={manejarCambioTema} 
+                            value={isDarkMode} 
                         />
                     </View>
                 </View>
@@ -354,7 +354,7 @@ export default function ConfiguracionPaciente({ navigation }) {
 
                 {/* BOTÓN CERRAR SESIÓN */}
                 <TouchableOpacity 
-                    style={[styles.mainButton, { backgroundColor: '#EF4444', marginTop: 30, marginBottom: 50 }]} 
+                    style={[styles.mainButton, { backgroundColor: '#EF4444', marginTop: 30, marginBottom: 20 }]} 
                     onPress={confirmarCerrarSesion}
                 >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>

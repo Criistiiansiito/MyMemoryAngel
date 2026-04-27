@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Platform, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -18,19 +18,26 @@ export default function MenuCategoriaJuegos({
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
-
-  const GameCard = ({ game }) => (
-    <TouchableOpacity style={styles.menuCard} onPress={() => onSelectGame(game.id)}>
-      <View style={[styles.menuIconContainer, { backgroundColor: game.color }]}>
-        <MaterialCommunityIcons name={game.icon} size={30} color={game.iconColor} />
+  const GameCard = ({ game }) => {
+    return (
+      <View style={[styles.settingsCard, { marginBottom: 16, paddingVertical: 16 }]}>
+        <TouchableOpacity
+          style={{ flexDirection: 'row', alignItems: 'center' }}
+          onPress={() => onSelectGame(game.id)}
+          activeOpacity={0.85}
+        >
+          <View style={[styles.menuIconContainer, { backgroundColor: game.color }]}>
+            <MaterialCommunityIcons name={game.icon} size={30} color={game.iconColor} />
+          </View>
+          <View style={{ flex: 1, marginLeft: 15 }}>
+            <Text style={styles.menuTitle}>{game.title}</Text>
+            <Text style={styles.menuSubtitle}>{game.description}</Text>
+          </View>
+          <MaterialCommunityIcons name="chevron-right" size={24} color="#CBD5E1" />
+        </TouchableOpacity>
       </View>
-      <View style={{ flex: 1, marginLeft: 15 }}>
-        <Text style={styles.menuTitle}>{game.title}</Text>
-        <Text style={styles.menuSubtitle}>{game.description}</Text>
-      </View>
-      <MaterialCommunityIcons name="chevron-right" size={24} color="#CBD5E1" />
-    </TouchableOpacity>
-  );
+    );
+  };
 
   return (
     <View style={styles.container}>

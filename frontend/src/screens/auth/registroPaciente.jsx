@@ -121,7 +121,7 @@ export default function RegistroPaciente({ navigation }) {
         <View style={styles.inputContainer}>
           <MaterialCommunityIcons name="email-outline" style={styles.inputIcon} />
           <TextInput 
-            placeholder="tu@email.com" 
+            placeholder="ejemplo@gmail.com" 
             value={email} 
             onChangeText={setEmail} 
             style={styles.input} 

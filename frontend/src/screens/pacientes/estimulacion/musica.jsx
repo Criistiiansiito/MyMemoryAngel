@@ -17,6 +17,51 @@ import { musicaService } from '../../../services/musicaService';
 import { useStoredUser } from '../../../hooks/storedUser';
 import MenuCategoriaEstimulacion from '../../../components/estimulacion/MenuCardEstimulacion';
 
+// --- DICCIONARIOS DE RECURSOS LOCALES ---
+const AUDIOS_LOCALES = {
+  'clasica': require('../../../../assets/sounds/musica/clasica.mp3'),
+  'barroca': require('../../../../assets/sounds/musica/barroca.mp3'),
+  'yoSoyAquel': require('../../../../assets/sounds/musica/yoSoyAquel.mp3'),
+  'eresTu': require('../../../../assets/sounds/musica/eresTu.mp3'),
+  'libre': require('../../../../assets/sounds/musica/libre.mp3'),
+  'lluvia': require('../../../../assets/sounds/musica/lluvia.mp3'),
+  'paraElisa': require('../../../../assets/sounds/musica/paraElisa.mp3'),
+  'organo': require('../../../../assets/sounds/musica/organo.mp3'),
+  'clasicaRitmo': require('../../../../assets/sounds/musica/clasicaRitmo.mp3'),
+  'barroca2': require('../../../../assets/sounds/musica/barroca2.mp3'),
+  'olas': require('../../../../assets/sounds/musica/olas.mp3'),
+  'gaviotas': require('../../../../assets/sounds/musica/gaviotas.mp3'),
+  'bosque': require('../../../../assets/sounds/musica/bosque.mp3'),
+  'grillos': require('../../../../assets/sounds/musica/grillos.mp3'),
+  'pajaros': require('../../../../assets/sounds/musica/pajaros.mp3'),
+  'pajaros2': require('../../../../assets/sounds/musica/pajaros2.mp3'),
+  'ondasFondoBlanco': require('../../../../assets/sounds/musica/ondaFondoBlanco.mp3'),
+  'ondasConSonido': require('../../../../assets/sounds/musica/ondaConSonido.mp3'),
+  'ondasConLluvia': require('../../../../assets/sounds/musica/ondasConLluvia.mp3'),
+};
+
+const IMAGENES_MUSICA = {
+  'clasica': require('../../../../assets/images/musica/clasica.png'),
+  'barroca': require('../../../../assets/images/musica/barroca.png'),
+  'yoSoyAquel': require('../../../../assets/images/musica/yoSoyAquel.jpg'),
+  'eresTu': require('../../../../assets/images/musica/eresTu.jpg'),
+  'libre': require('../../../../assets/images/musica/libre.jpg'),
+  'lluvia': require('../../../../assets/images/musica/lluvia.jpg'),
+  'paraElisa': require('../../../../assets/images/musica/paraElisa.jpg'),
+  'organo': require('../../../../assets/images/musica/organo.jpg'),
+  'clasicaRitmo': require('../../../../assets/images/musica/clasicaRitmo.jpg'),
+  'barroca2': require('../../../../assets/images/musica/barroca2.jpg'),
+  'olas': require('../../../../assets/images/musica/olas.jpg'),
+  'gaviotas': require('../../../../assets/images/musica/gaviotas.jpg'),
+  'bosque': require('../../../../assets/images/musica/bosque.png'),
+  'grillos': require('../../../../assets/images/musica/grillos.jpg'), 
+  'pajaros': require('../../../../assets/images/musica/pajaros.jpg'), 
+  'pajaros2': require('../../../../assets/images/musica/pajaros2.jpg'), 
+  'ondasFondoBlanco': require('../../../../assets/images/musica/ondaFondoBlanco.jpg'), 
+  'ondasConLluvia': require('../../../../assets/images/musica/ondasConLLuvia.jpg'), 
+'ondasConSonido': require('../../../../assets/images/musica/ondaConSonido.jpg'),
+};
+
 export default function Musica({ onBack }) {
   const { aplicarEscala, isDaltonic } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDaltonic);
@@ -73,7 +118,6 @@ export default function Musica({ onBack }) {
     setCargando(true);
     setCategoriaActiva(item);
     try {
-      // Si es personal, enviamos el userId para filtrar sus canciones
       const data = await musicaService.obtenerMusicaPorTipo(item.tipo, item.tipo === 'personal' ? userId : null);
       setCanciones(data);
       setVistaActual('reproductor');
@@ -93,13 +137,9 @@ export default function Musica({ onBack }) {
 
       if (!result.canceled) {
         const { uri, name, size } = result.assets[0];
-
         const extension = name.split('.').pop().toLowerCase();
         if (extension !== 'mp3') {
-          Alert.alert(
-            "Archivo no permitido", 
-            "Solo se permiten archivos con extensión .mp3"
-          );
+          Alert.alert("Archivo no permitido", "Solo se permiten archivos con extensión .mp3");
           return;
         }
 
@@ -110,9 +150,7 @@ export default function Musica({ onBack }) {
 
         setCargando(true);
         const titulo = name.split('.')[0];
-
         await musicaService.insertarMusicaPersonal(uri, titulo, userId);
-
         Alert.alert("¡Éxito!", "MP3 guardado en tus recuerdos.");
         const data = await musicaService.obtenerMusicaPorTipo('personal', userId);
         setCanciones(data);
@@ -124,7 +162,7 @@ export default function Musica({ onBack }) {
     }
   };
 
-  const controlarReproduccion = async (base64Data, id) => {
+  const controlarReproduccion = async (audioData, id) => {
     try {
       if (sonido && reproduciendoId === id) {
         const status = await sonido.getStatusAsync();
@@ -146,15 +184,22 @@ export default function Musica({ onBack }) {
         setSonido(null);
       }
 
-      setProgreso({ posicion: 0, duracion: 0 }); // Reiniciamos progreso solo aquí
+      setProgreso({ posicion: 0, duracion: 0 });
       setReproduciendoId(id);
       setEstaReproduciendo(true);
 
-      const cleanBase64 = base64Data.replace(/(\r\n|\n|\r)/gm, "");
-      const uri = cleanBase64.startsWith('data:') ? cleanBase64 : `data:audio/mpeg;base64,${cleanBase64}`;
+      // --- LÓGICA DE CARGA HÍBRIDA (LOCAL O BASE64) ---
+      let fuenteAudio;
+      if (AUDIOS_LOCALES[audioData]) {
+        fuenteAudio = AUDIOS_LOCALES[audioData];
+      } else {
+        const cleanBase64 = audioData.replace(/(\r\n|\n|\r)/gm, "");
+        const uri = cleanBase64.startsWith('data:') ? cleanBase64 : `data:audio/mpeg;base64,${cleanBase64}`;
+        fuenteAudio = { uri };
+      }
 
       const { sound: nuevoSonido } = await Audio.Sound.createAsync(
-        { uri },
+        fuenteAudio,
         { shouldPlay: true, volume: 1.0 },
         actualizarEstadoProgreso
       );
@@ -169,7 +214,6 @@ export default function Musica({ onBack }) {
   const actualizarEstadoProgreso = (status) => {
     if (status.isLoaded) {
       setProgreso({ posicion: status.positionMillis, duracion: status.durationMillis });
-      
       if (status.didJustFinish) {
         setEstaReproduciendo(false);
         setReproduciendoId(null);
@@ -203,13 +247,7 @@ export default function Musica({ onBack }) {
   ];
 
   const leerResumen = () => {
-    if (vistaActual !== 'menu') {
-      Speech.stop();
-      setIsSpeaking(false);
-      return;
-    }
-
-    if (isSpeaking) {
+    if (vistaActual !== 'menu' || isSpeaking) {
       Speech.stop();
       setIsSpeaking(false);
       return;
@@ -242,7 +280,6 @@ export default function Musica({ onBack }) {
   const renderReproductor = () => (
     <View style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.musicScrollContainer} showsVerticalScrollIndicator={false}>
-        {/* BOTÓN DE AÑADIR */}
         {categoriaActiva?.tipo === 'personal' && (
             <TouchableOpacity 
                 style={styles.musicaUploadButton}
@@ -258,8 +295,11 @@ export default function Musica({ onBack }) {
             <View key={pista.id} style={styles.musicCardContainer}>
                 <View style={styles.musicCardRow}>
                 <View style={styles.musicImageContainer}>
-                    {pista.imagen ? (
-                    <Image source={{ uri: `data:image/jpeg;base64,${pista.imagen}` }} style={styles.musicImageThumb} />
+                    {pista.imagen && (IMAGENES_MUSICA[pista.imagen] || pista.imagen.length > 100) ? (
+                    <Image 
+                      source={IMAGENES_MUSICA[pista.imagen] ? IMAGENES_MUSICA[pista.imagen] : { uri: `data:image/jpeg;base64,${pista.imagen}` }} 
+                      style={styles.musicImageThumb} 
+                    />
                     ) : (
                     <View style={[styles.musicImagePlaceholder, { backgroundColor: categoriaActiva.color + '20' }]}>
                         <MaterialCommunityIcons name="music" size={24} color={categoriaActiva.color} />
@@ -284,7 +324,6 @@ export default function Musica({ onBack }) {
                   onPress={() => controlarReproduccion(pista.audio, pista.id)}
                 >
                   <MaterialCommunityIcons 
-                    // La clave es esta condición:
                     name={(reproduciendoId === pista.id && estaReproduciendo) ? "pause" : "play"} 
                     size={28} 
                     color={(reproduciendoId === pista.id && estaReproduciendo) ? "white" : categoriaActiva.color} 
@@ -308,7 +347,7 @@ export default function Musica({ onBack }) {
         ) : (
             <View style={styles.emptyStateContainer}>
             <MaterialCommunityIcons name="music-off" size={80} color="#CBD5E1" />
-            <Text style={styles.emptyStateText}>Aún no has subido canciones.</Text>
+            <Text style={styles.emptyStateText}>Aún no hay canciones disponibles.</Text>
             </View>
         )}
         </ScrollView>

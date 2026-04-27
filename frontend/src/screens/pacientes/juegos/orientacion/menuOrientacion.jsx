@@ -10,7 +10,7 @@ export default function MenuOrientacion({ onBack, onSelectGame }) {
       description="Juegos para reforzar la referencia temporal y el contexto del día."
       games={[
         {
-          id: 'Orientacion',
+          id: 'NivelesOrientacion',
           title: 'Orientación Temporal',
           description: 'Responde preguntas sobre el día, el mes y el momento actual.',
           icon: 'compass-outline',

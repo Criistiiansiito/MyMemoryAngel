@@ -283,6 +283,102 @@ router.put('/actualizar-perfil', async (req, res) => {
 // 5. RECORDATORIOS Y CHATBOT (RESTO DEL CÓDIGO)
 // ==========================================
 
+router.post('/progreso-juegos', async (req, res) => {
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.split(' ')[1];
+
+    if (!token) return res.status(401).json({ error: 'Token faltante' });
+
+    try {
+        const decoded = await admin.auth().verifyIdToken(token);
+        const {
+            juego,
+            categoria,
+            puntuacion = 0,
+            ultimo_resultado = null,
+            user_uid,
+        } = req.body;
+
+        const targetUid = user_uid || decoded.uid;
+
+        if (!juego || !categoria) {
+            return res.status(400).json({ ok: false, error: 'Juego y categoria son obligatorios' });
+        }
+
+        const [rows] = await db.query(
+            'SELECT * FROM progreso_juegos WHERE user_uid = ? AND juego = ? LIMIT 1',
+            [targetUid, juego]
+        );
+
+        if (rows.length === 0) {
+            await db.query(
+                `
+                    INSERT INTO progreso_juegos
+                    (user_uid, juego, categoria, partidas_jugadas, mejor_puntuacion, promedio_puntuacion, ultimo_resultado, ultima_fecha)
+                    VALUES (?, ?, ?, 1, ?, ?, ?, NOW())
+                `,
+                [targetUid, juego, categoria, puntuacion, puntuacion, ultimo_resultado]
+            );
+        } else {
+            const actual = rows[0];
+            const partidasAnteriores = Number(actual.partidas_jugadas || 0);
+            const partidasJugadas = partidasAnteriores + 1;
+            const promedioAnterior = Number(actual.promedio_puntuacion || 0);
+            const mejorAnterior = Number(actual.mejor_puntuacion || 0);
+            const nuevaPuntuacion = Number(puntuacion);
+            const nuevoPromedio = ((promedioAnterior * partidasAnteriores) + nuevaPuntuacion) / partidasJugadas;
+            const mejorPuntuacion = Math.max(mejorAnterior, nuevaPuntuacion);
+
+            await db.query(
+                `
+                    UPDATE progreso_juegos
+                    SET
+                        categoria = ?,
+                        partidas_jugadas = ?,
+                        mejor_puntuacion = ?,
+                        promedio_puntuacion = ?,
+                        ultimo_resultado = ?,
+                        ultima_fecha = NOW()
+                    WHERE user_uid = ? AND juego = ?
+                `,
+                [categoria, partidasJugadas, mejorPuntuacion, nuevoPromedio, ultimo_resultado, targetUid, juego]
+            );
+        }
+
+        return res.json({ ok: true });
+    } catch (err) {
+        console.error('Error guardando progreso de juego:', err);
+        return res.status(500).json({ ok: false, error: 'No se pudo guardar el progreso del juego' });
+    }
+});
+
+router.get('/progreso-juegos/:user_uid', async (req, res) => {
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.split(' ')[1];
+
+    if (!token) return res.status(401).json({ error: 'Token faltante' });
+
+    try {
+        await admin.auth().verifyIdToken(token);
+
+        const [rows] = await db.query(
+            `
+                SELECT id, user_uid, juego, categoria, partidas_jugadas, mejor_puntuacion,
+                       promedio_puntuacion, ultimo_resultado, ultima_fecha, actualizado_en
+                FROM progreso_juegos
+                WHERE user_uid = ?
+                ORDER BY categoria ASC, juego ASC
+            `,
+            [req.params.user_uid]
+        );
+
+        return res.json({ ok: true, progreso: rows });
+    } catch (err) {
+        console.error('Error obteniendo progreso de juegos:', err);
+        return res.status(500).json({ ok: false, error: 'No se pudo obtener el progreso de juegos' });
+    }
+});
+
 router.post('/crear', async (req, res) => {
     const { id_usuario, titulo, descripcion, tipo, recurrencia, fecha_hora, tipo_alerta } = req.body;
     try {
@@ -427,23 +523,14 @@ router.get('/get-musica', async (req, res) => {
         let params = [tipo];
 
         if (tipo === 'personal') {
-            // Buscamos donde el id_usuario coincida O sea NULL (canciones generales)
             sql += ' AND (id_usuario = ? OR id_usuario IS NULL)';
             params.push(id_usuario);
         }
 
         const [rows] = await db.query(sql, params);
-
-        const respuesta = rows.map(pista => ({
-            id: pista.id,
-            titulo: pista.titulo,
-            tipo: pista.tipo,
-            audio: pista.audio ? pista.audio.toString('base64') : null,
-            imagen: pista.imagen ? pista.imagen.toString('base64') : null
-        }));
-
-        res.json(respuesta);
+        res.json(rows);
     } catch (error) {
+        console.error("Error en musica:", error);
         res.status(500).send("Error en el servidor");
     }
 });
@@ -481,14 +568,10 @@ router.get('/get-lecturas', async (req, res) => {
       'SELECT id, titulo, tipo, contenido, imagenPrincipal FROM lecturas WHERE tipo = ?', 
       [tipo]
     );
-
-    const respuesta = rows.map(lectura => ({
-      ...lectura,
-      imagenPrincipal: lectura.imagenPrincipal ? Buffer.from(lectura.imagenPrincipal).toString('base64') : null
-    }));
-
-    res.json(respuesta);
+    res.json(rows); 
+    
   } catch (error) {
+    console.error("Error al obtener lecturas:", error);
     res.status(500).send("Error en el servidor");
   }
 });

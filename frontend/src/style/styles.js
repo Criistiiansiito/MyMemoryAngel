@@ -48,9 +48,19 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     width: '100%', 
   },
   logoHeader: { 
-    width: 60, 
-    height: 60, 
-    marginRight: 55, 
+    width: 130, 
+    height: 130,  
+  },
+  cuadradoLogoHeader: {
+    backgroundColor: '#FFFFFF',
+    padding: 10,
+    borderRadius: 35, 
+    elevation: 5,    
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    marginBottom: 15
   },
   textContainer: {
     justifyContent: 'center',
@@ -95,7 +105,8 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
   cardButtonText: { 
     fontSize: aplicarEscala(18), 
     fontWeight: '600', 
-    color: '#2D3748' 
+    color: '#2D3748',
+    marginLeft: 40
   },
 
   // --- FORMULARIOS (Registro/Login) ---
@@ -114,7 +125,7 @@ export const getStyles = (aplicarEscala) => StyleSheet.create({
     borderColor: '#E2E8F0',
     borderRadius: 12,
     paddingHorizontal: 15,
-    height: 55,
+    height: 60,
   },
   inputIcon: {
     marginRight: 10,
@@ -1145,7 +1156,7 @@ writingIndicator: {
     bottom: -1,
     left: 0,
     right: -5,
-    height: 120,
+    height: 125,
     backgroundColor: 'white',
     transform: [{ skewY: '-5deg' }, { translateY: 30 }],
   },
