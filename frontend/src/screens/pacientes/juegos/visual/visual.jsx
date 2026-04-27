@@ -40,9 +40,9 @@ const buildRound = (difficulty) => {
 };
 
 export default function Visual({ onBack, difficulty = 'visual_facil' }) {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
-  const juegosStyles = getJuegosStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
+  const juegosStyles = getJuegosStyles(aplicarEscala, isDarkMode);
   const insets = useSafeAreaInsets();
 
   const [round, setRound] = useState(0);

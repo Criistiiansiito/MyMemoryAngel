@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 
-require('dotenv').config();
+require('dotenv').config({ path: '../.env' })
 
 const app = express();
 const { iniciarCron } = require('./notificationsWorker');

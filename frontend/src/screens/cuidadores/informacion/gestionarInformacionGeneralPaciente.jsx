@@ -23,8 +23,8 @@ import { configuracionPerfil } from '../../../services/configuracionPerfil';
 
 export default function GestionarInformacionGeneralPaciente({ route, navigation }) {
   const { aplicarEscala } = useAccesibilidad();
-  const [previewDaltonic, setPreviewDaltonic] = useState(false);
-  const styles = getStyles(aplicarEscala, previewDaltonic);
+  const [previewDarkMode, setPreviewDarkMode] = useState(false);
+  const styles = getStyles(aplicarEscala, previewDarkMode);
   const insets = useSafeAreaInsets();
 
   const { paciente } = route.params;
@@ -41,7 +41,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
   const [savingAccessibilityField, setSavingAccessibilityField] = useState(null);
 
   const [textSizeLabel, setTextSizeLabel] = useState('Mediano');
-  const [isDaltonic, setIsDaltonic] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const cargarDatosPaciente = useCallback(async () => {
     try {
@@ -53,8 +53,8 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
         setNombre(usuario.nombre || '');
         setEmail(usuario.correo || '');
         setTextSizeLabel(usuario.tamano_texto || 'Mediano');
-        setIsDaltonic(!!usuario.modo_daltonico);
-        setPreviewDaltonic(!!usuario.modo_daltonico);
+        setIsDarkMode(!!usuario.modo_daltonico);
+        setPreviewDarkMode(!!usuario.modo_daltonico);
 
         if (usuario.fecha_nacimiento) {
           const fechaLimpia = usuario.fecha_nacimiento.split('T')[0];
@@ -112,7 +112,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
     }
   };
 
-  const guardarAccesibilidadPaciente = async (nextTextSize, nextDaltonic, field) => {
+  const guardarAccesibilidadPaciente = async (nextTextSize, nextDarkMode, field) => {
     try {
       setSavingAccessibility(true);
       setSavingAccessibilityField(field);
@@ -122,7 +122,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
         foto_perfil: profilePhoto,
         fecha_nacimiento: fechaSQL,
         tamano_texto: nextTextSize,
-        modo_daltonico: nextDaltonic ? 1 : 0,
+        modo_daltonico: nextDarkMode ? 1 : 0,
       });
 
       if (!res?.ok) {
@@ -139,13 +139,13 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
 
   const manejarCambioTamano = async (size) => {
     setTextSizeLabel(size);
-    await guardarAccesibilidadPaciente(size, isDaltonic, 'textSize');
+    await guardarAccesibilidadPaciente(size, isDarkMode, 'textSize');
   };
 
-  const manejarCambioDaltonismo = async (val) => {
-    setIsDaltonic(val);
-    setPreviewDaltonic(val);
-    await guardarAccesibilidadPaciente(textSizeLabel, val, 'daltonic');
+  const manejarCambioTema = async (val) => {
+    setIsDarkMode(val);
+    setPreviewDarkMode(val);
+    await guardarAccesibilidadPaciente(textSizeLabel, val, 'theme');
   };
 
   const manejarGuardarPerfil = async () => {
@@ -162,7 +162,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
         foto_perfil: profilePhoto,
         fecha_nacimiento: fechaSQL,
         tamano_texto: textSizeLabel,
-        modo_daltonico: isDaltonic ? 1 : 0,
+        modo_daltonico: isDarkMode ? 1 : 0,
       });
 
       if (res?.ok) {
@@ -294,6 +294,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
                   styles.optionButton,
                   { flex: 1, marginHorizontal: 4 },
                   textSizeLabel === size && styles.optionButtonActive,
+                  isDarkMode && textSizeLabel === size && { borderColor: '#000000' },
                 ]}
                 onPress={() => manejarCambioTamano(size)}
               >
@@ -301,6 +302,8 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
                   style={[
                     styles.optionText,
                     textSizeLabel === size && styles.optionTextActive,
+                    isDarkMode && textSizeLabel !== size && { color: '#000000' },
+                    isDarkMode && textSizeLabel === size && { color: '#FFFFFF' },
                   ]}
                 >
                   {size}
@@ -317,21 +320,21 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
         <View style={styles.settingsCard}>
           <View style={styles.sectionHeader}>
             <MaterialCommunityIcons
-              name="eye-outline"
+              name="theme-light-dark"
               size={22}
-              color={isDaltonic ? '#000' : '#8B5CF6'}
+              color={isDarkMode ? '#60A5FA' : '#F59E0B'}
             />
-            <Text style={styles.sectionTitle}>Modo Daltónico (paciente)</Text>
+            <Text style={styles.sectionTitle}>Modo oscuro (paciente)</Text>
           </View>
 
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Text style={{ fontSize: aplicarEscala(16) }}>
-              Activar filtros de color
+              Activar tema oscuro
             </Text>
-            <Switch onValueChange={manejarCambioDaltonismo} value={isDaltonic} />
+            <Switch onValueChange={manejarCambioTema} value={isDarkMode} />
           </View>
 
-          {savingAccessibility && savingAccessibilityField === 'daltonic' ? (
+          {savingAccessibility && savingAccessibilityField === 'theme' ? (
             <Text style={[styles.menuSubtitle, { marginTop: 12, textAlign: 'center' }]}>Guardando accesibilidad...</Text>
           ) : null}
         </View>
