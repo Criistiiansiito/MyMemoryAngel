@@ -17,6 +17,8 @@ const setToken = async (key, value) => {
   else await SecureStore.setItemAsync(key, value);
 };
 
+const esPasswordValida = (value = '') => value.length >= 6 && /[A-Za-z]/.test(value);
+
 export default function RegistroCuidador({ navigation }) {
   const { aplicarEscala } = useAccesibilidad();
   const styles = getStyles(aplicarEscala);
@@ -47,7 +49,7 @@ export default function RegistroCuidador({ navigation }) {
     if (!email.trim()) nuevosErrores.email = "El correo es obligatorio";
     else if (!/\S+@\S+\.\S+/.test(email)) nuevosErrores.email = "Email no válido";
     if (!password) nuevosErrores.password = "La contraseña es obligatoria";
-    else if (password.length < 6) nuevosErrores.password = "Mínimo 6 caracteres";
+    else if (!esPasswordValida(password)) nuevosErrores.password = "Mínimo 6 caracteres y al menos una letra";
     if (!fechaSeleccionada) nuevosErrores.fecha = "Selecciona tu fecha de nacimiento";
 
     setErrores(nuevosErrores);
@@ -174,7 +176,7 @@ export default function RegistroCuidador({ navigation }) {
         <View style={[styles.inputContainer, getInputBorderStyle('password'), { borderRadius: 12 }]}>
           <MaterialCommunityIcons name="lock-outline" size={20} color={getIconColor('password')} style={styles.inputIcon} />
           <TextInput 
-            placeholder="Mínimo 6 caracteres" 
+            placeholder="Mínimo 6 caracteres y una letra" 
             secureTextEntry={!showPassword} 
             value={password} 
             onChangeText={(val) => { setPassword(val); setErrores({...errores, password: null}); }} 

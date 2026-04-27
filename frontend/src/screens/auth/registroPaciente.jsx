@@ -18,6 +18,8 @@ const setToken = async (key, value) => {
   else await SecureStore.setItemAsync(key, value);
 };
 
+const esPasswordValida = (value = '') => value.length >= 6 && /[A-Za-z]/.test(value);
+
 export default function RegistroPaciente({ navigation }) {
   const { aplicarEscala } = useAccesibilidad();
   const styles = getStyles(aplicarEscala);
@@ -34,6 +36,11 @@ export default function RegistroPaciente({ navigation }) {
   const handleRegistro = async () => {
     if (!nombre || !email || !password || !fechaSQL) {
       Alert.alert("Error", "Rellena todos los campos");
+      return;
+    }
+
+    if (!esPasswordValida(password)) {
+      Alert.alert("Error", "La contraseña debe tener al menos 6 caracteres y contener al menos una letra.");
       return;
     }
 
@@ -134,7 +141,7 @@ export default function RegistroPaciente({ navigation }) {
         <View style={styles.inputContainer}>
           <MaterialCommunityIcons name="lock-outline" style={styles.inputIcon} />
           <TextInput 
-            placeholder="Mínimo 6 caracteres" 
+            placeholder="Mínimo 6 caracteres y una letra" 
             secureTextEntry={!showPassword} 
             value={password} 
             onChangeText={setPassword} 
@@ -169,3 +176,4 @@ export default function RegistroPaciente({ navigation }) {
     </View>
   );
 }
+

@@ -225,7 +225,7 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1, 
-    marginRight: 10,
+    marginRight: 4,
     minWidth: 0,
   },
   dateContainer: {
