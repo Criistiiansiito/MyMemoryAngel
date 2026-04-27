@@ -226,6 +226,7 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
     alignItems: 'center',
     flex: 1, 
     marginRight: 10,
+    minWidth: 0,
   },
   dateContainer: {
     backgroundColor: '#FFFFFF',
@@ -1361,7 +1362,9 @@ writingIndicator: {
   nombreCuidador: {
     fontSize: aplicarEscala(17),  
     color: colors.nombreCuidador,
-    marginLeft: 5
+    marginLeft: 5,
+    flexShrink: 1,
+    minWidth: 0,
   },
   qrCard: {
     backgroundColor: '#FFF',

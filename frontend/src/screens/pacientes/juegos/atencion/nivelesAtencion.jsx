@@ -174,16 +174,16 @@ export default function NivelesAtencion({ onBack, onSelectDifficulty }) {
                   size={24} 
                   color={accuracyIsGood ? '#16A34A' : '#DC2626'} 
                 />
-                <Text style={[styles.menuSubtitle, juegosStyles.statTitle]}>% de aciertos</Text>
-                <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }]}>
+                <Text style={[styles.menuSubtitle, juegosStyles.statTitle, isDarkMode && { color: '#000000' }]}>% de aciertos</Text>
+                <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }, isDarkMode && { color: '#000000' }]}>
                   {summary.accuracy}%
                 </Text>
               </View>
 
               <View style={[juegosStyles.cardBase, juegosStyles.cardNeutral]}>
                 <MaterialCommunityIcons name="counter" size={24} color="#4D6BFE" />
-                <Text style={[styles.menuSubtitle, juegosStyles.statTitle]}>Partidas</Text>
-                <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }]}>
+                <Text style={[styles.menuSubtitle, juegosStyles.statTitle, isDarkMode && { color: '#000000' }]}>Partidas</Text>
+                <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }, isDarkMode && { color: '#000000' }]}>
                   {summary.partidasTotales}
                 </Text>
               </View>
@@ -193,16 +193,16 @@ export default function NivelesAtencion({ onBack, onSelectDifficulty }) {
             <View style={juegosStyles.statsRowSmall}>
               <View style={[juegosStyles.cardBase, juegosStyles.cardNeutral]}>
                 <MaterialCommunityIcons name="clock-outline" size={22} color="#4D6BFE" />
-                <Text style={[styles.menuSubtitle, juegosStyles.statTitle]}>Última partida</Text>
-                <Text style={[juegosStyles.statNumberSmall, { fontSize: aplicarEscala(20) }]}>
+                <Text style={[styles.menuSubtitle, juegosStyles.statTitle, isDarkMode && { color: '#000000' }]}>Última partida</Text>
+                <Text style={[juegosStyles.statNumberSmall, { fontSize: aplicarEscala(20) }, isDarkMode && { color: '#000000' }]}>
                   {summary.ultimoResultado}
                 </Text>
               </View>
 
               <View style={[juegosStyles.cardBase, juegosStyles.cardWarning]}>
                 <MaterialCommunityIcons name="trophy-outline" size={22} color="#F97316" />
-                <Text style={[styles.menuSubtitle, juegosStyles.statTitle]}>Mejor score</Text>
-                <Text style={[juegosStyles.statNumberSmall, { fontSize: aplicarEscala(20) }]}>
+                <Text style={[styles.menuSubtitle, juegosStyles.statTitle, isDarkMode && { color: '#000000' }]}>Mejor score</Text>
+                <Text style={[juegosStyles.statNumberSmall, { fontSize: aplicarEscala(20) }, isDarkMode && { color: '#000000' }]}>
                   {summary.mejorPuntuacion}
                 </Text>
               </View>
@@ -213,3 +213,4 @@ export default function NivelesAtencion({ onBack, onSelectDifficulty }) {
     </View>
   );
 }
+
