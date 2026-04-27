@@ -69,7 +69,7 @@ const iniciarCron = () => {
                     await sendPushNotifications(tokens, {
                         title: `${icono} ${rec.titulo}`,
                         body: `${fechaFormateada} a las ${horaActual}`,
-                        
+                        sound: rec.tipo_alerta === 'visual' ? null : 'default',
                         categoryId: 'recordatorio-actions'
                     });
                     

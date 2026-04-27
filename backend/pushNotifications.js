@@ -1,4 +1,4 @@
-async function sendPushNotifications(tokens, { title, body, data = {} }) {
+async function sendPushNotifications(tokens, { title, body, data = {}, sound = 'default' }) {
     const { Expo } = await import('expo-server-sdk');
     const expo = new Expo();
 
@@ -10,7 +10,7 @@ async function sendPushNotifications(tokens, { title, body, data = {} }) {
 
     const messages = validTokens.map((token) => ({
         to: token,
-        sound: 'default',
+        sound,
         title,
         body,
         data,
