@@ -22,14 +22,14 @@ export default function MenuJuegos({ onBack, onSelectCategory }) {
   ];
 
   const CategoryCard = ({ category }) => (
-    <TouchableOpacity style={styles.typeCard} onPress={() => onSelectCategory(category.id)}>
+    <TouchableOpacity style={[styles.typeCard, isDarkMode && { backgroundColor: '#54537e' }]} onPress={() => onSelectCategory(category.id)}>
       <View style={[styles.typeIconCircle, { backgroundColor: category.color }]}>
         <MaterialCommunityIcons name={category.icon} size={36} color={category.iconColor} />
       </View>
       <View>
-        <Text style={[styles.badgeText, { color: category.iconColor }]}>{category.label}</Text>
+        <Text style={[styles.badgeText, isDarkMode ? { color: '#FFFFFF' } : { color: category.iconColor }]}>{category.label}</Text>
       </View>
-      <Text style={[styles.typeText, { marginTop: 10, fontWeight: '700', textAlign: 'center' }]}>
+      <Text style={[styles.typeText, { marginTop: 10, fontWeight: '700', textAlign: 'center' }, isDarkMode && { color: '#FFFFFF' }]}>
         {category.title}
       </Text>
     </TouchableOpacity>
@@ -60,7 +60,7 @@ export default function MenuJuegos({ onBack, onSelectCategory }) {
           ))}
         </View>
 
-        <View style={styles.infoBox}>
+        <View style={[styles.infoBox, isDarkMode && { borderColor: '#FFFFFF' }]}>
           <View style={styles.infoIconCircle}>
             <MaterialCommunityIcons name="lightbulb-on" size={24} color="#F59E0B" />
           </View>

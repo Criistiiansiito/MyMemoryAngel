@@ -15,14 +15,14 @@ export default function MenuEstimulacion({ onBack, onSelectActivity }) {
   const insets = useSafeAreaInsets();
 
   const ActivityCard = ({ title, icon, color, iconColor, label, onPress }) => (
-    <TouchableOpacity style={styles.typeCard} onPress={onPress}>
+    <TouchableOpacity style={[styles.typeCard, isDarkMode && { backgroundColor: '#54537e' }]} onPress={onPress}>
       <View style={[styles.typeIconCircle, { backgroundColor: color }]}>
         <MaterialCommunityIcons name={icon} size={36} color={iconColor} />
       </View>
       <View>
-        <Text style={[styles.badgeText, { color: iconColor }]}>{label}</Text>
+        <Text style={[styles.badgeText, isDarkMode ? { color: '#FFFFFF' } : { color: iconColor }]}>{label}</Text>
       </View>
-      <Text style={[styles.typeText, { marginTop: 10, fontWeight: '700' }]}>{title}</Text>
+      <Text style={[styles.typeText, { marginTop: 10, fontWeight: '700' }, isDarkMode && { color: '#FFFFFF' }]}>{title}</Text>
     </TouchableOpacity>
   );
 

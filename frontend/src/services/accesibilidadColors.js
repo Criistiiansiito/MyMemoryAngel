@@ -41,7 +41,8 @@ const defaultPalette = {
   headerIconButton: '#F7FAFC',
   iconosHeaders: '#334155',
   iconosRecordatorios: '#8B5CF6',
-  textoColorNormal: '#0000'
+  textoColorNormal: '#0000',
+  canvasDeleteButton: '#FFF1F2',
 };
 
 const darkPalette = {
@@ -87,7 +88,8 @@ const darkPalette = {
   headerIconButton: '#54537e',
   iconosHeaders: '#FFFF',
   iconosRecordatorios: '#FFFF',
-  textoColorNormal: '#FFFF'
+  textoColorNormal: '#FFFF',
+  canvasDeleteButton: '#54537e',
 };
 
 export const getAccesibilidadColors = (isDarkMode = false) =>

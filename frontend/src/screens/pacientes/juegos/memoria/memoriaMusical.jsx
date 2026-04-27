@@ -329,11 +329,11 @@ export default function MemoriaMusical({ onBack, difficulty = 'dificil' }) {
                 color="#8B5CF6"
               />
 
-              <Text style={[styles.menuSubtitle, juegosStyles.phaseText]}>
+              <Text style={[styles.menuSubtitle, juegosStyles.phaseText, isDarkMode && { color: '#000000' }]}>
                 {showSequence ? 'Escucha la secuencia:' : 'Repite los sonidos:'}
               </Text>
 
-              <Text style={[styles.inputLabel, juegosStyles.difficultyText]}>
+              <Text style={[styles.inputLabel, juegosStyles.difficultyText, isDarkMode && { color: '#000000' }]}>
                 Dificultad: {sequence.length} sonidos
               </Text>
 

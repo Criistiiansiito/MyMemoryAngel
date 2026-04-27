@@ -21,28 +21,28 @@ export default function MenuCategoriaEstimulacion({
       {items.map((item) => (
         <TouchableOpacity
           key={item.id}
-          style={styles.musicCard}
+          style={[styles.musicCard, isDarkMode && { backgroundColor: '#54537e' }]}
           onPress={() => onSelectItem(item)}
         >
           <View style={[styles.musicIconContainer, { backgroundColor: item.color }]}>
             <MaterialCommunityIcons name={item.icono} size={32} color="white" />
           </View>
           <View style={styles.musicTextContainer}>
-            <Text style={styles.musicCardTitle}>{item.titulo}</Text>
-            <Text style={styles.musicCardDescription} numberOfLines={2}>
+            <Text style={[styles.musicCardTitle, isDarkMode && { color: '#FFFFFF' }]}>{item.titulo}</Text>
+            <Text style={[styles.musicCardDescription, isDarkMode && { color: '#FFFFFF' }]} numberOfLines={2}>
               {item.descripcion}
             </Text>
             <View style={styles.musicBadge}>
               <View style={styles.musicBadgePlaySection}>
                 <MaterialCommunityIcons name={item.actionIcon} size={16} color={item.color} />
-                <Text style={[styles.musicBadgeText, { color: item.color }]}>
+                <Text style={[styles.musicBadgeText, isDarkMode ? { color: '#FFFFFF' } : { color: item.color }]}>
                   {item.actionLabel}
                 </Text>
               </View>
               <Text style={styles.musicSeparator}>|</Text>
               <View style={styles.musicBadgeMomentSection}>
                 <MaterialCommunityIcons name="clock-outline" size={13} color="#64748B" />
-                <Text style={styles.momentoTextInline}>{item.meta}</Text>
+                <Text style={[styles.momentoTextInline, isDarkMode && { color: '#FFFFFF' }]}>{item.meta}</Text>
               </View>
             </View>
           </View>

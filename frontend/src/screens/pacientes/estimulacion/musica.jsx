@@ -292,7 +292,7 @@ export default function Musica({ onBack }) {
 
         {canciones.length > 0 ? (
             canciones.map((pista) => (
-            <View key={pista.id} style={styles.musicCardContainer}>
+            <View key={pista.id} style={[styles.musicCardContainer, isDarkMode && { backgroundColor: '#54537e' }]}>
                 <View style={styles.musicCardRow}>
                 <View style={styles.musicImageContainer}>
                     {pista.imagen && (IMAGENES_MUSICA[pista.imagen] || pista.imagen.length > 100) ? (
@@ -308,10 +308,10 @@ export default function Musica({ onBack }) {
                 </View>
 
                 <View style={styles.musicTextContainer}>
-                    <Text style={[styles.musicCardTitle, { color: reproduciendoId === pista.id ? categoriaActiva.color : '#334155' }]} numberOfLines={1}>
+                    <Text style={[styles.musicCardTitle, { color: reproduciendoId === pista.id ? categoriaActiva.color : (isDarkMode ? '#FFFFFF' : '#334155') }]} numberOfLines={1}>
                     {pista.titulo}
                     </Text>
-                    <Text style={styles.musicCardDescription}>
+                    <Text style={[styles.musicCardDescription, isDarkMode && { color: '#FFFFFF' }]}>
                     {reproduciendoId === pista.id ? 'Reproduciendo...' : 'Canción disponible'}
                     </Text>
                 </View>

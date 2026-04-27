@@ -212,7 +212,7 @@ export default function Escritura({ onBack }) {
   const renderRefranes = () => (
     <View style={{ flex: 1 }}>
       <View style={styles.settingsCard}>
-        <Text style={[styles.musicCardTitle, { fontSize: 22, marginBottom: 15, textAlign: 'center' }]}>
+        <Text style={[styles.musicCardTitle, { fontSize: 22, marginBottom: 15, textAlign: 'center' }, isDarkMode && { color: '#FFFFFF' }]}>
           &quot;{refranes[indiceRefran].inicio}&quot;
         </Text>
         <TextInput

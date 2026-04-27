@@ -195,11 +195,11 @@ export default function MemoriaNumerica({ onBack, difficulty = 'dificil' }) {
                 color="#EC4899"
               />
 
-              <Text style={[styles.menuSubtitle, juegosStyles.phaseText]}>
+              <Text style={[styles.menuSubtitle, juegosStyles.phaseText, isDarkMode && { color: '#000000' }]}>
                 {showSequence ? 'Memoriza estos numeros:' : 'Introduce la secuencia:'}
               </Text>
 
-              <Text style={[styles.inputLabel, juegosStyles.difficultyText]}>
+              <Text style={[styles.inputLabel, juegosStyles.difficultyText, isDarkMode && { color: '#000000' }]}>
                 Dificultad: {sequence.length} digitos
               </Text>
 

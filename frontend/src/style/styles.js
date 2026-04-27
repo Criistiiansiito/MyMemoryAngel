@@ -1079,7 +1079,7 @@ writingIndicator: {
   },
   canvasDeleteButton: {
     padding: 8,
-    backgroundColor: '#FFF1F2',
+    backgroundColor: colors.canvasDeleteButton,
     borderRadius: 12,
   },
   canvasWrapper: {
