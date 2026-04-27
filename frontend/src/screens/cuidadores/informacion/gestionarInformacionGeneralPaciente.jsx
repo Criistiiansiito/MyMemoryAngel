@@ -22,9 +22,8 @@ import { useAccesibilidad } from '../../../services/accesibilidadContext';
 import { configuracionPerfil } from '../../../services/configuracionPerfil';
 
 export default function GestionarInformacionGeneralPaciente({ route, navigation }) {
-  const { aplicarEscala } = useAccesibilidad();
-  const [previewDarkMode, setPreviewDarkMode] = useState(false);
-  const styles = getStyles(aplicarEscala, previewDarkMode);
+  const { aplicarEscala, isDarkMode: isCaregiverDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isCaregiverDarkMode);
   const insets = useSafeAreaInsets();
 
   const { paciente } = route.params;
@@ -41,7 +40,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
   const [savingAccessibilityField, setSavingAccessibilityField] = useState(null);
 
   const [textSizeLabel, setTextSizeLabel] = useState('Mediano');
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isPatientDarkMode, setIsPatientDarkMode] = useState(false);
 
   const cargarDatosPaciente = useCallback(async () => {
     try {
@@ -53,8 +52,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
         setNombre(usuario.nombre || '');
         setEmail(usuario.correo || '');
         setTextSizeLabel(usuario.tamano_texto || 'Mediano');
-        setIsDarkMode(!!usuario.modo_daltonico);
-        setPreviewDarkMode(!!usuario.modo_daltonico);
+        setIsPatientDarkMode(!!usuario.modo_daltonico);
 
         if (usuario.fecha_nacimiento) {
           const fechaLimpia = usuario.fecha_nacimiento.split('T')[0];
@@ -139,12 +137,11 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
 
   const manejarCambioTamano = async (size) => {
     setTextSizeLabel(size);
-    await guardarAccesibilidadPaciente(size, isDarkMode, 'textSize');
+    await guardarAccesibilidadPaciente(size, isPatientDarkMode, 'textSize');
   };
 
   const manejarCambioTema = async (val) => {
-    setIsDarkMode(val);
-    setPreviewDarkMode(val);
+    setIsPatientDarkMode(val);
     await guardarAccesibilidadPaciente(textSizeLabel, val, 'theme');
   };
 
@@ -162,7 +159,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
         foto_perfil: profilePhoto,
         fecha_nacimiento: fechaSQL,
         tamano_texto: textSizeLabel,
-        modo_daltonico: isDarkMode ? 1 : 0,
+        modo_daltonico: isPatientDarkMode ? 1 : 0,
       });
 
       if (res?.ok) {
@@ -188,7 +185,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle={isCaregiverDarkMode ? 'light-content' : 'dark-content'} />
 
       <View
         style={[
@@ -294,7 +291,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
                   styles.optionButton,
                   { flex: 1, marginHorizontal: 4 },
                   textSizeLabel === size && styles.optionButtonActive,
-                  isDarkMode && textSizeLabel === size && { borderColor: '#000000' },
+                  isCaregiverDarkMode && textSizeLabel === size && { borderColor: '#000000' },
                 ]}
                 onPress={() => manejarCambioTamano(size)}
               >
@@ -302,8 +299,8 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
                   style={[
                     styles.optionText,
                     textSizeLabel === size && styles.optionTextActive,
-                    isDarkMode && textSizeLabel !== size && { color: '#000000' },
-                    isDarkMode && textSizeLabel === size && { color: '#FFFFFF' },
+                    isCaregiverDarkMode && textSizeLabel !== size && { color: '#000000' },
+                    isCaregiverDarkMode && textSizeLabel === size && { color: '#FFFFFF' },
                   ]}
                 >
                   {size}
@@ -322,7 +319,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
             <MaterialCommunityIcons
               name="theme-light-dark"
               size={22}
-              color={isDarkMode ? '#60A5FA' : '#F59E0B'}
+              color={isPatientDarkMode ? '#60A5FA' : '#F59E0B'}
             />
             <Text style={styles.sectionTitle}>Modo oscuro (paciente)</Text>
           </View>
@@ -331,7 +328,7 @@ export default function GestionarInformacionGeneralPaciente({ route, navigation 
             <Text style={{ fontSize: aplicarEscala(16) }}>
               Activar tema oscuro
             </Text>
-            <Switch onValueChange={manejarCambioTema} value={isDarkMode} />
+            <Switch onValueChange={manejarCambioTema} value={isPatientDarkMode} />
           </View>
 
           {savingAccessibility && savingAccessibilityField === 'theme' ? (

@@ -113,10 +113,10 @@ export default function Recordatorios({ navigation }) {
           <Text style={styles.brandName}>Recordatorios</Text>
           <View style={styles.headerButtonsGroup}>
             <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('CalendarioCuidador')}>
-              <MaterialCommunityIcons name="calendar-month-outline" size={24} color="#8B5CF6" />
+              <MaterialCommunityIcons name="calendar-month-outline" style={styles.iconosRecordatorios} size={24} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('GestionarRecordatorios')}>
-              <MaterialCommunityIcons name="playlist-edit" size={24} color="#8B5CF6" />
+              <MaterialCommunityIcons name="playlist-edit" style={styles.iconosRecordatorios} size={24} />
             </TouchableOpacity>            
             <TouchableOpacity
               style={[styles.headerIconButton, { backgroundColor: '#334155' }]}

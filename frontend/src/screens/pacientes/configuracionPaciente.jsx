@@ -324,7 +324,7 @@ export default function ConfiguracionPaciente({ navigation }) {
                          <Text style={styles.sectionTitle}>Modo oscuro</Text>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Text style={[styles.textoColorNormal ,{ fontSize: aplicarEscala(16) }]}>Activar tema oscuro</Text>
+                        <Text style={{ fontSize: aplicarEscala(16), color: isDarkMode ? '#FFFFFF' : '#000000' }}>Activar tema oscuro</Text>
                         <Switch 
                             onValueChange={manejarCambioTema} 
                             value={isDarkMode} 
