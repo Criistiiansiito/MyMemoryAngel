@@ -1360,7 +1360,7 @@ writingIndicator: {
   escrituraTextoHistorial: { fontSize: 16, color: '#475569' },
   escrituraBotonAccionHistorial: { padding: 8 },
   nombreCuidador: {
-    fontSize: aplicarEscala(17),  
+    fontSize: aplicarEscala(16),  
     color: colors.nombreCuidador,
     marginLeft: 5,
     flexShrink: 1,
