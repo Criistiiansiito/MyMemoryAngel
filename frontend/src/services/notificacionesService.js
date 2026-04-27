@@ -4,10 +4,7 @@ import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import axios from 'axios';
 
-const API =
-  Platform.OS === 'web'
-    ? 'http://localhost:5000/api'
-    : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
+const API = `${process.env.EXPO_PUBLIC_IP}`;
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({

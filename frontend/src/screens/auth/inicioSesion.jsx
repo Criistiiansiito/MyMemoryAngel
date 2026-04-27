@@ -10,7 +10,7 @@ import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
 import { registerForPushNotificationsAsync, enviarPushTokenAlBackend } from '../../services/notificacionesService';
 
-const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
+const API = `${process.env.EXPO_PUBLIC_IP}`;
 
 const setToken = async (key, value) => {
   if (Platform.OS === 'web') localStorage.setItem(key, value);

@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, Text, TouchableOpacity, Image, StatusBar } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getStyles } from '../../style/styles';

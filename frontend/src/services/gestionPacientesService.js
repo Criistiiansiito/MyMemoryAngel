@@ -1,7 +1,6 @@
 import { getAuth } from 'firebase/auth';
-import { Platform } from 'react-native';
 
-const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
+const API = `${process.env.EXPO_PUBLIC_IP}`;
 
 export const gestionPacientesService = {
     //Obtiene la lista de pacientes vinculados al cuidador actual

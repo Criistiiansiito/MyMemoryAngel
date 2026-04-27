@@ -1,9 +1,8 @@
 import axios from 'axios';
-import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getRecordatorioVisualConfig, getTiposRecordatorio } from './accesibilidadColors';
 
-const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
+const API = `${process.env.EXPO_PUBLIC_IP}`;
 
 const normalizarTipo = (tipo = '') =>
   tipo

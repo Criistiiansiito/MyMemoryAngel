@@ -1,11 +1,7 @@
 import axios from 'axios';
-import { Platform } from 'react-native';
 import { auth } from './firebase';
 
-const API =
-  Platform.OS === 'web'
-    ? 'http://localhost:5000/api'
-    : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
+const API = `${process.env.EXPO_PUBLIC_IP}`;
 
 const getAuthHeaders = async () => {
   const token = await auth.currentUser?.getIdToken();
