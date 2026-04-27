@@ -177,16 +177,16 @@ export default function NivelesOrientacion({ onBack, onSelectDifficulty }) {
                   size={24}
                   color={accuracyIsGood ? '#16A34A' : '#DC2626'}
                 />
-                <Text style={[styles.menuSubtitle, juegosStyles.statTitle]}>% de aciertos</Text>
-                <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }]}>
+                <Text style={[styles.menuSubtitle, juegosStyles.statTitle, isDarkMode && { color: '#FFFFFF' }]}>% de aciertos</Text>
+                <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }, isDarkMode && { color: '#FFFFFF' }]}>
                   {summary.accuracy}%
                 </Text>
               </View>
 
               <View style={[juegosStyles.cardBase, juegosStyles.cardNeutral]}>
                 <MaterialCommunityIcons name="counter" size={24} color="#4D6BFE" />
-                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }]}>Partidas jugadas</Text>
-                <Text style={{ fontSize: aplicarEscala(24), fontWeight: '800', color: '#1E293B' }}>
+                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }, isDarkMode && { color: '#000000' }]}>Partidas jugadas</Text>
+                <Text style={{ fontSize: aplicarEscala(24), fontWeight: '800', color: isDarkMode ? '#000000' : '#1E293B' }}>
                   {summary.partidasTotales}
                 </Text>
               </View>
@@ -195,16 +195,16 @@ export default function NivelesOrientacion({ onBack, onSelectDifficulty }) {
             <View style={juegosStyles.statsRowSmall}>
               <View style={[juegosStyles.cardBase, juegosStyles.cardNeutral]}>
                 <MaterialCommunityIcons name="clock-outline" size={22} color="#4D6BFE" />
-                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }]}>Última partida</Text>
-                <Text style={[juegosStyles.statNumberSmall, { fontSize: aplicarEscala(20) }]}>
+                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }, isDarkMode && { color: '#000000' }]}>Última partida</Text>
+                <Text style={[juegosStyles.statNumberSmall, { fontSize: aplicarEscala(20) }, isDarkMode && { color: '#000000' }]}>
                   {summary.ultimoResultado}
                 </Text>
               </View>
 
               <View style={[juegosStyles.cardBase, juegosStyles.cardWarning]}>
                 <MaterialCommunityIcons name="trophy-outline" size={22} color="#F97316" />
-                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }]}>Mejor puntuacion</Text>
-                <Text style={{ fontSize: aplicarEscala(20), fontWeight: '800', color: '#1E293B' }}>
+                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }, isDarkMode && { color: '#FFFFFF' }]}>Mejor puntuacion</Text>
+                <Text style={{ fontSize: aplicarEscala(20), fontWeight: '800', color: isDarkMode ? '#FFFFFF' : '#1E293B' }}>
                   {summary.mejorPuntuacion}
                 </Text>
               </View>
@@ -215,3 +215,5 @@ export default function NivelesOrientacion({ onBack, onSelectDifficulty }) {
     </View>
   );
 }
+
+
