@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getRecordatorioVisualConfig, getTiposRecordatorio } from './accesibilidadColors';
 
 const API = `${process.env.EXPO_PUBLIC_IP}`;
+const MADRID_TIMEZONE = 'Europe/Madrid';
 
 const normalizarTipo = (tipo = '') =>
   tipo
@@ -120,8 +121,8 @@ export const formatearFechaYHora = (fechaRaw) => {
   try {
     const d = parseMySQLDateTime(fechaRaw);
     if (!d || Number.isNaN(d.getTime())) return { fecha: 'Error', hora: '--:--' };
-    const fechaTexto = d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }).replace('.', '');
-    const horaTexto = d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
+    const fechaTexto = d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', timeZone: MADRID_TIMEZONE }).replace('.', '');
+    const horaTexto = d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: MADRID_TIMEZONE });
     return { fecha: fechaTexto, hora: horaTexto };
   } catch (_e) {
     return { fecha: '---', hora: '00:00' };
@@ -139,15 +140,20 @@ export const TIPOS_RECORDATORIO = [
 export const getTiposRecordatorioConfig = (isDarkMode = false) => getTiposRecordatorio(isDarkMode);
 
 export const formatToMySQL = (date) => {
-  const pad = (n) => (n < 10 ? `0${n}` : n);
-  return (
-    `${date.getFullYear()}-` +
-    `${pad(date.getMonth() + 1)}-` +
-    `${pad(date.getDate())} ` +
-    `${pad(date.getHours())}:` +
-    `${pad(date.getMinutes())}:` +
-    `${pad(date.getSeconds())}`
-  );
+  const parts = new Intl.DateTimeFormat('sv-SE', {
+    timeZone: MADRID_TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).formatToParts(date);
+
+  const getPart = (type) => parts.find((part) => part.type === type)?.value;
+
+  return `${getPart('year')}-${getPart('month')}-${getPart('day')} ${getPart('hour')}:${getPart('minute')}:${getPart('second')}`;
 };
 
 export const crearRecordatorio = async (datos) => {

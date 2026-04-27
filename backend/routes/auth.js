@@ -4,6 +4,7 @@ const admin = require('../firebaseAdmin');
 const multer = require('multer'); 
 const db = require('../db'); 
 const { sendPushNotifications } = require('../pushNotifications');
+const MADRID_TIMEZONE = 'Europe/Madrid';
 
 const upload = multer({ 
     storage: multer.memoryStorage(),
@@ -19,10 +20,21 @@ const upload = multer({
 });
 
 const toDateOnly = (value) => {
+    if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) {
+        return value.slice(0, 10);
+    }
+
     const date = new Date(value);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const parts = new Intl.DateTimeFormat('sv-SE', {
+        timeZone: MADRID_TIMEZONE,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    }).formatToParts(date);
+
+    const year = parts.find((part) => part.type === 'year')?.value;
+    const month = parts.find((part) => part.type === 'month')?.value;
+    const day = parts.find((part) => part.type === 'day')?.value;
     return `${year}-${month}-${day}`;
 };
 

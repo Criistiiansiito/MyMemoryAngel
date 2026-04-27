@@ -1,18 +1,41 @@
 const cron = require('node-cron');
 const db = require('./db');
 const { sendPushNotifications } = require('./pushNotifications');
+const MADRID_TIMEZONE = 'Europe/Madrid';
+
+const getMadridNowParts = (date = new Date()) => {
+    const parts = new Intl.DateTimeFormat('sv-SE', {
+        timeZone: MADRID_TIMEZONE,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        weekday: 'long',
+        hour12: false,
+    }).formatToParts(date);
+
+    const getPart = (type) => parts.find((part) => part.type === type)?.value;
+    const weekdayMap = {
+        domingo: 'domingo',
+        lunes: 'lunes',
+        martes: 'martes',
+        miércoles: 'miercoles',
+        jueves: 'jueves',
+        viernes: 'viernes',
+        sábado: 'sabado',
+    };
+
+    return {
+        horaActual: `${getPart('hour')}:${getPart('minute')}`,
+        fechaHoy: `${getPart('year')}-${getPart('month')}-${getPart('day')}`,
+        nombreDiaHoy: weekdayMap[getPart('weekday')] || getPart('weekday'),
+    };
+};
 
 const ejecutarRecordatoriosPendientes = async () => {
     const ahora = new Date();
-
-    const horaActual = `${ahora.getHours().toString().padStart(2, '0')}:${ahora.getMinutes().toString().padStart(2, '0')}`;
-    const anio = ahora.getFullYear();
-    const mes = (ahora.getMonth() + 1).toString().padStart(2, '0');
-    const dia = ahora.getDate().toString().padStart(2, '0');
-    const fechaHoy = `${anio}-${mes}-${dia}`;
-
-    const diasSemana = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
-    const nombreDiaHoy = diasSemana[ahora.getDay()];
+    const { horaActual, fechaHoy, nombreDiaHoy } = getMadridNowParts(ahora);
 
     console.log(`[${new Date().toLocaleTimeString()}] Buscando: Hora ${horaActual}, Dia ${nombreDiaHoy}, Fecha ${fechaHoy}`);
 
@@ -58,7 +81,7 @@ const ejecutarRecordatoriosPendientes = async () => {
         const tipoDB = (rec.tipo || 'otro').toLowerCase().trim();
         const icono = iconos[tipoDB] || '🔔';
 
-        const opciones = { weekday: 'long', day: 'numeric', month: 'long' };
+        const opciones = { weekday: 'long', day: 'numeric', month: 'long', timeZone: MADRID_TIMEZONE };
         let fechaFormateada = ahora.toLocaleDateString('es-ES', opciones);
         fechaFormateada = fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
 

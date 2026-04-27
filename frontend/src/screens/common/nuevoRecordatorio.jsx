@@ -14,6 +14,8 @@ import {
   crearRecordatorio 
 } from '../../services/recordatoriosService';
 
+const MADRID_TIMEZONE = 'Europe/Madrid';
+
 export default function NuevoRecordatorio({ navigation, route }) {
 
   const { aplicarEscala, isDarkMode } = useAccesibilidad();
@@ -74,6 +76,9 @@ export default function NuevoRecordatorio({ navigation, route }) {
     setTempDate(date);
     setShowPicker(true);
   };
+
+  const fechaTexto = date.toLocaleDateString('es-ES', { timeZone: MADRID_TIMEZONE });
+  const horaTexto = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: MADRID_TIMEZONE });
 
   return (
     <View style={styles.container}>
@@ -182,13 +187,13 @@ export default function NuevoRecordatorio({ navigation, route }) {
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <TouchableOpacity onPress={() => showMode('date')} style={[styles.inputContainer, { flex: 0.52, marginRight: 10 }]}>
             <MaterialCommunityIcons name="calendar" size={20} color="#4D6BFE" style={{ marginRight: 8 }} />
-            <Text style={{ color: isDarkMode ? '#FFFFFF' : '#1E293B' }}>{date.toLocaleDateString()}</Text>
+            <Text style={{ color: isDarkMode ? '#FFFFFF' : '#1E293B' }}>{fechaTexto}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => showMode('time')} style={[styles.inputContainer, { flex: 0.43 }]}>
             <MaterialCommunityIcons name="clock-outline" size={20} color="#4D6BFE" style={{ marginRight: 8 }} />
             <Text style={{ color: isDarkMode ? '#FFFFFF' : '#1E293B' }}>
-              {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {horaTexto}
             </Text>
           </TouchableOpacity>
         </View>
@@ -199,6 +204,7 @@ export default function NuevoRecordatorio({ navigation, route }) {
               value={tempDate}
               mode={mode}
               is24Hour={true}
+              timeZoneName={MADRID_TIMEZONE}
               display="spinner"
               onChange={(event, selectedDate) => {
                 if (selectedDate) {
@@ -233,6 +239,7 @@ export default function NuevoRecordatorio({ navigation, route }) {
             value={date}
             mode={mode}
             is24Hour={true}
+            timeZoneName={MADRID_TIMEZONE}
             display="default"
             onChange={(event, selectedDate) => {
               setShowPicker(false);
