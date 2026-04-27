@@ -17,8 +17,8 @@ export default function DashboardCuidador({ navigation }) {
   const [numPacientes, setNumPacientes] = useState(0); 
 
   const insets = useSafeAreaInsets();
-  const { aplicarEscala, cargarDesdeServidor, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, cargarDesdeServidor, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
   const currentDate = useCurrentDate();
 
   const fechaHoy = formatMadridDate(currentDate, {
