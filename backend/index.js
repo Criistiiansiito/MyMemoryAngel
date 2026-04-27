@@ -19,6 +19,7 @@ app.use((req, res, next) => {
 
 // Rutas
 const authRoutes = require('./routes/auth');
+const internalRoutes = require('./routes/internal');
 app.use('/api/auth', authRoutes);
 app.use('/api/recordatorios', authRoutes);
 app.use('/api/chatbot', authRoutes);
@@ -26,8 +27,13 @@ app.use('/api/musica', authRoutes);
 app.use('/api/lecturas', authRoutes);
 app.use('/api/escritura', authRoutes);
 app.use('/api/vinculaciones', authRoutes);
+app.use('/api/internal', internalRoutes);
 
-iniciarCron();
+if (process.env.CRON_ENABLED !== 'false') {
+  iniciarCron();
+} else {
+  console.log('Cron desactivado por CRON_ENABLED=false');
+}
 
 // Arrancar servidor en IP local
 const PORT = process.env.API_PORT || 5000;
