@@ -1,14 +1,10 @@
 import { StyleSheet, Platform, Dimensions } from 'react-native';
-import { getAccesibilidadColors } from '../services/accesibilidadColors';
 
 const { height } = Dimensions.get('window');
 const { width } = Dimensions.get('window');
 const CANVAS_SIZE = width - 20;
 
-export const getJuegosStyles = (aplicarEscala, isDarkMode = false) => {
-  const colors = getAccesibilidadColors(isDarkMode);
-
-  return StyleSheet.create({
+export const getJuegosStyles = (aplicarEscala) => StyleSheet.create({
     headerRow: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -31,7 +27,7 @@ export const getJuegosStyles = (aplicarEscala, isDarkMode = false) => {
       fontWeight: '600',
     },
     scoreText: {
-      color: colors.memory,
+      color: '#EC4899',
       fontWeight: 'bold',
     },
     progressTrack: {
@@ -41,7 +37,7 @@ export const getJuegosStyles = (aplicarEscala, isDarkMode = false) => {
     },
     progressFill: {
       height: '100%',
-      backgroundColor: colors.memory,
+      backgroundColor: '#EC4899',
       borderRadius: 4,
     },
     gameCard: {
@@ -68,7 +64,7 @@ export const getJuegosStyles = (aplicarEscala, isDarkMode = false) => {
       marginBottom: 0,
       textTransform: 'none',
       letterSpacing: 0,
-      color: colors.inactive,
+      color: '#94A3B8',
     },
     sequenceWrapper: {
       height: 50,
@@ -79,7 +75,7 @@ export const getJuegosStyles = (aplicarEscala, isDarkMode = false) => {
     sequenceText: {
       fontSize: aplicarEscala(40),
       fontWeight: '800',
-      color: colors.memory,
+      color: '#EC4899',
       letterSpacing: 10,
     },
     sequenceDotsRow: {
@@ -151,7 +147,7 @@ export const getJuegosStyles = (aplicarEscala, isDarkMode = false) => {
     backButton: {
       marginTop: 20,
       width: '100%',
-      backgroundColor: colors.success,
+      backgroundColor: '#10B981',
     },
     statsRow: {
     flexDirection: 'row',
@@ -170,20 +166,20 @@ export const getJuegosStyles = (aplicarEscala, isDarkMode = false) => {
         borderWidth: 1,
     },
     cardAccuracyGood: {
-        backgroundColor: colors.successSoft,
-        borderColor: colors.successSoft,
+        backgroundColor: '#DCFCE7',
+        borderColor: '#BBF7D0',
     },
     cardAccuracyBad: {
-        backgroundColor: colors.dangerSoft,
-        borderColor: colors.dangerSoft,
+        backgroundColor: '#FEE2E2',
+        borderColor: '#FECACA',
     },
     cardNeutral: {
         backgroundColor: '#F8FAFC',
         borderColor: '#E2E8F0',
     },
     cardWarning: {
-        backgroundColor: colors.warningSoft,
-        borderColor: colors.warningSoft,
+        backgroundColor: '#FFF7ED',
+        borderColor: '#FED7AA',
     },
     statTitle: {
         marginTop: 10,
@@ -231,4 +227,3 @@ export const getJuegosStyles = (aplicarEscala, isDarkMode = false) => {
         borderColor: 'transparent',
     },
   });
-};

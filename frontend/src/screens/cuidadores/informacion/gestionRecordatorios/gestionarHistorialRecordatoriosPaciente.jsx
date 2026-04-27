@@ -26,8 +26,8 @@ const renderEstado = (estado) => {
 };
 
 export default function HistorialRecordatoriosPaciente({ route, navigation }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
   const { paciente } = route.params;
 
@@ -58,7 +58,7 @@ export default function HistorialRecordatoriosPaciente({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle="dark-content" />
 
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -71,7 +71,7 @@ export default function HistorialRecordatoriosPaciente({ route, navigation }) {
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}>
         <View style={{ paddingTop: 10, paddingBottom: 20 }}>
-          <Text style={{ color: isDarkMode ? '#FFFFFF' : '#64748B', fontSize: 14, lineHeight: 22, textAlign: 'center' }}>
+          <Text style={{ color: '#64748B', fontSize: 14, lineHeight: 22, textAlign: 'center' }}>
             Consulta como ha ido {paciente?.nombre} con sus recordatorios durante el ultimo mes.
           </Text>
         </View>
@@ -85,7 +85,7 @@ export default function HistorialRecordatoriosPaciente({ route, navigation }) {
           </View>
         ) : (
           historial.map((item) => {
-            const config = getIconConfig(item.tipo, isDarkMode);
+            const config = getIconConfig(item.tipo);
             const estado = renderEstado(item.estado_calendario);
             const { hora } = formatearFechaYHora(item.fecha_hora);
 
@@ -97,7 +97,7 @@ export default function HistorialRecordatoriosPaciente({ route, navigation }) {
 
                 <View style={styles.reminderInfoBody}>
                   <View style={[styles.reminderBadge, { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }]}>
-                    <Text style={[styles.reminderBadgeText, {color: isDarkMode ? '#FFFFFF' : '#718096', fontSize: aplicarEscala(12)}]}>
+                    <Text style={[styles.reminderBadgeText, {color: '#718096', fontSize: aplicarEscala(12)}]}>
                       {formatDateLabel(item.fecha_ocurrencia)} | {hora}
                     </Text>
                     <Text

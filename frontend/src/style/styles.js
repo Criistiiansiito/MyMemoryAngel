@@ -1,18 +1,14 @@
 import { StyleSheet, Platform, Dimensions } from 'react-native';
-import { getAccesibilidadColors } from '../services/accesibilidadColors';
 
 const { height } = Dimensions.get('window');
 const { width } = Dimensions.get('window');
 const CANVAS_SIZE = width - 20;
 
-export const getStyles = (aplicarEscala, isDarkMode = false) => {
-  const colors = getAccesibilidadColors(isDarkMode);
-
-  return StyleSheet.create({
+export const getStyles = (aplicarEscala) => StyleSheet.create({
   // --- ESTILOS GENERALES Y CONTENEDORES ---
   container: { 
     flex: 1, 
-    backgroundColor: colors.background,
+    backgroundColor: '#F0F5FA',
   },
   contentCenter: {
     flex: 1,
@@ -28,13 +24,13 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
 
   // --- TOP BAR / HEADER ---
   topBar: {
-    backgroundColor: colors.surface2,
+    backgroundColor: '#FFFFFF',
     width: '100%',
     paddingTop: Platform.OS === 'ios' ? 30 : 20, 
     paddingBottom: 20,
     paddingHorizontal: 25,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: '#E2E8F0',
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -43,7 +39,7 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
   },
   topBarArrow:{
     fontSize:aplicarEscala(26),
-    color: colors.text
+    color:"#334155"
   },
   logoRow: { 
     flexDirection: 'row',
@@ -56,7 +52,7 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
     height: 130,  
   },
   cuadradoLogoHeader: {
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
     padding: 10,
     borderRadius: 35, 
     elevation: 5,    
@@ -69,21 +65,15 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
   textContainer: {
     justifyContent: 'center',
   },
-  iconosHeaders: {
-    color:colors.iconosHeaders
-  },
-  iconosRecordatorios: {
-    color:colors.iconosRecordatorios
-  },
   brandName: { 
     fontSize: aplicarEscala(22), 
     fontWeight: '800', 
-    color: colors.textStrong,
+    color: '#1A202C',
     marginLeft: 15
   },
   subtitle: { 
     fontSize: aplicarEscala(13), 
-    color: colors.textMuted, 
+    color: '#718096', 
     fontWeight: '400'
   },
 
@@ -94,7 +84,7 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
   cardButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
     padding: 20,
     borderRadius: 18,
     marginBottom: 16,
@@ -115,7 +105,7 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
   cardButtonText: { 
     fontSize: aplicarEscala(18), 
     fontWeight: '600', 
-    color: colors.text,
+    color: '#2D3748',
     marginLeft: 40
   },
 
@@ -123,16 +113,16 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
   label: {
     fontSize: aplicarEscala(14),
     fontWeight: '600',
-    color: colors.text,
+    color: '#4A5568',
     marginBottom: 8,
     marginTop: 15,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: '#E2E8F0',
     borderRadius: 12,
     paddingHorizontal: 15,
     height: 60,
@@ -140,11 +130,11 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
   inputIcon: {
     marginRight: 10,
     fontSize: aplicarEscala(22),      
-    color: colors.inactive
+    color: '#94A3B8'
   },
   input: {
     flex: 1,
-    color: colors.text,
+    color: '#2D3748',
     fontSize: aplicarEscala(16),
   },
   eyeIcon: {
@@ -155,18 +145,15 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
     fontSize: aplicarEscala(16),
     textAlignVertical: 'center',
   },
-  textoColorNormal:{
-    color: colors.textoColorNormal,
-  },
 
   // --- BOTONES DE ACCIÓN (Bottom) ---
   footer: {
     paddingHorizontal: 25,
     paddingBottom: 30, 
-    backgroundColor: colors.background,
+    backgroundColor: '#F0F5FA',
   },
   mainButton: {
-    backgroundColor: colors.primary,
+    backgroundColor: '#334155',
     height: 55,
     borderRadius: 15,
     justifyContent: 'center',
@@ -178,7 +165,7 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
     shadowRadius: 5,
   },
   mainButtonText: {
-    color: colors.onPrimary,
+    color: '#FFFFFF',
     fontSize: aplicarEscala(16),
     fontWeight: '700',
   },
@@ -187,7 +174,7 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
     alignItems: 'center'
   },
   loginText: { 
-    color: colors.text, 
+    color: '#334155', 
     fontSize: aplicarEscala(15), 
     fontWeight: '500',
     textDecorationLine: 'underline'
@@ -240,7 +227,7 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
     shadowRadius: 5,
   },
   dateText: {
-    color: colors.menuSubtitle,
+    color: '#718096',
     fontSize: aplicarEscala(16),
     left: 60,
     fontWeight: '500',
@@ -248,11 +235,11 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
   headerIconButton: {
     padding: 8,
     borderRadius: 12,
-    backgroundColor: colors.headerIconButton,
+    backgroundColor: '#F7FAFC',
     marginLeft: 10,
   },
   menuCard: {
-    backgroundColor: colors.cards,
+    backgroundColor: '#FFFFFF',
     borderRadius: 15, 
     padding: 10,
     flexDirection: 'row',
@@ -276,11 +263,11 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
   menuTitle: {
     fontSize: aplicarEscala(18),
     fontWeight: '700',
-    color: colors.menuTitle,
+    color: '#2D3748',
   },
   menuSubtitle: {
     fontSize: aplicarEscala(14),
-    color: colors.menuSubtitle,
+    color: '#718096',
     marginTop: 2,
   },
   scrollContent: {
@@ -312,14 +299,14 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
     marginHorizontal: 15,
     fontSize: aplicarEscala(14),
     fontWeight: '700',
-    color: colors.inactive,
+    color: '#94A3B8',
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
 
   // --- TARJETAS DE CONFIGURACIÓN (Mantienen el estilo card) ---
   settingsCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 20,
     marginBottom: 15,
@@ -338,21 +325,21 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
   sectionTitle: {
     fontSize: aplicarEscala(18),
     fontWeight: '700',
-    color: colors.text,
+    color: '#2D3748',
     marginLeft: 10,
   },
   optionButtonActive: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primarySoft,
+    borderColor: '#4D6BFE',
+    backgroundColor: '#F0F5FF',
     borderWidth: 2,
   },
   optionText: {
     fontSize: aplicarEscala(16),
-    color: colors.text,
+    color: '#4A5568',
     fontWeight: '600',
   },
   optionTextActive: {
-    color: colors.primary,
+    color: '#4D6BFE',
     fontWeight: '700',
   },
   rowSpace: {
@@ -364,7 +351,7 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
     width: 140,
     height: 140,
     borderRadius: 70,
-    backgroundColor: colors.primarySoft,
+    backgroundColor: '#E8F0FE',
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
@@ -380,7 +367,7 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
     width: 130,
     height: 130,
     borderRadius: 65,
-    backgroundColor: colors.primarySoft, 
+    backgroundColor: '#E8F0FE', 
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
@@ -393,7 +380,7 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: colors.primary,
+    backgroundColor: '#334155',
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -408,7 +395,7 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
     paddingHorizontal: 5,
   },
   typeCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
     width: '48%', 
     borderRadius: 24,
     padding: 20,
@@ -421,8 +408,8 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
     shadowRadius: 8,
   },
   typeCardActive: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primarySoft,
+    borderColor: '#4D6BFE',
+    backgroundColor: '#F0F5FF',
     borderWidth: 2,
   },
   badgeText: {
@@ -446,7 +433,7 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
     textAlign: 'center',
   },
   typeTextActive: {
-    color: colors.primary,
+    color: '#4D6BFE',
     fontWeight: '700',
   },
   gridRecordatorios: {
@@ -477,11 +464,11 @@ export const getStyles = (aplicarEscala, isDarkMode = false) => {
   // --- ESTILOS DEL CHATBOT ---
   chatContainer: {
     flex: 1,
-    backgroundColor: colors.background, 
+    backgroundColor: '#FFFCF5', 
   },
 bubbleBot: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 20,
@@ -503,7 +490,7 @@ bubbleUser: {
     maxWidth: '85%',
   },
   textBot: {
-    color: colors.text,
+    color: '#4A5568',
     fontSize: aplicarEscala(16),
     lineHeight: 22,
   },
@@ -516,18 +503,17 @@ chatInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 5,
-    backgroundColor: colors.surface,
+    backgroundColor: '#fff',
     borderTopWidth: 1,
-    borderColor: colors.border,
+    borderColor: '#E2E8F0',
   },
  inputChatWrapper: {
     flex: 1,
     height: 35,
-    backgroundColor: colors.surfaceSoft,
+    backgroundColor: '#F1F5F9',
     borderRadius: 20,
     paddingHorizontal: 15,
     marginRight: 10,
-    color: colors.text,
   },
   sendButton: {
     backgroundColor: '#334155',
@@ -543,9 +529,9 @@ chatInputContainer: {
   tabBar: {
     flexDirection: 'row',
     height: 90,
-    backgroundColor: colors.surface2,
+    backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: colors.borderSoft,
+    borderTopColor: '#F1F5F9',
     justifyContent: 'space-around',
     alignItems: 'center',
     paddingBottom: Platform.OS === 'ios' ? 20 : 10,
@@ -562,7 +548,7 @@ chatInputContainer: {
     fontWeight: '500',
   },
   tabTextActive: {
-    color: colors.primary,
+    color: '#4D6BFE',
     fontWeight: '700',
   },
 
@@ -571,7 +557,7 @@ chatInputContainer: {
     width: 45,
     height: 45,
     borderRadius: 22.5,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FEF3C7',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
@@ -580,19 +566,19 @@ chatInputContainer: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: colors.successStrong,
+    backgroundColor: '#22C55E',
     position: 'absolute',
     bottom: 0,
     right: 0,
     borderWidth: 2,
-    borderColor: colors.surface,
+    borderColor: '#FFFFFF',
   },
   activityCanvas: {
     flex: 1,
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: colors.border,
+    borderColor: '#E2E8F0',
     borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
@@ -604,19 +590,19 @@ chatInputContainer: {
     shadowRadius: 4,
   },
   canvasHint: {
-    color: colors.inactive,
+    color: '#94A3B8',
     marginTop: 12,
     fontSize: aplicarEscala(16),
     fontWeight: '500',
     textAlign: 'center',
   },
   actionPanel: {
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
     padding: 20,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
+    borderColor: '#F1F5F9',
     elevation: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -3 },
@@ -635,14 +621,14 @@ chatInputContainer: {
   },
 
   colorPickerSelected: {
-    borderColor: colors.text,
+    borderColor: '#334155',
     transform: [{ scale: 1.1 }], 
   },
   iconButton: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: colors.accent,
+    backgroundColor: '#6366F1',
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
@@ -667,13 +653,13 @@ chatInputContainer: {
     marginTop: 50,
   },
   emptyStateText: {
-    color: colors.textMuted, 
+    color: '#718096', 
     marginTop: 10,
     fontSize: aplicarEscala(16),
     fontWeight: '500',
   },
   menuCardCompleted: {
-    borderColor: colors.success, 
+    borderColor: '#4ADE80', 
     borderWidth: 1.5, 
     opacity: 0.8,
   },
@@ -691,7 +677,7 @@ chatInputContainer: {
     marginBottom: 6,
   },
   timeBadge: {
-    backgroundColor: colors.surfaceSoft, 
+    backgroundColor: '#F1F5F9', 
     paddingHorizontal: 8, 
     paddingVertical: 3, 
     borderRadius: 6, 
@@ -700,19 +686,19 @@ chatInputContainer: {
     alignItems: 'center',
   },
   timeBadgeText: {
-    color: colors.primary, 
+    color: '#4D6BFE', 
     fontWeight: 'bold', 
     fontSize: aplicarEscala(11), 
     marginLeft: 4,
   },
   completedBadge: {
-    backgroundColor: colors.successSoft, 
+    backgroundColor: '#DCFCE7', 
     paddingHorizontal: 6, 
     paddingVertical: 2, 
     borderRadius: 4,
   },
   completedCheck: {
-    color: colors.successStrong, 
+    color: '#16A34A', 
     fontSize: aplicarEscala(10), 
     fontWeight: 'bold',
   },
@@ -729,7 +715,7 @@ chatInputContainer: {
   },
   typeTabText: {
     fontSize: aplicarEscala(11), 
-    color: colors.inactive, 
+    color: '#94A3B8', 
     fontWeight: '600',
     textTransform: 'capitalize',
   },
@@ -740,13 +726,13 @@ chatInputContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 20,
-    backgroundColor: colors.surfaceSoft,
+    backgroundColor: '#F8FAFC',
   },
   centeredLoader: {
     marginTop: 50,
   },
   calendarCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 10,
     marginBottom: 5,
@@ -757,35 +743,31 @@ chatInputContainer: {
     elevation: 3,
   },
   calendarTheme: {
-    calendarBackground: colors.surface,
-    textSectionTitleColor: colors.textMuted,
-    dayTextColor: colors.text,
-    monthTextColor: colors.textStrong,
-    textDisabledColor: colors.inactive,
-    selectedDayBackgroundColor: colors.primary,
-    todayTextColor: colors.primary,
-    arrowColor: colors.primary,
+    calendarBackground: '#FFFFFF',
+    selectedDayBackgroundColor: '#4D6BFE',
+    todayTextColor: '#4D6BFE',
+    arrowColor: '#4D6BFE',
     textMonthFontWeight: '800',
     textDayHeaderFontWeight: '600',
     dotStyle: { width: 6, height: 6, borderRadius: 3 }
   },
   inputLabel: {
     fontSize: aplicarEscala(13),
-    color: colors.textSoft,
+    color: '#64748B',
     marginBottom: 8,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   textInput: {
-    backgroundColor: colors.surfaceSoft,
+    backgroundColor: '#F1F5F9',
     padding: 14,
     borderRadius: 12,
     marginBottom: 20,
     fontSize: aplicarEscala(16),
-    color: colors.text,
+    color: '#1E293B',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: '#E2E8F0',
   },
   textArea: {
     minHeight: 100,
@@ -797,7 +779,7 @@ chatInputContainer: {
     marginBottom: 25,
   },
   dateTimeButton: {
-    backgroundColor: colors.primarySoft,
+    backgroundColor: '#EEF2FF',
     padding: 15,
     borderRadius: 12,
     flex: 0.48,
@@ -806,12 +788,12 @@ chatInputContainer: {
     justifyContent: 'center',
   },
   dateTimeText: {
-    color: colors.primary,
+    color: '#4D6BFE',
     fontWeight: 'bold',
     marginLeft: 8,
   },
   btnPrimary: {
-    backgroundColor: colors.primary,
+    backgroundColor: '#4D6BFE',
     padding: 18,
     borderRadius: 15,
     alignItems: 'center',
@@ -829,9 +811,9 @@ chatInputContainer: {
   },
   gridContainer: {
     padding: 10,
-    backgroundColor: colors.surface,
+    backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderColor: colors.border,
+    borderColor: '#eee',
   },
   gridRow: {
     flexDirection: 'row',
@@ -841,18 +823,18 @@ chatInputContainer: {
   chipTema: {
     width: '31%', 
     height: 40,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F0F4FF',
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: colors.primary,
+    borderColor: '#E0E7FF',
   },
   chipTemaText: {
     fontSize: aplicarEscala(13),
     fontWeight: 'bold',
-    color: '#000000',
+    color: '#334155',
     textAlign: 'center',
   },
   subtemasContainer: {
@@ -899,7 +881,7 @@ writingIndicator: {
   headerTitle: {
     fontSize: aplicarEscala(17),
     fontWeight: '700',
-    color: colors.textStrong,
+    color: '#1E293B',
   },
   headerStatus: {
     fontSize: aplicarEscala(11),
@@ -916,13 +898,13 @@ writingIndicator: {
   },
   infoBox: {
     marginTop: 20,
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: '#E2E8F0',
     borderStyle: 'dashed', 
   },
   infoIconCircle: {
@@ -937,12 +919,12 @@ writingIndicator: {
   infoTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: colors.textStrong,
+    color: '#1E293B',
     marginBottom: 4,
   },
   infoText: {
     fontSize: 14,
-    color: colors.textSoft,
+    color: '#64748B',
     lineHeight: 20,
     fontStyle: 'italic',
   },
@@ -1079,7 +1061,7 @@ writingIndicator: {
   },
   canvasDeleteButton: {
     padding: 8,
-    backgroundColor: colors.canvasDeleteButton,
+    backgroundColor: '#FFF1F2',
     borderRadius: 12,
   },
   canvasWrapper: {
@@ -1310,7 +1292,7 @@ writingIndicator: {
   },
   musicaUploadButton: {
     flexDirection: 'row',
-    backgroundColor: colors.accent,
+    backgroundColor: '#6366F1',
     padding: 15,
     borderRadius: 15,
     alignItems: 'center',
@@ -1355,12 +1337,12 @@ writingIndicator: {
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
-  escrituraFechaHistorial: { fontSize: 13, fontWeight: 'bold', color: colors.accent, marginBottom: 2 },
+  escrituraFechaHistorial: { fontSize: 13, fontWeight: 'bold', color: '#6366F1', marginBottom: 2 },
   escrituraTextoHistorial: { fontSize: 16, color: '#475569' },
   escrituraBotonAccionHistorial: { padding: 8 },
   nombreCuidador: {
     fontSize: aplicarEscala(17),  
-    color: colors.nombreCuidador,
+    color: '#1e293b',
     marginLeft: 5
   },
   qrCard: {
@@ -1437,5 +1419,4 @@ writingIndicator: {
     height: '100%',
     borderRadius: 35
   }
-  });
-};
+});

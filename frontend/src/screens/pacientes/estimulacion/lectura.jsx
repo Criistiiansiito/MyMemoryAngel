@@ -33,8 +33,8 @@ const IMAGENES_LECTURA = {
 };
 
 export default function Lectura({ onBack }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
 
   const [vistaActual, setVistaActual] = useState('menu'); 
@@ -135,7 +135,7 @@ export default function Lectura({ onBack }) {
       {textos.map(t => (
         <TouchableOpacity 
           key={t.id} 
-          style={[styles.tarjetaLectura, isDarkMode && { backgroundColor: '#54537e' }]} 
+          style={styles.tarjetaLectura} 
           onPress={() => { setTextoSeleccionado(t); setVistaActual('lector'); }}
         >
           <View style={styles.contenedorImagenCorteLectura}>
@@ -146,21 +146,21 @@ export default function Lectura({ onBack }) {
                 <MaterialCommunityIcons name="book-open-variant" size={60} color="#CBD5E1" />
               </View>
             )}
-            <View style={[styles.corteOblicuoLectura, isDarkMode && { backgroundColor: '#54537e' }]} />
+            <View style={styles.corteOblicuoLectura} />
           </View>
 
           <View style={styles.infoCapaLectura}>
             <View style={{ flex: 1 }}>
-              <Text style={[styles.tituloListaLectura, isDarkMode && { color: '#FFFFFF' }]} numberOfLines={2}>{t.titulo}</Text>
+              <Text style={styles.tituloListaLectura} numberOfLines={2}>{t.titulo}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
                 <View style={styles.badgeListaLectura}>
-                  <MaterialCommunityIcons name="clock-outline" size={14} color={isDarkMode ? "#FFFFFF" : "#64748B"} />
-                  <Text style={[styles.tiempoListaLectura, isDarkMode && { color: '#FFFFFF' }]}>{categoriaActiva?.meta}</Text>
+                  <MaterialCommunityIcons name="clock-outline" size={14} color="#64748B" />
+                  <Text style={styles.tiempoListaLectura}>{categoriaActiva?.meta}</Text>
                 </View>
                 {/* Lo que tenías al lado de los tiempos */}
                 <View style={[styles.badgeListaLectura, { marginLeft: 8 }]}>
-                  <MaterialCommunityIcons name="book-open-variant" size={14} color={isDarkMode ? "#FFFFFF" : "#64748B"} />
-                  <Text style={[styles.tiempoListaLectura, isDarkMode && { color: '#FFFFFF' }]}>Leer</Text>
+                  <MaterialCommunityIcons name="book-open-variant" size={14} color="#64748B" />
+                  <Text style={styles.tiempoListaLectura}>Leer</Text>
                 </View>
               </View>
             </View>
@@ -186,12 +186,12 @@ export default function Lectura({ onBack }) {
           {textoSeleccionado?.imagenPrincipal && IMAGENES_LECTURA[textoSeleccionado.imagenPrincipal] ? (
             <Image source={IMAGENES_LECTURA[textoSeleccionado.imagenPrincipal]} style={styles.imagenLecturaPortada} resizeMode="cover" />
           ) : (
-            <View style={[styles.imagenLecturaPlaceholder, { backgroundColor: isDarkMode ? '#54537e' : '#E2E8F0' }]}>
+            <View style={[styles.imagenLecturaPlaceholder, { backgroundColor: '#E2E8F0' }]}>
               <MaterialCommunityIcons name="image-outline" size={80} color="#94A3B8" />
             </View>
           )}
-          <View style={[styles.overlayLecturaTitulo, isDarkMode && { backgroundColor: '#54537e' }]}>
-              <Text style={[styles.tituloTextoLectura, isDarkMode && { color: '#FFFFFF' }]}>{textoSeleccionado?.titulo}</Text>
+          <View style={styles.overlayLecturaTitulo}>
+              <Text style={styles.tituloTextoLectura}>{textoSeleccionado?.titulo}</Text>
               <View style={[styles.divisorLectura, { backgroundColor: categoriaActiva?.color }]} />
           </View>
         </View>
@@ -203,17 +203,17 @@ export default function Lectura({ onBack }) {
         </View>
       </ScrollView>
 
-      <View style={[styles.controlesInferioresLectura, { paddingBottom: insets.bottom + 10 }, isDarkMode && { backgroundColor: '#54537e' }]}>
+      <View style={[styles.controlesInferioresLectura, { paddingBottom: insets.bottom + 10 }]}>
         <View style={styles.containerProgresoLectura}>
           <View style={[styles.barraProgresoLectura, { width: `${progresoLectura}%`, backgroundColor: categoriaActiva?.color }]} />
         </View>
         <View style={styles.botonesRowLectura}>
-          <View style={[styles.grupoBotonesLectura, isDarkMode && { backgroundColor: '#6b6998' }]}>
+          <View style={styles.grupoBotonesLectura}>
             <TouchableOpacity onPress={() => setFontSize(f => Math.max(18, f-2))} style={styles.botonControlLectura}>
-              <MaterialCommunityIcons name="format-font-size-decrease" size={24} color={isDarkMode ? "#FFFFFF" : "#475569"} />
+              <MaterialCommunityIcons name="format-font-size-decrease" size={24} color="#475569" />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setFontSize(f => Math.min(40, f+2))} style={styles.botonControlLectura}>
-              <MaterialCommunityIcons name="format-font-size-increase" size={24} color={isDarkMode ? "#FFFFFF" : "#475569"} />
+              <MaterialCommunityIcons name="format-font-size-increase" size={24} color="#475569" />
             </TouchableOpacity>
           </View>
           <TouchableOpacity 
@@ -238,7 +238,7 @@ export default function Lectura({ onBack }) {
               if (vistaActual === 'menu') onBack();
               else setVistaActual(vistaActual === 'lector' ? 'lista' : 'menu');
             }}>
-              <MaterialCommunityIcons name="arrow-left" style={styles.iconosHeaders} size={24} />
+              <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
             </TouchableOpacity>
             <Text style={styles.brandName}>
               {vistaActual === 'menu' ? 'Lectura' : (vistaActual === 'lista' ? categoriaActiva?.titulo : 'Leyendo')}
@@ -247,7 +247,7 @@ export default function Lectura({ onBack }) {
           {/* Botón de escuchar resumen en el menú */}
           {vistaActual === 'menu' && (
             <TouchableOpacity style={styles.headerIconButton} onPress={leerResumen}>
-              <MaterialCommunityIcons name={isSpeakingSummary ? 'stop' : 'volume-high'} style={styles.iconosHeaders} size={24} />
+              <MaterialCommunityIcons name={isSpeakingSummary ? 'stop' : 'volume-high'} size={24} color="#334155" />
             </TouchableOpacity>
           )}
         </View>

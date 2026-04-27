@@ -40,8 +40,8 @@ const getMonthRange = (dateString) => {
 };
 
 export default function CalendarioCuidador({ navigation }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
 
   const currentDate = useCurrentDate();
@@ -58,7 +58,7 @@ export default function CalendarioCuidador({ navigation }) {
     lista.forEach((item, index) => {
       const fecha = item.fecha_ocurrencia || item.fecha_hora.substring(0, 10);
       if (!marcas[fecha]) marcas[fecha] = { dots: [] };
-      const config = getIconConfig(item.tipo, isDarkMode);
+      const config = getIconConfig(item.tipo);
       if (marcas[fecha].dots.length < 3) {
         marcas[fecha].dots.push({ key: `${item.id_recordatorio}-${fecha}-${index}`, color: config.iconColor });
       }
@@ -157,7 +157,7 @@ export default function CalendarioCuidador({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle="dark-content" />
 
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -203,7 +203,7 @@ export default function CalendarioCuidador({ navigation }) {
           </View>
         ) : (
           recordatoriosDelDia.map((item, index) => {
-            const config = getIconConfig(item.tipo, isDarkMode);
+            const config = getIconConfig(item.tipo);
             const { fecha, hora } = formatearFechaYHora(item.fecha_hora);
 
             return (

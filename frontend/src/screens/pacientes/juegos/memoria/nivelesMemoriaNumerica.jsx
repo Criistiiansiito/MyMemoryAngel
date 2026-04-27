@@ -56,9 +56,9 @@ const formatDate = (value) => {
 };
 
 export default function NivelesMemoria({ onBack, onSelectDifficulty }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
-  const juegosStyles = getJuegosStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
+  const juegosStyles = getJuegosStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
   const [progressMap, setProgressMap] = useState({});
   const [loading, setLoading] = useState(true);
@@ -197,7 +197,7 @@ export default function NivelesMemoria({ onBack, onSelectDifficulty }) {
                 <Text style={[styles.menuSubtitle, juegosStyles.statTitle]}>
                   % de aciertos
                 </Text>
-                <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }, isDarkMode && { color: '#FFFFFF' }]}>
+                <Text style={[juegosStyles.statNumberLarge, { fontSize: aplicarEscala(24) }]}>
                   {summary.accuracy}%
                 </Text>
               </View>
@@ -209,7 +209,7 @@ export default function NivelesMemoria({ onBack, onSelectDifficulty }) {
                 ]}
               >
                 <MaterialCommunityIcons name="counter" size={24} color="#4D6BFE" />
-                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }, isDarkMode && { color: '#000000' }]}>
+                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }]}>
                   Partidas jugadas
                 </Text>
                 <Text style={{ fontSize: aplicarEscala(24), fontWeight: '800', color: '#1E293B' }}>
@@ -226,7 +226,7 @@ export default function NivelesMemoria({ onBack, onSelectDifficulty }) {
                 ]}
               >
                 <MaterialCommunityIcons name="clock-outline" size={22} color="#4D6BFE" />
-                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }, isDarkMode && { color: '#000000' }]}>
+                <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }]}>
                   Última partida
                 </Text>
                 <Text style={[juegosStyles.statNumberSmall, { fontSize: aplicarEscala(20) }]}>
@@ -244,7 +244,7 @@ export default function NivelesMemoria({ onBack, onSelectDifficulty }) {
                 <Text style={[styles.menuSubtitle, { marginTop: 10, marginBottom: 4 }]}>
                   Mejor puntuacion
                 </Text>
-                <Text style={{ fontSize: aplicarEscala(20), fontWeight: '800', color: isDarkMode ? '#FFFFFF' : '#1E293B' }}>
+                <Text style={{ fontSize: aplicarEscala(20), fontWeight: '800', color: '#1E293B' }}>
                   {summary.mejorPuntuacion}
                 </Text>
               </View>

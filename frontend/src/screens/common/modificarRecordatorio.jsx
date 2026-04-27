@@ -6,9 +6,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
-import { getAccesibilidadColors } from '../../services/accesibilidadColors';
 import {
-  getTiposRecordatorioConfig,
+  TIPOS_RECORDATORIO,
   formatToMySQL,
   parseMySQLDateTime,
   actualizarRecordatorio,
@@ -24,16 +23,14 @@ const formatRecurrencia = (recurrencia = 'puntual') => {
 };
 
 export default function ModificarRecordatorio({ route, navigation }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
-  const colors = getAccesibilidadColors(isDarkMode);
-  const tiposRecordatorio = getTiposRecordatorioConfig(isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
   const { recordatorio } = route.params;
 
   const [titulo, setTitulo] = useState(recordatorio.titulo || '');
   const [descripcion, setDescripcion] = useState(recordatorio.descripcion || '');
-  const [tipoSeleccionado, setTipoSeleccionado] = useState(recordatorio.tipo || tiposRecordatorio[0].id);
+  const [tipoSeleccionado, setTipoSeleccionado] = useState(recordatorio.tipo || TIPOS_RECORDATORIO[0].id);
   const [frecuencia, setFrecuencia] = useState(formatRecurrencia(recordatorio.recurrencia));
   const [alertaSonora, setAlertaSonora] = useState((recordatorio.tipo_alerta || 'sonora') === 'sonora');
   const initialDate = parseMySQLDateTime(recordatorio.fecha_hora) || new Date();
@@ -131,7 +128,7 @@ export default function ModificarRecordatorio({ route, navigation }) {
 
         <Text style={styles.label}>Categoría</Text>
         <View style={styles.gridRecordatorios}>
-          {tiposRecordatorio.map((item) => {
+          {TIPOS_RECORDATORIO.map((item) => {
             const esSeleccionado = tipoSeleccionado === item.id;
             return (
               <TouchableOpacity
@@ -141,9 +138,9 @@ export default function ModificarRecordatorio({ route, navigation }) {
                 style={[
                   styles.cardTipoRecordatorio,
                   esSeleccionado && {
-                    borderColor: colors.primary,
+                    borderColor: '#4D6BFE',
                     borderWidth: 2,
-                    backgroundColor: colors.primarySoft,
+                    backgroundColor: '#F0F4FF',
                   },
                 ]}
               >
@@ -153,7 +150,7 @@ export default function ModificarRecordatorio({ route, navigation }) {
                 <Text
                   style={[
                     styles.textoTipo,
-                    esSeleccionado && { fontWeight: 'bold', color: colors.primary },
+                    esSeleccionado && { fontWeight: 'bold', color: '#4D6BFE' },
                   ]}
                 >
                   {item.id}

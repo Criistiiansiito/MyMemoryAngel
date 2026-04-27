@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getRecordatorioVisualConfig, getTiposRecordatorio } from './accesibilidadColors';
 
 const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
 
@@ -85,8 +84,21 @@ export const fetchRecordatoriosCalendarioPorUsuario = async (userId, fromDate, t
   }
 };
 
-export const getIconConfig = (tipo, isDarkMode = false) => {
-  return getRecordatorioVisualConfig(normalizarTipo(tipo), isDarkMode);
+export const getIconConfig = (tipo) => {
+  switch (normalizarTipo(tipo)) {
+    case 'medicacion':
+      return { icon: 'pill', color: '#DBEAFE', iconColor: '#3B82F6' };
+    case 'cita medica':
+      return { icon: 'calendar-check', color: '#DCFCE7', iconColor: '#22C55E' };
+    case 'tarea':
+      return { icon: 'checkbox-marked-outline', color: '#F3E8FF', iconColor: '#A855F7' };
+    case 'evento personal':
+      return { icon: 'account-outline', color: '#FFEDD5', iconColor: '#F97316' };
+    case 'hidratacion':
+      return { icon: 'cup-water', color: '#E0F2FE', iconColor: '#0284C7' };
+    default:
+      return { icon: 'bell-outline', color: '#F1F5F9', iconColor: '#64748B' };
+  }
 };
 
 export const parseMySQLDateTime = (fechaRaw) => {
@@ -137,7 +149,6 @@ export const TIPOS_RECORDATORIO = [
   { id: 'Hidratación', icon: 'cup-water', color: '#E0F2FE', iconColor: '#0284C7' },
   { id: 'Otro', icon: 'plus', color: '#F7FAFC', iconColor: '#718096' },
 ];
-export const getTiposRecordatorioConfig = (isDarkMode = false) => getTiposRecordatorio(isDarkMode);
 
 export const formatToMySQL = (date) => {
   const pad = (n) => (n < 10 ? `0${n}` : n);

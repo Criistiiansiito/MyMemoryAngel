@@ -17,8 +17,8 @@ const formatRecurrencia = (recurrencia = 'puntual') => {
 };
 
 export default function GestionarRecordatorios({ navigation }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
 
   const [recordatorios, setRecordatorios] = useState([]);
@@ -66,7 +66,7 @@ export default function GestionarRecordatorios({ navigation }) {
           </View>
         ) : (
           recordatorios.map((item) => {
-            const config = getIconConfig(item.tipo, isDarkMode);
+            const config = getIconConfig(item.tipo);
             const { fecha, hora } = formatearFechaYHora(item.fecha_hora);
 
             return (

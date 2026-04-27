@@ -8,8 +8,8 @@ import { useAccesibilidad } from '../../../services/accesibilidadContext';
 import { escrituraService } from '../../../services/escrituraService';
 
 export default function GestionarEscriturasPaciente({ route, navigation }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
 
   const { paciente } = route.params;
@@ -59,7 +59,7 @@ export default function GestionarEscriturasPaciente({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle="dark-content" />
 
       <View
         style={[
@@ -78,7 +78,7 @@ export default function GestionarEscriturasPaciente({ route, navigation }) {
       <View style={{ paddingHorizontal: 30, paddingTop: 10 }}>
         <Text
           style={{
-            color: isDarkMode ? '#FFFFFF' : '#64748B',
+            color: '#64748B',
             fontSize: 14,
             lineHeight: 22,
             textAlign: 'center',
@@ -148,13 +148,13 @@ export default function GestionarEscriturasPaciente({ route, navigation }) {
                       marginTop: 10,
                       paddingTop: 10,
                       borderTopWidth: 1,
-                      borderTopColor: isDarkMode ? '#FFFFFF' : '#F1F5F9',
+                      borderTopColor: '#F1F5F9',
                     }}
                   >
                     <Text
                       style={[
                         styles.escrituraTextoHistorial,
-                        { color: isDarkMode ? '#FFFFFF' : '#334155', lineHeight: 22 },
+                        { color: '#334155', lineHeight: 22 },
                       ]}
                     >
                       {item.texto}

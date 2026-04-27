@@ -41,9 +41,9 @@ const normalizeGameKey = (value = '') =>
   String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 
 export default function NivelesVisual({ onBack, onSelectDifficulty }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
-  const juegosStyles = getJuegosStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
+  const juegosStyles = getJuegosStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
   const [progressMap, setProgressMap] = useState({});
   const [loading, setLoading] = useState(true);

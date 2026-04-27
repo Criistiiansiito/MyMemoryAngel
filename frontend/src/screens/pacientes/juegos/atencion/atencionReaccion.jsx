@@ -20,9 +20,9 @@ const TOTAL_TIEMPO = 30;
 const RATON_IMAGE = require('../../../../../assets/images/raton.png');
 
 export default function AtencionReaccion({ onBack, difficulty = 'facil' }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
-  const juegosStyles = getJuegosStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
+  const juegosStyles = getJuegosStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
 
   const config = {

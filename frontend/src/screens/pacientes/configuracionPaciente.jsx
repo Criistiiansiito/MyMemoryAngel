@@ -214,7 +214,7 @@ export default function ConfiguracionPaciente({ navigation }) {
                     <Text style={styles.brandName}>Configuración</Text>
                     </View>
                     <TouchableOpacity style={styles.headerIconButton} onPress={leerResumen}>
-                        <MaterialCommunityIcons name={isSpeaking ? 'stop' : 'volume-high'} style={styles.iconosHeaders} size={24} />
+                        <MaterialCommunityIcons name={isSpeaking ? 'stop' : 'volume-high'} size={24} color="#334155" />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -302,16 +302,13 @@ export default function ConfiguracionPaciente({ navigation }) {
                                 style={[
                                     styles.optionButton, 
                                     { flex: 1, marginHorizontal: 4 },
-                                    textSizeLabel === size && styles.optionButtonActive,
-                                    isDarkMode && textSizeLabel === size && { borderColor: '#000000' }
+                                    textSizeLabel === size && styles.optionButtonActive
                                 ]}
                                 onPress={() => manejarCambioTamano(size)} 
                             >
                                 <Text style={[
                                     styles.optionText, 
-                                    textSizeLabel === size && styles.optionTextActive,
-                                    isDarkMode && textSizeLabel !== size && { color: '#000000' },
-                                    isDarkMode && textSizeLabel === size && { color: '#FFFFFF' }
+                                    textSizeLabel === size && styles.optionTextActive
                                 ]}>{size}</Text>
                             </TouchableOpacity>
                         ))}
@@ -324,7 +321,7 @@ export default function ConfiguracionPaciente({ navigation }) {
                          <Text style={styles.sectionTitle}>Modo oscuro</Text>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Text style={[styles.textoColorNormal ,{ fontSize: aplicarEscala(16) }]}>Activar tema oscuro</Text>
+                        <Text style={{ fontSize: aplicarEscala(16) }}>Activar tema oscuro</Text>
                         <Switch 
                             onValueChange={manejarCambioTema} 
                             value={isDarkMode} 

@@ -13,8 +13,8 @@ import { useAccesibilidad } from '../../../services/accesibilidadContext';
 import { musicaService } from '../../../services/musicaService';
 
 export default function GestionarMusicaPaciente({ route, navigation }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
   
   const { paciente } = route.params;
@@ -146,7 +146,7 @@ export default function GestionarMusicaPaciente({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle="dark-content" />
       
       {/* HEADER */}
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
@@ -158,7 +158,7 @@ export default function GestionarMusicaPaciente({ route, navigation }) {
         </View>
       </View>
       <View style={{ paddingHorizontal: 30, paddingTop: 10 }}>
-        <Text style={{ color: isDarkMode ? '#FFFFFF' : '#64748B', fontSize: 14, lineHeight: 22, textAlign: 'center' }}>
+        <Text style={{ color: '#64748B', fontSize: 14, lineHeight: 22, textAlign: 'center' }}>
             Aquí puedes añadir canciones exclusivas para {paciente?.nombre}.
         </Text>
       </View>
@@ -180,7 +180,7 @@ export default function GestionarMusicaPaciente({ route, navigation }) {
 
           {canciones.length > 0 ? (
             canciones.map((pista) => (
-                <View key={pista.id} style={[styles.musicCardContainer, isDarkMode && { backgroundColor: '#54537e' }]}>
+                <View key={pista.id} style={styles.musicCardContainer}>
                 <View style={styles.musicCardRow}>
                     
                     {/* IMAGEN */}
@@ -202,14 +202,14 @@ export default function GestionarMusicaPaciente({ route, navigation }) {
                     <Text 
                         style={[
                         styles.musicCardTitle, 
-                        { color: reproduciendoId === pista.id ? '#A855F7' : (isDarkMode ? '#FFFFFF' : '#334155') }
+                        { color: reproduciendoId === pista.id ? '#A855F7' : '#334155' }
                         ]} 
                         numberOfLines={1}
                     >
                         {pista.titulo}
                     </Text>
 
-                    <Text style={[styles.musicCardDescription, isDarkMode && { color: '#FFFFFF' }]}>
+                    <Text style={styles.musicCardDescription}>
                         {reproduciendoId === pista.id ? 'Reproduciendo...' : 'Canción disponible'}
                     </Text>
                     </View>
@@ -265,7 +265,7 @@ export default function GestionarMusicaPaciente({ route, navigation }) {
           ) : (
             <View style={{ alignItems: 'center', marginTop: 50 }}>
               <MaterialCommunityIcons name="folder-music-outline" size={70} color="#CBD5E1" />
-              <Text style={{ color: isDarkMode ? '#FFFFFF' : '#94A3B8', marginTop: 15, textAlign: 'center' }}>
+              <Text style={{ color: '#94A3B8', marginTop: 15, textAlign: 'center' }}>
                 No hay archivos personales subidos para este paciente.
               </Text>
             </View>

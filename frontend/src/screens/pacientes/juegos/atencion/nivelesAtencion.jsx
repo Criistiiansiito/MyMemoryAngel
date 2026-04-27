@@ -45,8 +45,8 @@ const normalizeGameKey = (value = '') =>
     .trim();
 
 export default function NivelesAtencion({ onBack, onSelectDifficulty }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   const juegosStyles = getJuegosStyles(aplicarEscala);
   const insets = useSafeAreaInsets();
   const [progressMap, setProgressMap] = useState({});

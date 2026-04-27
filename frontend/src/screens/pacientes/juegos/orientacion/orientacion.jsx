@@ -47,9 +47,9 @@ const DATA_BANK = {
 };
 
 export default function Orientacion({ onBack, difficulty = 'orientacion_facil' }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
-  const juegosStyles = getJuegosStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
+  const juegosStyles = getJuegosStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
 
   const [questions, setQuestions] = useState([]);

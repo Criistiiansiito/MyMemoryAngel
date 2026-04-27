@@ -21,8 +21,8 @@ import {
 import { gestionPacientesService } from '../../services/gestionPacientesService';
 
 export default function Recordatorios({ navigation }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
   const currentDate = useCurrentDate();
   const todayLabel = formatMadridDate(currentDate, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -106,7 +106,7 @@ export default function Recordatorios({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle="dark-content" />
 
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={styles.headerActions}>
@@ -144,7 +144,7 @@ export default function Recordatorios({ navigation }) {
           </View>
         ) : (
           reminders.map((item) => {
-            const config = getIconConfig(item.tipo, isDarkMode);
+            const config = getIconConfig(item.tipo);
             const { fecha, hora } = formatearFechaYHora(item.fecha_hora);
 
             return (

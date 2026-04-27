@@ -6,20 +6,17 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker'; 
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
-import { getAccesibilidadColors } from '../../services/accesibilidadColors';
- 
+
 import { 
-  getTiposRecordatorioConfig, 
+  TIPOS_RECORDATORIO, 
   formatToMySQL, 
   crearRecordatorio 
 } from '../../services/recordatoriosService';
 
 export default function NuevoRecordatorio({ navigation, route }) {
 
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
-  const colors = getAccesibilidadColors(isDarkMode);
-  const tiposRecordatorio = getTiposRecordatorioConfig(isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   
   // Hook para manejar espacios seguros (Notch y Home Indicator)
   const insets = useSafeAreaInsets();
@@ -27,7 +24,7 @@ export default function NuevoRecordatorio({ navigation, route }) {
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
   
-  const defaultTipo = tiposRecordatorio.find(t => t.id === 'Medicaci\u00f3n')?.id || tiposRecordatorio[0].id;
+  const defaultTipo = TIPOS_RECORDATORIO.find(t => t.id === 'Medicamento')?.id || TIPOS_RECORDATORIO[0].id;
   const [tipoSeleccionado, setTipoSeleccionado] = useState(defaultTipo);
 
   const [frecuencia, setFrecuencia] = useState('Puntual');
@@ -122,7 +119,7 @@ export default function NuevoRecordatorio({ navigation, route }) {
 
         <Text style={styles.label}>Categoría</Text>
         <View style={styles.gridRecordatorios}>
-          {tiposRecordatorio.map((item) => {
+          {TIPOS_RECORDATORIO.map((item) => {
             const esSeleccionado = tipoSeleccionado === item.id;
             return (
               <TouchableOpacity 
@@ -132,9 +129,9 @@ export default function NuevoRecordatorio({ navigation, route }) {
                 style={[
                   styles.cardTipoRecordatorio, 
                   esSeleccionado && { 
-                    borderColor: colors.primary, 
+                    borderColor: '#4D6BFE', 
                     borderWidth: 2,         
-                    backgroundColor: colors.primarySoft 
+                    backgroundColor: '#F0F4FF' 
                   }
                 ]}
               >
@@ -143,9 +140,7 @@ export default function NuevoRecordatorio({ navigation, route }) {
                 </View>
                 <Text style={[
                   styles.textoTipo, 
-                  !esSeleccionado && isDarkMode && { color: '#000000' },
-                  esSeleccionado && { fontWeight: 'bold', color: colors.primary },
-                  esSeleccionado && isDarkMode && { color: '#FFFFFF' }
+                  esSeleccionado && { fontWeight: 'bold', color: '#4D6BFE' }
                 ]}>
                   {item.id}
                 </Text>
@@ -166,12 +161,7 @@ export default function NuevoRecordatorio({ navigation, route }) {
                 frecuencia === f && styles.optionButtonActive
               ]}
             >
-              <Text style={[
-                styles.optionText,
-                isDarkMode && frecuencia !== f && { color: '#000000' },
-                frecuencia === f && styles.optionTextActive,
-                isDarkMode && frecuencia === f && { color: '#FFFFFF' }
-              ]}>
+              <Text style={[styles.optionText, frecuencia === f && styles.optionTextActive]}>
                 {f}
               </Text>
             </TouchableOpacity>
@@ -182,12 +172,12 @@ export default function NuevoRecordatorio({ navigation, route }) {
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <TouchableOpacity onPress={() => showMode('date')} style={[styles.inputContainer, { flex: 0.52, marginRight: 10 }]}>
             <MaterialCommunityIcons name="calendar" size={20} color="#4D6BFE" style={{ marginRight: 8 }} />
-            <Text style={{ color: isDarkMode ? '#FFFFFF' : '#1E293B' }}>{date.toLocaleDateString()}</Text>
+            <Text style={{ color: '#1E293B' }}>{date.toLocaleDateString()}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => showMode('time')} style={[styles.inputContainer, { flex: 0.43 }]}>
             <MaterialCommunityIcons name="clock-outline" size={20} color="#4D6BFE" style={{ marginRight: 8 }} />
-            <Text style={{ color: isDarkMode ? '#FFFFFF' : '#1E293B' }}>
+            <Text style={{ color: '#1E293B' }}>
               {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </Text>
           </TouchableOpacity>
@@ -255,10 +245,10 @@ export default function NuevoRecordatorio({ navigation, route }) {
                 />
               </View>
               <View>
-                <Text style={{ fontSize: 15, fontWeight: '700', color: isDarkMode ? '#FFFFFF' : '#1E293B' }}>
+                <Text style={{ fontSize: 15, fontWeight: '700', color: '#1E293B' }}>
                   {alertaSonora ? "Sonido Activado" : "Modo Silencioso"}
                 </Text>
-                <Text style={{ fontSize: 12, color: isDarkMode ? '#FFFFFF' : '#64748B' }}>
+                <Text style={{ fontSize: 12, color: '#64748B' }}>
                   {alertaSonora ? "Recibirás un aviso con sonido" : "Solo notificación visual"}
                 </Text>
               </View>

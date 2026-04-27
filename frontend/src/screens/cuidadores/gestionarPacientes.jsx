@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  View, Text, TouchableOpacity, ScrollView,
-  Platform, StatusBar, ActivityIndicator, Alert, StyleSheet, Image,
+import { 
+  View, Text, TouchableOpacity, ScrollView, 
+  Platform, StatusBar, ActivityIndicator, Alert, StyleSheet, Image 
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -17,8 +17,8 @@ import { useCurrentDate } from '../../hooks/useCurrentDate';
 import { formatMadridDate } from '../../utils/dateMadrid';
 
 export default function GestionPacientes() {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
   const currentDate = useCurrentDate();
   const todayLabel = formatMadridDate(currentDate, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -47,10 +47,10 @@ export default function GestionPacientes() {
       if (res.ok) {
         setPacientes(res.pacientes);
       } else {
-        console.error('Error al obtener pacientes:', res.error);
+        console.error("Error al obtener pacientes:", res.error);
       }
     } catch (error) {
-      console.error('Error de conexión:', error);
+      console.error("Error de conexión:", error);
     } finally {
       setLoading(false);
     }
@@ -66,41 +66,41 @@ export default function GestionPacientes() {
 
       if (res.ok && res.paciente) {
         Alert.alert(
-          'Paciente Detectado',
+          "Paciente Detectado",
           `¿Quieres vincularte con ${res.paciente.nombre}?`,
           [
-            {
-              text: 'Cancelar',
-              style: 'cancel',
+            { 
+              text: "Cancelar", 
+              style: "cancel",
               onPress: () => {
                 setScanned(false);
                 isScanningRef.current = false;
-              },
+              }
             },
-            {
-              text: 'Sí, vincular',
+            { 
+              text: "Sí, vincular", 
               onPress: async () => {
                 const vinculo = await vinculacionesService.vincularPaciente(data);
                 if (vinculo.ok) {
-                  Alert.alert('¡Éxito!', 'Vinculación completada correctamente.');
+                  Alert.alert("¡Éxito!", "Vinculación completada correctamente.");
                   cargarPacientes();
-                  setView('main');
+                  setView('main');  
                 } else {
-                  Alert.alert('Error', vinculo.error || 'No se pudo realizar la vinculación.');
+                  Alert.alert("Error", vinculo.error || "No se pudo realizar la vinculación.");
                 }
                 setScanned(false);
                 isScanningRef.current = false;
-              },
-            },
+              }
+            }
           ]
         );
       } else {
-        Alert.alert('Error', res.error || 'Código no válido.', [
-          { text: 'OK', onPress: () => { isScanningRef.current = false; setScanned(false); } },
+        Alert.alert("Error", res.error || "Código no válido.", [
+          { text: "OK", onPress: () => { isScanningRef.current = false; setScanned(false); } }
         ]);
       }
     } catch (error) {
-      Alert.alert('Error', 'Hubo un problema con el escaneo.');
+      Alert.alert("Error", "Hubo un problema con el escaneo.");
       isScanningRef.current = false;
       setScanned(false);
     }
@@ -109,7 +109,7 @@ export default function GestionPacientes() {
   const abrirEscaner = async () => {
     const { granted } = await requestPermission();
     if (!granted) {
-      Alert.alert('Permisos', 'Se requiere acceso a la cámara para escanear el código del paciente.');
+      Alert.alert("Permisos", "Se requiere acceso a la cámara para escanear el código del paciente.");
       return;
     }
     setScanned(false);
@@ -117,20 +117,22 @@ export default function GestionPacientes() {
     setView('vincular');
   };
 
+  // VISTA DEL ESCÁNER
   const renderScanner = () => (
     <View style={{ flex: 1, backgroundColor: '#000' }}>
-      <CameraView
-        style={StyleSheet.absoluteFillObject}
-        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+      <CameraView 
+        style={StyleSheet.absoluteFillObject} 
+        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned} 
       />
-
+      
+      {/* CAPA VISUAL */}
       <View style={styles.scanCameraContainer}>
         <View style={styles.scanMarker} />
         <Text style={styles.scanMarkerText}>Alinea el QR dentro del recuadro</Text>
       </View>
 
-      <TouchableOpacity
-        style={styles.scanCloseModal}
+      <TouchableOpacity 
+        style={styles.scanCloseModal} 
         onPress={() => setView('main')}
       >
         <MaterialCommunityIcons name="close" size={28} color="#FFF" />
@@ -140,61 +142,63 @@ export default function GestionPacientes() {
 
   const renderMainMenu = () => (
     <View style={{ flex: 1 }}>
+      {/* HEADER */}
       <View style={[
-        styles.topBar,
-        { paddingTop: insets.top },
+        styles.topBar, 
+        { paddingTop: insets.top }
       ]}>
         <View style={styles.headerActions}>
           <Text style={styles.brandName}>Mis Pacientes</Text>
-          <TouchableOpacity
+          <TouchableOpacity 
             style={[styles.headerIconButton, { backgroundColor: '#F3E8FF' }]}
-            onPress={abrirEscaner}
+            onPress={abrirEscaner} 
           >
             <MaterialCommunityIcons name="account-plus" size={24} color="#A855F7" />
           </TouchableOpacity>
         </View>
       </View>
 
-      <ScrollView
-        contentContainerStyle={[styles.scrollContent, { paddingTop: 0 }]}
+      <ScrollView 
+        contentContainerStyle={[styles.scrollContent, { paddingTop: 0 }]} 
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.dateHeaderContainer}>
           <Text style={styles.dateText}>{todayLabel}</Text>
-        </View>
+        </View>  
 
         {loading ? (
           <ActivityIndicator size="large" color="#A855F7" style={{ marginTop: 50 }} />
         ) : pacientes.length > 0 ? (
-          pacientes.map((paciente) => (
-            <TouchableOpacity key={paciente.uid} style={styles.menuCard} onPress={() => seleccionarPaciente(paciente)}>
-              <View style={styles.menuIconContainer}>
-                {paciente.foto_perfil ? (
-                  <Image source={{ uri: paciente.foto_perfil }} style={styles.avatarImage} />
-                ) : (
-                  <MaterialCommunityIcons name="account" size={30} color="#A855F7" />
-                )}
-              </View>
+                  pacientes.map((paciente) => (
+                    <TouchableOpacity key={paciente.uid} style={styles.menuCard}onPress={() => seleccionarPaciente(paciente)}>
+                      <View style={styles.menuIconContainer}>
+                        {paciente.foto_perfil ? (
+                          <Image source={{ uri: paciente.foto_perfil }} style={styles.avatarImage} />
+                        ) : (
+                          <MaterialCommunityIcons name="account" size={30} color="#A855F7" />
+                        )}
+                      </View>
 
-              <View style={{ flex: 1, marginLeft: 5 }}>
-                <Text style={styles.menuTitle}>{paciente.nombre}</Text>
-                <Text style={styles.menuSubtitle}> {paciente.correo} </Text>
-              </View>
+                      <View style={{ flex: 1, marginLeft: 5 }}>
+                        <Text style={styles.menuTitle}>{paciente.nombre}</Text>
+                        <Text style={[styles.menuSubtitle]}> {paciente.correo} </Text>
+                      </View>
 
-              <MaterialCommunityIcons name="chevron-right" size={24} color="#CBD5E1" />
-            </TouchableOpacity>
-          ))
+                      <MaterialCommunityIcons name="chevron-right" size={24} color="#CBD5E1" />
+                    </TouchableOpacity>
+                  ))
         ) : (
           <View style={{ alignItems: 'center', marginTop: 50 }}>
             <MaterialCommunityIcons name="account-search-outline" size={80} color="#CBD5E1" />
-            <Text style={styles.menuSubtitle}>
+            <Text style={[styles.menuSubtitle]}>
               No tienes pacientes vinculados todavía.
             </Text>
           </View>
         )}
 
-        <View style={styles.infoBox}>
-          <View style={[styles.infoIconCircle, isDarkMode && { backgroundColor: '#FFFFFF' }]}>
+        {/* CAJA DE AYUDA */}
+        <View style={[styles.infoBox, { backgroundColor: '#F8FAFC' }]}>
+          <View style={[styles.infoIconCircle, { backgroundColor: '#E2E8F0' }]}>
             <MaterialCommunityIcons name="information-variant" size={24} color="#64748B" />
           </View>
           <View style={{ flex: 1 }}>
@@ -212,13 +216,13 @@ export default function GestionPacientes() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle="dark-content" />
       {view === 'main' && renderMainMenu()}
       {view === 'vincular' && renderScanner()}
       {view === 'detalle' && (
-        <InformacionPaciente
-          paciente={pacienteSeleccionado}
-          onBack={() => setView('main')}
+        <InformacionPaciente 
+          paciente={pacienteSeleccionado} 
+          onBack={() => setView('main')} 
           styles={styles}
         />
       )}

@@ -13,8 +13,8 @@ import { useStoredUser } from '../../../hooks/storedUser';
 import MenuCategoriaEstimulacion from '../../../components/estimulacion/MenuCardEstimulacion';
 
 export default function Escritura({ onBack }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
 
   const [vista, setVista] = useState('menu'); 
@@ -212,7 +212,7 @@ export default function Escritura({ onBack }) {
   const renderRefranes = () => (
     <View style={{ flex: 1 }}>
       <View style={styles.settingsCard}>
-        <Text style={[styles.musicCardTitle, { fontSize: 22, marginBottom: 15, textAlign: 'center' }, isDarkMode && { color: '#FFFFFF' }]}>
+        <Text style={[styles.musicCardTitle, { fontSize: 22, marginBottom: 15, textAlign: 'center' }]}>
           &quot;{refranes[indiceRefran].inicio}&quot;
         </Text>
         <TextInput
@@ -265,7 +265,7 @@ export default function Escritura({ onBack }) {
           </View>
           {vista === 'menu' ? (
             <TouchableOpacity style={styles.headerIconButton} onPress={leerResumen}>
-              <MaterialCommunityIcons name={isSpeakingSummary ? 'stop' : 'volume-high'} style={styles.iconosHeaders} size={24} />
+              <MaterialCommunityIcons name={isSpeakingSummary ? 'stop' : 'volume-high'} size={24} color="#334155" />
             </TouchableOpacity>
           ) : null}
         </View>

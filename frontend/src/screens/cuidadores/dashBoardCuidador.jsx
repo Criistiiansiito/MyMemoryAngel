@@ -17,8 +17,8 @@ export default function DashboardCuidador({ navigation }) {
   const [numPacientes, setNumPacientes] = useState(0); 
 
   const insets = useSafeAreaInsets();
-  const { aplicarEscala, cargarDesdeServidor, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, cargarDesdeServidor, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   const currentDate = useCurrentDate();
 
   const fechaHoy = formatMadridDate(currentDate, {
@@ -63,7 +63,7 @@ export default function DashboardCuidador({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle="dark-content" />
       
       {/* HEADER PERSONALIZADO */}
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
@@ -81,7 +81,7 @@ export default function DashboardCuidador({ navigation }) {
 
           <View style={{ flexDirection: 'row', flexShrink: 0}}> 
             <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('ConfiguracionCuidador')}>
-              <MaterialCommunityIcons name="cog-outline" style={styles.iconosHeaders} size={24} />
+              <MaterialCommunityIcons name="cog-outline" size={24} color="#334155" />
             </TouchableOpacity>
           </View>
         </View>

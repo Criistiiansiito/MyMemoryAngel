@@ -1,12 +1,10 @@
 import React, { createContext, useState, useContext } from 'react';
-import { getAccesibilidadColors } from './accesibilidadColors';
 
 const AccesibilidadContext = createContext();
 
 export const AccesibilidadProvider = ({ children }) => {
   const [textSizeLabel, setTextSizeLabel] = useState('Mediano');
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const colors = getAccesibilidadColors(isDarkMode);
+  const [isDaltonic, setIsDaltonic] = useState(false);
 
   // Sincroniza el estado global con los datos que vienen del servidor
   const cargarDesdeServidor = (datos) => {
@@ -14,8 +12,8 @@ export const AccesibilidadProvider = ({ children }) => {
     if (datos.tamano_texto) setTextSizeLabel(datos.tamano_texto);
     
     // Convertimos 0/1 de MySQL a Booleano
-    const darkModeBool = datos.modo_daltonico === 1 || datos.modo_daltonico === true;
-    setIsDarkMode(darkModeBool);
+    const daltonismoBool = datos.modo_daltonico === 1 || datos.modo_daltonico === true;
+    setIsDaltonic(daltonismoBool);
   };
 
   const aplicarEscala = (baseSize) => {
@@ -30,9 +28,8 @@ export const AccesibilidadProvider = ({ children }) => {
     <AccesibilidadContext.Provider value={{ 
         textSizeLabel, 
         setTextSizeLabel, // Cambiamos el estado directamente
-        isDarkMode,
-        setIsDarkMode,
-        colors,
+        isDaltonic,
+        setIsDaltonic,    // Cambiamos el estado directamente
         aplicarEscala,
         cargarDesdeServidor
     }}>

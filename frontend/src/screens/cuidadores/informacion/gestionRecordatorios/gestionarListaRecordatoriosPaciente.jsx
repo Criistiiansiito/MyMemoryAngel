@@ -18,8 +18,8 @@ const formatRecurrencia = (recurrencia = 'puntual') => {
 };
 
 export default function GestionarListaRecordatoriosPaciente({ route, navigation }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
   const { paciente } = route.params;
 
@@ -50,7 +50,7 @@ export default function GestionarListaRecordatoriosPaciente({ route, navigation 
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle="dark-content" />
 
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -63,7 +63,7 @@ export default function GestionarListaRecordatoriosPaciente({ route, navigation 
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}>
         <View style={{ paddingTop: 10, paddingBottom: 20 }}>
-          <Text style={{ color: isDarkMode ? '#FFFFFF' : '#64748B', fontSize: 14, lineHeight: 22, textAlign: 'center' }}>
+          <Text style={{ color: '#64748B', fontSize: 14, lineHeight: 22, textAlign: 'center' }}>
             Revisa los recordatorios de {paciente?.nombre} y entra en cada uno para modificarlo o eliminarlo.
           </Text>
         </View>
@@ -77,7 +77,7 @@ export default function GestionarListaRecordatoriosPaciente({ route, navigation 
           </View>
         ) : (
           recordatorios.map((item) => {
-            const config = getIconConfig(item.tipo, isDarkMode);
+            const config = getIconConfig(item.tipo);
             const { fecha, hora } = formatearFechaYHora(item.fecha_hora);
 
             return (

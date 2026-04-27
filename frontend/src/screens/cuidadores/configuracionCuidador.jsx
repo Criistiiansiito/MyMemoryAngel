@@ -311,16 +311,13 @@ export default function ConfiguracionPaciente({ navigation }) {
                                 style={[
                                     styles.optionButton, 
                                     { flex: 1, marginHorizontal: 4 },
-                                    textSizeLabel === size && styles.optionButtonActive,
-                                    isDarkMode && textSizeLabel === size && { borderColor: '#000000' }
+                                    textSizeLabel === size && styles.optionButtonActive
                                 ]}
                                 onPress={() => manejarCambioTamano(size)} 
                             >
                                 <Text style={[
                                     styles.optionText, 
-                                    textSizeLabel === size && styles.optionTextActive,
-                                    isDarkMode && textSizeLabel !== size && { color: '#000000' },
-                                    isDarkMode && textSizeLabel === size && { color: '#FFFFFF' }
+                                    textSizeLabel === size && styles.optionTextActive
                                 ]}>{size}</Text>
                             </TouchableOpacity>
                         ))}

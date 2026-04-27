@@ -34,9 +34,9 @@ const getSequenceLength = (round, difficulty) => {
 };
 
 export default function MemoriaNumerica({ onBack, difficulty = 'dificil' }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
-  const juegosStyles = getJuegosStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
+  const juegosStyles = getJuegosStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
 
   const [round, setRound] = useState(1);
@@ -195,11 +195,11 @@ export default function MemoriaNumerica({ onBack, difficulty = 'dificil' }) {
                 color="#EC4899"
               />
 
-              <Text style={[styles.menuSubtitle, juegosStyles.phaseText, isDarkMode && { color: '#000000' }]}>
+              <Text style={[styles.menuSubtitle, juegosStyles.phaseText]}>
                 {showSequence ? 'Memoriza estos numeros:' : 'Introduce la secuencia:'}
               </Text>
 
-              <Text style={[styles.inputLabel, juegosStyles.difficultyText, isDarkMode && { color: '#000000' }]}>
+              <Text style={[styles.inputLabel, juegosStyles.difficultyText]}>
                 Dificultad: {sequence.length} digitos
               </Text>
 

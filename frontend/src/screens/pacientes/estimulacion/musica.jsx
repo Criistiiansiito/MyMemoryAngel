@@ -63,8 +63,8 @@ const IMAGENES_MUSICA = {
 };
 
 export default function Musica({ onBack }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
 
   const [vistaActual, setVistaActual] = useState('menu');
@@ -292,7 +292,7 @@ export default function Musica({ onBack }) {
 
         {canciones.length > 0 ? (
             canciones.map((pista) => (
-            <View key={pista.id} style={[styles.musicCardContainer, isDarkMode && { backgroundColor: '#54537e' }]}>
+            <View key={pista.id} style={styles.musicCardContainer}>
                 <View style={styles.musicCardRow}>
                 <View style={styles.musicImageContainer}>
                     {pista.imagen && (IMAGENES_MUSICA[pista.imagen] || pista.imagen.length > 100) ? (
@@ -308,10 +308,10 @@ export default function Musica({ onBack }) {
                 </View>
 
                 <View style={styles.musicTextContainer}>
-                    <Text style={[styles.musicCardTitle, { color: reproduciendoId === pista.id ? categoriaActiva.color : (isDarkMode ? '#FFFFFF' : '#334155') }]} numberOfLines={1}>
+                    <Text style={[styles.musicCardTitle, { color: reproduciendoId === pista.id ? categoriaActiva.color : '#334155' }]} numberOfLines={1}>
                     {pista.titulo}
                     </Text>
-                    <Text style={[styles.musicCardDescription, isDarkMode && { color: '#FFFFFF' }]}>
+                    <Text style={styles.musicCardDescription}>
                     {reproduciendoId === pista.id ? 'Reproduciendo...' : 'Canción disponible'}
                     </Text>
                 </View>
@@ -361,7 +361,7 @@ export default function Musica({ onBack }) {
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TouchableOpacity onPress={vistaActual === 'menu' ? onBack : volverAlMenu}>
-              <MaterialCommunityIcons name="arrow-left" style={styles.iconosHeaders} size={24} />
+              <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
             </TouchableOpacity>
             <Text style={styles.brandName}>
               {vistaActual === 'menu' ? 'Musicoterapia' : categoriaActiva?.titulo}
@@ -369,7 +369,7 @@ export default function Musica({ onBack }) {
           </View>
           {vistaActual === 'menu' && (
             <TouchableOpacity style={styles.headerIconButton} onPress={leerResumen}>
-              <MaterialCommunityIcons name={isSpeaking ? 'stop' : 'volume-high'} style={styles.iconosHeaders} size={24} />
+              <MaterialCommunityIcons name={isSpeaking ? 'stop' : 'volume-high'} size={24} color="#334155" />
             </TouchableOpacity>
           )}
         </View>

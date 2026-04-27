@@ -19,8 +19,8 @@ const CATEGORIAS_COMPLETA = [
 ];
 
 export default function ChatbotScreen({ navigation }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   
   // Hook para el espacio seguro del Notch e inicio inferior
   const insets = useSafeAreaInsets();
@@ -92,7 +92,7 @@ export default function ChatbotScreen({ navigation }) {
 
   return (
     <View style={styles.chatContainer}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle="dark-content" />
 
       {/* CABECERA CON PADDING DINÁMICO */}
       <View style={[
@@ -177,7 +177,6 @@ export default function ChatbotScreen({ navigation }) {
             onChangeText={setMensaje} 
             style={styles.inputChatWrapper} 
             placeholder="Haz una pregunta..." 
-            placeholderTextColor={isDarkMode ? '#94A3B8' : '#64748B'}
           />
           <TouchableOpacity onPress={() => enviarMensaje()} style={styles.sendButton}>
             <MaterialCommunityIcons name="send" size={20} color="white" />

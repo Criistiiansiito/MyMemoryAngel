@@ -7,15 +7,15 @@ import { getStyles } from '../../../../style/styles';
 import { useAccesibilidad } from '../../../../services/accesibilidadContext';
 
 export default function GestionarRecordatoriosPaciente({ route, navigation }) {
-  const { aplicarEscala, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
   const insets = useSafeAreaInsets();
 
   const { paciente } = route.params;
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle="dark-content" />
 
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -28,7 +28,7 @@ export default function GestionarRecordatoriosPaciente({ route, navigation }) {
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}>
         <View style={{ paddingTop: 10, paddingBottom: 20 }}>
-          <Text style={{ color: isDarkMode ? '#FFFFFF' : '#64748B', fontSize: 14, lineHeight: 22, textAlign: 'center' }}>
+          <Text style={{ color: '#64748B', fontSize: 14, lineHeight: 22, textAlign: 'center' }}>
             Desde aquí puedes gestionar los recordatorios de {paciente?.nombre}.
           </Text>
         </View>

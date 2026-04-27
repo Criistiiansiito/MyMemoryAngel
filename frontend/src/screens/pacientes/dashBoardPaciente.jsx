@@ -29,8 +29,8 @@ export default function DashboardPaciente({ navigation }) {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
   });
 
-  const { aplicarEscala, cargarDesdeServidor, isDarkMode } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDarkMode);
+  const { aplicarEscala, cargarDesdeServidor, isDaltonic } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDaltonic);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -130,13 +130,13 @@ export default function DashboardPaciente({ navigation }) {
           {/* Contenedor de botones: Con flexShrink: 0 evitamos que se compriman */}
           <View style={{ flexDirection: 'row', flexShrink: 0 }}> 
             <TouchableOpacity style={styles.headerIconButton} onPress={leerDashboard}>
-              <MaterialCommunityIcons name={isSpeaking ? "stop" : "volume-high"} style={styles.iconosHeaders} size={24} />
+              <MaterialCommunityIcons name={isSpeaking ? "stop" : "volume-high"} size={24} color="#334155" />
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.headerIconButton} 
               onPress={() => navigation.navigate('ConfiguracionPaciente')}
             >
-              <MaterialCommunityIcons name="cog-outline" style={styles.iconosHeaders} size={24} color="#334155" />
+              <MaterialCommunityIcons name="cog-outline" size={24} color="#334155" />
             </TouchableOpacity>
           </View>
 
