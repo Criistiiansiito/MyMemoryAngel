@@ -1,10 +1,24 @@
 const admin = require('firebase-admin');
 const path = require('path');
+const fs = require('fs');
 
-const serviceAccountPath = path.join(__dirname, 'serviceAccountKey.json');
+let serviceAccount;
 
 try {
-  const serviceAccount = require(serviceAccountPath);
+  // PRODUCCIÓN (Render)
+  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+  } 
+  // LOCAL
+  else {
+    const filePath = path.join(__dirname, 'serviceAccountKey.json');
+
+    if (!fs.existsSync(filePath)) {
+      throw new Error('No existe serviceAccountKey.json en local');
+    }
+
+    serviceAccount = require(filePath);
+  }
 
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
@@ -12,7 +26,7 @@ try {
 
   console.log('Firebase Admin inicializado');
 } catch (err) {
-  console.error('No se pudo inicializar Firebase Admin. ¿Tienes serviceAccountKey.json?', err.message);
+  console.error('Error inicializando Firebase Admin:', err.message);
   process.exit(1);
 }
 
