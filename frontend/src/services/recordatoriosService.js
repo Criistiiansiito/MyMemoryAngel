@@ -5,6 +5,42 @@ import { getRecordatorioVisualConfig, getTiposRecordatorio } from './accesibilid
 const API = `${process.env.EXPO_PUBLIC_IP}`;
 const MADRID_TIMEZONE = 'Europe/Madrid';
 
+const getTimeZoneOffsetMs = (date, timeZone) => {
+  const parts = new Intl.DateTimeFormat('sv-SE', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).formatToParts(date);
+
+  const getPart = (type) => parts.find((part) => part.type === type)?.value;
+  const asUtc = Date.UTC(
+    Number(getPart('year')),
+    Number(getPart('month')) - 1,
+    Number(getPart('day')),
+    Number(getPart('hour')),
+    Number(getPart('minute')),
+    Number(getPart('second'))
+  );
+
+  return asUtc - date.getTime();
+};
+
+const buildDateFromTimeZoneParts = (year, month, day, hour, minute, second, timeZone) => {
+  const utcGuess = Date.UTC(year, month - 1, day, hour, minute, second);
+  let date = new Date(utcGuess);
+  let offset = getTimeZoneOffsetMs(date, timeZone);
+  date = new Date(utcGuess - offset);
+
+  // Segunda pasada para ajustar bien cambios de horario de verano/invierno
+  offset = getTimeZoneOffsetMs(date, timeZone);
+  return new Date(utcGuess - offset);
+};
+
 const normalizarTipo = (tipo = '') =>
   tipo
     .normalize('NFD')
@@ -106,13 +142,14 @@ export const parseMySQLDateTime = (fechaRaw) => {
   }
 
   const [, year, month, day, hour = '00', minute = '00', second = '00'] = match;
-  return new Date(
+  return buildDateFromTimeZoneParts(
     Number(year),
-    Number(month) - 1,
+    Number(month),
     Number(day),
     Number(hour),
     Number(minute),
-    Number(second)
+    Number(second),
+    MADRID_TIMEZONE
   );
 };
 
