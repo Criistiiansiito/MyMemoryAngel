@@ -308,7 +308,7 @@ export default function EstimulacionCognitiva() {
           <Text style={styles.brandName}>Estimulación</Text>
           <View style={styles.headerButtonsGroup}>
             <TouchableOpacity style={styles.headerIconButton} onPress={leerResumen}>
-              <MaterialCommunityIcons name={isSpeaking ? 'stop' : 'volume-high'} size={24} color="#334155" />
+              <MaterialCommunityIcons name={isSpeaking ? 'stop' : 'volume-high'} style={styles.iconosHeaders} size={24} />
             </TouchableOpacity>
           </View>
         </View>
@@ -348,7 +348,7 @@ export default function EstimulacionCognitiva() {
           </View>
         </TouchableOpacity>
 
-        <View style={styles.infoBox}>
+        <View style={[styles.infoBox, isDarkMode && { borderColor: '#FFFFFF' }]}>
           <View style={styles.infoIconCircle}>
             <MaterialCommunityIcons name="lightbulb-on" size={24} color="#F59E0B" />
           </View>

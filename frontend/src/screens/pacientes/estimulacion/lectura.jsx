@@ -238,7 +238,7 @@ export default function Lectura({ onBack }) {
               if (vistaActual === 'menu') onBack();
               else setVistaActual(vistaActual === 'lector' ? 'lista' : 'menu');
             }}>
-              <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
+              <MaterialCommunityIcons name="arrow-left" style={styles.iconosHeaders} size={24} />
             </TouchableOpacity>
             <Text style={styles.brandName}>
               {vistaActual === 'menu' ? 'Lectura' : (vistaActual === 'lista' ? categoriaActiva?.titulo : 'Leyendo')}
@@ -247,7 +247,7 @@ export default function Lectura({ onBack }) {
           {/* Botón de escuchar resumen en el menú */}
           {vistaActual === 'menu' && (
             <TouchableOpacity style={styles.headerIconButton} onPress={leerResumen}>
-              <MaterialCommunityIcons name={isSpeakingSummary ? 'stop' : 'volume-high'} size={24} color="#334155" />
+              <MaterialCommunityIcons name={isSpeakingSummary ? 'stop' : 'volume-high'} style={styles.iconosHeaders} size={24} />
             </TouchableOpacity>
           )}
         </View>

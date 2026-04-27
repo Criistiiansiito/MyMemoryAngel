@@ -265,7 +265,7 @@ export default function Escritura({ onBack }) {
           </View>
           {vista === 'menu' ? (
             <TouchableOpacity style={styles.headerIconButton} onPress={leerResumen}>
-              <MaterialCommunityIcons name={isSpeakingSummary ? 'stop' : 'volume-high'} size={24} color="#334155" />
+              <MaterialCommunityIcons name={isSpeakingSummary ? 'stop' : 'volume-high'} style={styles.iconosHeaders} size={24} />
             </TouchableOpacity>
           ) : null}
         </View>

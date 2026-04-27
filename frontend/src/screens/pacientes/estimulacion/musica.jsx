@@ -361,7 +361,7 @@ export default function Musica({ onBack }) {
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TouchableOpacity onPress={vistaActual === 'menu' ? onBack : volverAlMenu}>
-              <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
+              <MaterialCommunityIcons name="arrow-left" style={styles.iconosHeaders} size={24} />
             </TouchableOpacity>
             <Text style={styles.brandName}>
               {vistaActual === 'menu' ? 'Musicoterapia' : categoriaActiva?.titulo}
@@ -369,7 +369,7 @@ export default function Musica({ onBack }) {
           </View>
           {vistaActual === 'menu' && (
             <TouchableOpacity style={styles.headerIconButton} onPress={leerResumen}>
-              <MaterialCommunityIcons name={isSpeaking ? 'stop' : 'volume-high'} size={24} color="#334155" />
+              <MaterialCommunityIcons name={isSpeaking ? 'stop' : 'volume-high'} style={styles.iconosHeaders} size={24} />
             </TouchableOpacity>
           )}
         </View>

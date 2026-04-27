@@ -9,9 +9,9 @@ import { useAccesibilidad } from '../../../../services/accesibilidadContext';
 import { progresoJuegosService } from '../../../../services/progresoJuegosService';
 
 export default function Calculadora({ onBack, difficulty = 'calculadora_facil' }) {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
-  const juegosStyles = getJuegosStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
+  const juegosStyles = getJuegosStyles(aplicarEscala, isDarkMode);
   const insets = useSafeAreaInsets();
 
   const [operacion, setOperacion] = useState({ n1: 0, n2: 0, tipo: '+', res: 0 });

@@ -37,7 +37,7 @@ export default function MenuEstimulacion({ onBack, onSelectActivity }) {
       ]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={onBack}>
-              <MaterialCommunityIcons name="arrow-left" style={styles.topBarArrow} />
+              <MaterialCommunityIcons name="arrow-left" style={styles.iconosHeaders} size={24} />
           </TouchableOpacity>
           <Text style={styles.brandName}>Actividades</Text>
         </View>
@@ -84,7 +84,7 @@ export default function MenuEstimulacion({ onBack, onSelectActivity }) {
         </View>
 
         {/* PANEL DE INFORMACIÓN */}
-        <View style={styles.infoBox}>
+        <View style={[styles.infoBox, isDarkMode && { borderColor: '#FFFFFF' }]}>
           <View style={styles.infoIconCircle}>
             <MaterialCommunityIcons name="lightbulb-on" size={24} color="#F59E0B" />
           </View>
