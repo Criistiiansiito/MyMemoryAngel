@@ -7,7 +7,7 @@ import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
 import BottomTabBar from '../../components/BottomTabBarCuidador';
 
-const API = Platform.OS === 'web' ? 'http://localhost:5000/api' : `http://${process.env.EXPO_PUBLIC_IP}:5000/api`;
+const API = `${process.env.EXPO_PUBLIC_IP}`;
 
 const CATEGORIAS_COMPLETA = [
   { id: 1, titulo: 'Cuidados', pregunta: 'Cuidados Diarios', subtemas: ['Vestimenta', 'Dentadura', 'Piel y Escaras', 'Incontinencia', 'Corte de Uñas'] },

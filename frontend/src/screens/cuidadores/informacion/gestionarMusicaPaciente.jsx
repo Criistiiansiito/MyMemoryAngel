@@ -12,6 +12,28 @@ import { getStyles } from '../../../style/styles';
 import { useAccesibilidad } from '../../../services/accesibilidadContext';
 import { musicaService } from '../../../services/musicaService';
 
+const IMAGENES_MUSICA = {
+  'clasica': require('../../../../assets/images/musica/clasica.png'),
+  'barroca': require('../../../../assets/images/musica/barroca.png'),
+  'yoSoyAquel': require('../../../../assets/images/musica/yoSoyAquel.jpg'),
+  'eresTu': require('../../../../assets/images/musica/eresTu.jpg'),
+  'libre': require('../../../../assets/images/musica/libre.jpg'),
+  'lluvia': require('../../../../assets/images/musica/lluvia.jpg'),
+  'paraElisa': require('../../../../assets/images/musica/paraElisa.jpg'),
+  'organo': require('../../../../assets/images/musica/organo.jpg'),
+  'clasicaRitmo': require('../../../../assets/images/musica/clasicaRitmo.jpg'),
+  'barroca2': require('../../../../assets/images/musica/barroca2.jpg'),
+  'olas': require('../../../../assets/images/musica/olas.jpg'),
+  'gaviotas': require('../../../../assets/images/musica/gaviotas.jpg'),
+  'bosque': require('../../../../assets/images/musica/bosque.png'),
+  'grillos': require('../../../../assets/images/musica/grillos.jpg'),
+  'pajaros': require('../../../../assets/images/musica/pajaros.jpg'),
+  'pajaros2': require('../../../../assets/images/musica/pajaros2.jpg'),
+  'ondasFondoBlanco': require('../../../../assets/images/musica/ondaFondoBlanco.jpg'),
+  'ondasConLluvia': require('../../../../assets/images/musica/ondasConLLuvia.jpg'),
+  'ondasConSonido': require('../../../../assets/images/musica/ondaConSonido.jpg'),
+};
+
 export default function GestionarMusicaPaciente({ route, navigation }) {
   const { aplicarEscala, isDarkMode } = useAccesibilidad();
   const styles = getStyles(aplicarEscala, isDarkMode);
@@ -144,6 +166,14 @@ export default function GestionarMusicaPaciente({ route, navigation }) {
     return `${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
   };
 
+  const getImagenSource = (imagen) => {
+    if (!imagen) return null;
+    if (IMAGENES_MUSICA[imagen]) return IMAGENES_MUSICA[imagen];
+    if (imagen.startsWith('data:')) return { uri: imagen };
+    if (imagen.length > 100) return { uri: `data:image/jpeg;base64,${imagen}` };
+    return null;
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
@@ -185,9 +215,9 @@ export default function GestionarMusicaPaciente({ route, navigation }) {
                     
                     {/* IMAGEN */}
                     <View style={styles.musicImageContainer}>
-                    {pista.imagen ? (
+                    {getImagenSource(pista.imagen) ? (
                         <Image 
-                        source={{ uri: `data:image/jpeg;base64,${pista.imagen}` }} 
+                        source={getImagenSource(pista.imagen)} 
                         style={styles.musicImageThumb} 
                         />
                     ) : (
