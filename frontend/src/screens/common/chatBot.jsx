@@ -23,8 +23,8 @@ const CATEGORIAS_COMPLETA = [
 const MENSAJE_INICIAL = 'Hola. Estoy aquí para ayudarte. Puedes preguntarme sobre memoria, ejercicios o consejos. También puedes elegir un tema para empezar.';
 
 export default function ChatbotScreen() {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
   const insets = useSafeAreaInsets();
 
   const [mensaje, setMensaje] = useState('');
@@ -128,7 +128,7 @@ export default function ChatbotScreen() {
 
   return (
     <View style={styles.chatContainer}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
 
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -144,7 +144,7 @@ export default function ChatbotScreen() {
           </View>
 
           <TouchableOpacity style={styles.headerIconButton} onPress={leerUltimoMensajeBot}>
-            <MaterialCommunityIcons name={isSpeaking ? 'stop' : 'volume-high'} size={24} color="#334155" />
+            <MaterialCommunityIcons name={isSpeaking ? 'stop' : 'volume-high'} size={24} color={isDarkMode ? '#FFFFFF' : '#334155'} />
           </TouchableOpacity>
         </View>
       </View>
@@ -210,6 +210,7 @@ export default function ChatbotScreen() {
             onChangeText={setMensaje}
             style={styles.inputChatWrapper}
             placeholder="Haz una pregunta..."
+            placeholderTextColor={isDarkMode ? '#94A3B8' : '#64748B'}
           />
           <TouchableOpacity onPress={() => enviarMensaje()} style={styles.sendButton}>
             <MaterialCommunityIcons name="send" size={20} color="white" />

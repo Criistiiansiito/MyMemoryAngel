@@ -33,8 +33,8 @@ const getMonthRange = (dateString) => {
 };
 
 export default function CalendarioView({ navigation }) {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
   const insets = useSafeAreaInsets();
 
   const currentDate = useCurrentDate();
@@ -51,7 +51,7 @@ export default function CalendarioView({ navigation }) {
     lista.forEach((item) => {
       const fecha = item.fecha_ocurrencia || item.fecha_hora.substring(0, 10);
       if (!marcas[fecha]) marcas[fecha] = { dots: [] };
-      const config = getIconConfig(item.tipo);
+      const config = getIconConfig(item.tipo, isDarkMode);
       if (marcas[fecha].dots.length < 3) {
         marcas[fecha].dots.push({ key: `${item.id_recordatorio}-${fecha}`, color: config.iconColor });
       }
@@ -164,7 +164,7 @@ export default function CalendarioView({ navigation }) {
           </View>
         ) : (
           recordatoriosDelDia.map((item) => {
-            const config = getIconConfig(item.tipo);
+            const config = getIconConfig(item.tipo, isDarkMode);
             const { fecha, hora } = formatearFechaYHora(item.fecha_hora);
 
             return (

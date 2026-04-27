@@ -42,9 +42,9 @@ const getSymbolStyle = (symbol, columns) => {
 };
 
 export default function Atencion({ onBack, difficulty = 'dificil' }) {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
-  const juegosStyles = getJuegosStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
+  const juegosStyles = getJuegosStyles(aplicarEscala, isDarkMode);
   const insets = useSafeAreaInsets();
   const gridConfig = getGridConfig(difficulty);
 

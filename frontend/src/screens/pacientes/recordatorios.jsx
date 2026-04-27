@@ -17,8 +17,8 @@ import {
 } from '../../services/recordatoriosService';
 
 export default function Recordatorios({ navigation }) {
-  const { aplicarEscala, isDaltonic } = useAccesibilidad();
-  const styles = getStyles(aplicarEscala, isDaltonic);
+  const { aplicarEscala, isDarkMode } = useAccesibilidad();
+  const styles = getStyles(aplicarEscala, isDarkMode);
   const insets = useSafeAreaInsets();
   const currentDate = useCurrentDate();
   const todayLabel = formatMadridDate(currentDate, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -79,10 +79,10 @@ export default function Recordatorios({ navigation }) {
           <Text style={styles.brandName}>Recordatorios</Text>
           <View style={styles.headerButtonsGroup}>
             <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('Calendario')}>
-              <MaterialCommunityIcons name="calendar-month-outline" size={24} color="#8B5CF6" />
+              <MaterialCommunityIcons name="calendar-month-outline" style={styles.iconosRecordatorios} size={24}  />
             </TouchableOpacity>
             <TouchableOpacity style={styles.headerIconButton} onPress={() => navigation.navigate('GestionarRecordatorios')}>
-              <MaterialCommunityIcons name="playlist-edit" size={24} color="#8B5CF6" />
+              <MaterialCommunityIcons name="playlist-edit" style={styles.iconosRecordatorios} size={24}  />
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.headerIconButton, { backgroundColor: '#334155' }]}
@@ -110,7 +110,7 @@ export default function Recordatorios({ navigation }) {
           </View>
         ) : (
           reminders.map((item) => {
-            const config = getIconConfig(item.tipo);
+            const config = getIconConfig(item.tipo, isDarkMode);
             const { fecha, hora } = formatearFechaYHora(item.fecha_hora);
 
             return (
