@@ -20,8 +20,9 @@ app.use((req, res, next) => {
 // Rutas
 const authRoutes = require('./routes/auth');
 const internalRoutes = require('./routes/internal');
+const recordatoriosRoutes = require('./routes/recordatorios');
 app.use('/api/auth', authRoutes);
-app.use('/api/recordatorios', authRoutes);
+app.use('/api/recordatorios', recordatoriosRoutes);
 app.use('/api/chatbot', authRoutes);
 app.use('/api/musica', authRoutes);
 app.use('/api/lecturas', authRoutes);

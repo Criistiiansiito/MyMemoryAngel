@@ -18,7 +18,7 @@ export const gestionRecordatoriosPacientesService = {
         return { ok: false, recordatorios: [] };
       }
 
-      const response = await axios.get(`${API}/auth/recordatorios/${pacienteId}`);
+      const response = await axios.get(`${API}/recordatorios/${pacienteId}`);
       return { ok: true, recordatorios: response.data.recordatorios || [] };
     } catch (error) {
       console.error('Error cargando recordatorios del paciente:', error);
@@ -35,7 +35,7 @@ export const gestionRecordatoriosPacientesService = {
       const today = toMadridDateOnly(new Date());
       const from = addDays(today, -30);
 
-      const response = await axios.get(`${API}/auth/recordatorios-calendario/${pacienteId}`, {
+      const response = await axios.get(`${API}/recordatorios/calendario/${pacienteId}`, {
         params: { from, to: today },
       });
 
