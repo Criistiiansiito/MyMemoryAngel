@@ -64,7 +64,7 @@ export const fetchRecordatoriosHoyPorUsuario = async (userId) => {
   try {
     if (!userId) return { ok: false, data: [] };
 
-    const response = await axios.get(`${API}/auth/recordatorios-hoy/${userId}`);
+    const response = await axios.get(`${API}/recordatorios/hoy/${userId}`);
     return { ok: true, data: response.data.recordatorios || [] };
   } catch (error) {
     console.error('Error fetching recordatorios por usuario:', error);
@@ -87,7 +87,7 @@ export const fetchAllRecordatorios = async () => {
     const userId = await getCurrentUserId();
     if (!userId) return { ok: false, data: [] };
 
-    const response = await axios.get(`${API}/auth/recordatorios/${userId}`);
+    const response = await axios.get(`${API}/recordatorios/${userId}`);
     return { ok: true, data: response.data.recordatorios || [] };
   } catch (error) {
     console.error('Error fetching all recordatorios:', error);
@@ -111,7 +111,7 @@ export const fetchRecordatoriosCalendarioPorUsuario = async (userId, fromDate, t
   try {
     if (!userId) return { ok: false, data: [] };
 
-    const response = await axios.get(`${API}/auth/recordatorios-calendario/${userId}`, {
+    const response = await axios.get(`${API}/recordatorios/calendario/${userId}`, {
       params: { from: fromDate, to: toDate },
     });
     return { ok: true, data: response.data.recordatorios || [] };
@@ -200,7 +200,7 @@ export const crearRecordatorio = async (datos) => {
     if (!targetUserId) throw new Error('No hay sesión de usuario');
 
     const body = { ...datos, id_usuario: targetUserId };
-    const response = await axios.post(`${API}/auth/crear`, body);
+    const response = await axios.post(`${API}/recordatorios/crear`, body);
     return response;
   } catch (error) {
     console.error('Error en crearRecordatorio:', error);
@@ -210,7 +210,7 @@ export const crearRecordatorio = async (datos) => {
 
 export const actualizarRecordatorio = async (recordatorioId, datos) => {
   try {
-    const response = await axios.put(`${API}/auth/recordatorios/${recordatorioId}`, datos);
+    const response = await axios.put(`${API}/recordatorios/${recordatorioId}`, datos);
     return response.data;
   } catch (error) {
     console.error('Error al actualizar recordatorio:', error);
@@ -220,7 +220,7 @@ export const actualizarRecordatorio = async (recordatorioId, datos) => {
 
 export const eliminarRecordatorio = async (recordatorioId) => {
   try {
-    const response = await axios.delete(`${API}/auth/recordatorios/${recordatorioId}`);
+    const response = await axios.delete(`${API}/recordatorios/${recordatorioId}`);
     return response.data;
   } catch (error) {
     console.error('Error al eliminar recordatorio:', error);
@@ -230,7 +230,7 @@ export const eliminarRecordatorio = async (recordatorioId) => {
 
 export const marcarRecordatorioCumplido = async (recordatorioId, cumplido, fechaOcorrencia) => {
   try {
-    const response = await axios.put(`${API}/auth/recordatorios/${recordatorioId}/cumplido`, {
+    const response = await axios.put(`${API}/recordatorios/${recordatorioId}/cumplido`, {
       cumplido,
       fecha_ocurrencia: fechaOcorrencia,
     });
