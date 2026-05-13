@@ -21,13 +21,19 @@ app.use((req, res, next) => {
 const authRoutes = require('./routes/auth');
 const internalRoutes = require('./routes/internal');
 const recordatoriosRoutes = require('./routes/recordatorios');
+const lecturasRoutes = require('./routes/lecturas');
+const escrituraRoutes = require('./routes/escritura');
+const perfilRoutes = require('./routes/perfil');
+const vinculacionesRoutes = require('./routes/vinculaciones');
+const musicaRoutes = require('./routes/musica');
 app.use('/api/auth', authRoutes);
+app.use('/api/perfil', perfilRoutes);
 app.use('/api/recordatorios', recordatoriosRoutes);
-app.use('/api/chatbot', authRoutes);
-app.use('/api/musica', authRoutes);
-app.use('/api/lecturas', authRoutes);
-app.use('/api/escritura', authRoutes);
-app.use('/api/vinculaciones', authRoutes);
+app.use('/api/chatbot', perfilRoutes);
+app.use('/api/musica', musicaRoutes);
+app.use('/api/lecturas', lecturasRoutes);
+app.use('/api/escritura', escrituraRoutes);
+app.use('/api/vinculaciones', vinculacionesRoutes);
 app.use('/api/internal', internalRoutes);
 
 if (process.env.CRON_ENABLED !== 'false') {

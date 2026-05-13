@@ -277,4 +277,40 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+router.post('/push-token', async (req, res) => {
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ error: 'Token faltante' });
+  }
+
+  try {
+    const admin = require('../firebaseAdmin');
+    const decoded = await admin.auth().verifyIdToken(token);
+    const { expo_push_token, platform } = req.body;
+
+    if (!expo_push_token || !platform) {
+      return res.status(400).json({ error: 'Faltan datos del dispositivo' });
+    }
+
+    const sql = `
+      INSERT INTO device_tokens (user_uid, expo_push_token, platform, activo)
+      VALUES (?, ?, ?, 1)
+      ON DUPLICATE KEY UPDATE
+        user_uid = VALUES(user_uid),
+        platform = VALUES(platform),
+        activo = 1,
+        updated_at = CURRENT_TIMESTAMP
+    `;
+
+    await db.query(sql, [decoded.uid, expo_push_token, platform]);
+
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error('Error guardando push token:', err);
+    return res.status(500).json({ error: 'No se pudo guardar el token push' });
+  }
+});
+
 module.exports = router;

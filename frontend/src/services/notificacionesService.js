@@ -78,7 +78,7 @@ export const registerForPushNotificationsAsync = async () => {
 
 export const enviarPushTokenAlBackend = async ({ token, firebaseToken, platform }) => {
   await axios.post(
-    `${API}/auth/push-token`,
+    `${API}/recordatorios/push-token`,
     {
       expo_push_token: token,
       platform,

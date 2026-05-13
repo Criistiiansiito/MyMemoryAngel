@@ -16,7 +16,7 @@ export const progresoJuegosService = {
   guardarProgreso: async ({ juego, categoria, puntuacion, ultimo_resultado, user_uid }) => {
     const headers = await getAuthHeaders();
     const response = await axios.post(
-      `${API}/auth/progreso-juegos`,
+      `${API}/perfil/progreso-juegos`,
       { juego, categoria, puntuacion, ultimo_resultado, user_uid },
       { headers }
     );
@@ -25,7 +25,7 @@ export const progresoJuegosService = {
 
   obtenerProgreso: async (userUid) => {
     const headers = await getAuthHeaders();
-    const response = await axios.get(`${API}/auth/progreso-juegos/${userUid}`, { headers });
+    const response = await axios.get(`${API}/perfil/progreso-juegos/${userUid}`, { headers });
     return response.data;
   },
 

@@ -14,7 +14,7 @@ export const vinculacionesService = {
     // Obtiene los datos del paciente usando el ID del QR, que es el udi
     obtenerPacientePorId: async (id) => {
         const token = await getAuthToken();
-        const res = await axios.get(`${API}/auth/paciente/${id}`, {
+        const res = await axios.get(`${API}/vinculaciones/paciente/${id}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         return res.data; 
@@ -23,7 +23,7 @@ export const vinculacionesService = {
     // Esto registra la relación en la tabla vinculaciones
     vincularPaciente: async (idPaciente) => {
         const token = await getAuthToken();
-        const res = await axios.post(`${API}/auth/vincular-paciente`, {
+        const res = await axios.post(`${API}/vinculaciones/vincular-paciente`, {
             id_paciente: idPaciente
         }, {
             headers: { Authorization: `Bearer ${token}` }
