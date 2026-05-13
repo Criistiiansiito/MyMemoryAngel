@@ -166,6 +166,19 @@ router.get('/progreso-juegos/:user_uid', async (req, res) => {
   }
 });
 
+router.post('/preguntar', async (req, res) => {
+  const { mensajeUsuario } = req.body;
+  try {
+    const [rows] = await db.query(
+      'SELECT respuesta FROM chatbot_contenido WHERE pregunta LIKE ? OR categoria LIKE ?',
+      [`%${mensajeUsuario}%`, `%${mensajeUsuario}%`]
+    );
+    res.json({ respuesta: rows.length > 0 ? rows[0].respuesta : 'No tengo información específica sobre eso.' });
+  } catch (_error) {
+    res.status(500).json({ respuesta: 'Error al consultar.' });
+  }
+});
+
 router.get('/paciente-profile/:id', async (req, res) => {
   const authHeader = req.headers.authorization || '';
   const token = authHeader.split(' ')[1];

@@ -29,7 +29,7 @@ const musicaRoutes = require('./routes/musica');
 app.use('/api/auth', authRoutes);
 app.use('/api/perfil', perfilRoutes);
 app.use('/api/recordatorios', recordatoriosRoutes);
-app.use('/api/chatbot', authRoutes);
+app.use('/api/chatbot', perfilRoutes);
 app.use('/api/musica', musicaRoutes);
 app.use('/api/lecturas', lecturasRoutes);
 app.use('/api/escritura', escrituraRoutes);

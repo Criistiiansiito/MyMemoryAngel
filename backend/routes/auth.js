@@ -1,7 +1,6 @@
 const express = require('express');
 const admin = require('../firebaseAdmin');
 const db = require('../db');
-const { sendPushNotifications } = require('../pushNotifications');
 
 const router = express.Router();
 
@@ -51,86 +50,6 @@ router.post('/sync', async (req, res) => {
     return res.status(500).json({ error: 'Error al sincronizar datos del usuario' });
   } finally {
     connection.release();
-  }
-});
-
-router.post('/preguntar', async (req, res) => {
-  const { mensajeUsuario } = req.body;
-  try {
-    const [rows] = await db.query(
-      'SELECT respuesta FROM chatbot_contenido WHERE pregunta LIKE ? OR categoria LIKE ?',
-      [`%${mensajeUsuario}%`, `%${mensajeUsuario}%`]
-    );
-    res.json({ respuesta: rows.length > 0 ? rows[0].respuesta : 'No tengo información específica sobre eso.' });
-  } catch (_error) {
-    res.status(500).json({ respuesta: 'Error al consultar.' });
-  }
-});
-
-router.post('/push-token', async (req, res) => {
-  const authHeader = req.headers.authorization || '';
-  const token = authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({ error: 'Token faltante' });
-  }
-
-  try {
-    const decoded = await admin.auth().verifyIdToken(token);
-    const { expo_push_token, platform } = req.body;
-
-    if (!expo_push_token || !platform) {
-      return res.status(400).json({ error: 'Faltan datos del dispositivo' });
-    }
-
-    const sql = `
-      INSERT INTO device_tokens (user_uid, expo_push_token, platform, activo)
-      VALUES (?, ?, ?, 1)
-      ON DUPLICATE KEY UPDATE
-        user_uid = VALUES(user_uid),
-        platform = VALUES(platform),
-        activo = 1,
-        updated_at = CURRENT_TIMESTAMP
-    `;
-
-    await db.query(sql, [decoded.uid, expo_push_token, platform]);
-
-    return res.json({ ok: true });
-  } catch (err) {
-    console.error('Error guardando push token:', err);
-    return res.status(500).json({ error: 'No se pudo guardar el token push' });
-  }
-});
-
-router.post('/test-push', async (req, res) => {
-  const authHeader = req.headers.authorization || '';
-  const token = authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({ error: 'Token faltante' });
-  }
-
-  try {
-    const decoded = await admin.auth().verifyIdToken(token);
-
-    const [rows] = await db.query(
-      'SELECT expo_push_token FROM device_tokens WHERE user_uid = ? AND activo = 1',
-      [decoded.uid]
-    );
-
-    const tokens = rows.map((row) => row.expo_push_token);
-
-    const result = await sendPushNotifications(tokens, {
-      title: 'MyMemoryAngel',
-      body: 'Esta es una notificación push de prueba',
-      data: { tipo: 'test' },
-      categoryId: 'recordatorio-actions',
-    });
-
-    return res.json({ ok: true, result });
-  } catch (err) {
-    console.error('Error en test push:', err);
-    return res.status(500).json({ error: 'No se pudo enviar la push' });
   }
 });
 
