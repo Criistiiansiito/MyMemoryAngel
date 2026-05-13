@@ -13,7 +13,7 @@ const getAuthToken = async () => {
 export const configuracionPerfil = {
     obtenerPerfil: async () => {
         const token = await getAuthToken();
-        const res = await axios.get(`${API}/auth/profile`, {
+        const res = await axios.get(`${API}/perfil/profile`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         return res.data;
@@ -21,7 +21,7 @@ export const configuracionPerfil = {
 
     obtenerPerfilPaciente: async (pacienteId) => {
         const token = await getAuthToken();
-        const res = await axios.get(`${API}/auth/paciente-profile/${pacienteId}`, {
+        const res = await axios.get(`${API}/perfil/paciente-profile/${pacienteId}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         return res.data;
@@ -29,7 +29,7 @@ export const configuracionPerfil = {
 
     actualizarPerfil: async (nombre, foto, fecha) => {
         const token = await getAuthToken();
-        const res = await axios.put(`${API}/auth/actualizar-perfil`, {
+        const res = await axios.put(`${API}/perfil/actualizar-perfil`, {
             nombre,
             foto_perfil: foto,
             fecha_nacimiento: fecha
@@ -41,7 +41,7 @@ export const configuracionPerfil = {
 
     actualizarPerfilPaciente: async (pacienteId, datos) => {
         const token = await getAuthToken();
-        const res = await axios.put(`${API}/auth/paciente-profile/${pacienteId}`, datos, {
+        const res = await axios.put(`${API}/perfil/paciente-profile/${pacienteId}`, datos, {
             headers: { Authorization: `Bearer ${token}` }
         });
         return res.data;
@@ -52,7 +52,7 @@ export const configuracionPerfil = {
             ? localStorage.getItem('userToken') 
             : await SecureStore.getItemAsync('userToken');
 
-        return await axios.put(`${API}/auth/actualizar-accesibilidad`, ajustes, {
+        return await axios.put(`${API}/perfil/actualizar-accesibilidad`, ajustes, {
             headers: { Authorization: `Bearer ${token}` }
         });
     }    

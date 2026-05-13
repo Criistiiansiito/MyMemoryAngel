@@ -79,7 +79,7 @@ export default function InicioSesion({ navigation }) {
       
       await setToken('userToken', idToken);
 
-      const res = await axios.get(`${API}/auth/profile`, {
+      const res = await axios.get(`${API}/perfil/profile`, {
         headers: { Authorization: `Bearer ${idToken}` }
       });
 
