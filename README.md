@@ -1,1 +1,6 @@
 # MyMemoryAngel
+El envejecimiento de la población y el avance de enfermedades neurodegenerativas como el Alzheimer plantean un desafío social y tecnológico de primer orden. Con el tiempo, la pérdida progresiva de la memoria y la autonomía deteriora la calidad de vida de los pacientes y aumenta la carga emocional y física de sus cuidadores.
+
+Ante esta realidad, este proyecto nace con el objetivo de mitigar el impacto del deterioro cognitivo en sus etapas iniciales mediante el desarrollo de una aplicación móvil inteligente y accesible. La plataforma funciona como un nexo seguro entre el paciente y su entorno, ofreciendo herramientas de estimulación cerebral adaptadas y un sistema automatizado de notificaciones para la gestión de recordatorios diarios. La aplicación incorpora ejercicios personalizados y juegos interactivos diseñados específicamente para ralentizar el avance de la enfermedad. Todo ello se despliega bajo una interfaz gobernada por criterios de accesibilidad universal, adaptada minuciosamente a personas de edad avanzada o con limitaciones sensoriales, priorizando su autonomía y ofreciendo una experiencia de uso diaria intuitiva, digna y segura.
+
+Descarga y prueba la aplicación: [APK]
