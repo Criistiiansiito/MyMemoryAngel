@@ -12,7 +12,7 @@
     "start-backend": "nodemon backend/index.js",
     "start-frontend": "expo start",
     "test:backend": "npm --prefix backend test",
-    "test:frontend": "npm --prefix frontend test",
+    "test:frontend": "node backend/node_modules/jest/bin/jest.js --config frontend/jest.config.js --runInBand",
     "test": "npm run test:backend && npm run test:frontend"
   },
   "dependencies": {
