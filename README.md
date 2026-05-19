@@ -86,7 +86,7 @@ Aiven
 
 <sub>
 © 2026 Cristian Garcia Moruno · Trabajo de Fin de Grado.  
-Todos los derechos están reservados. No se permite la copia, distribución ni uso comercial del código fuente ni de los activos de la aplicación sin el consentimiento previo del autor.
+Todos los derechos reservados. Consulta el archivo License para más información.
 </sub>
 
 </div>
