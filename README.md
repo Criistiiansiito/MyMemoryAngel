@@ -9,7 +9,7 @@ Descarga y prueba la aplicación: [APK](https://expo.dev/accounts/criistiian/pro
 <h2>También puedes escanear el QR para probar la aplicación:</h2>
 
 <p align="center">
-  <img src="./assets/qr-apk.png" width="250"/>
+  <img src="./frontend/assets/icons/qr-apk.png" width="250"/>
 </p>
 
 Este proyecto ha sido desarrollado como Trabajo de Fin de Grado. Todos los derechos están reservados. No se permite la copia, distribución ni uso comercial del código fuente ni de los activos de la aplicación sin el consentimiento previo del autor.
