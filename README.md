@@ -5,6 +5,6 @@ Partiendo de esta realidad, el proyecto que aquí se presenta busca actuar en la
 
 Los contenidos interactivos han sido concebidos con un propósito claro: contribuir a frenar el avance de la enfermedad de forma amena y sostenida en el tiempo. Todo ello se presenta a través de una interfaz pensada desde el principio para personas mayores o con algún tipo de limitación sensorial. La navegación es sencilla, los elementos visuales están cuidadosamente dimensionados y cada decisión de diseño responde a un mismo criterio: que el usuario pueda desenvolverse con soltura, sin frustraciones y con la mayor independencia posible.
 
-Descarga y prueba la aplicación: [APK]
+Descarga y prueba la aplicación: [APK](https://expo.dev/accounts/criistiian/projects/MyMemoryAngel/builds/c92ba4f6-3461-48d9-8f7f-2d5c646c1a78)
 
 Este proyecto ha sido desarrollado como Trabajo de Fin de Grado. Todos los derechos están reservados. No se permite la copia, distribución ni uso comercial del código fuente ni de los activos de la aplicación sin el consentimiento previo del autor.
