@@ -11,6 +11,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext'; 
 import { configuracionPerfil } from '../../services/configuracionPerfil';
+import { logoutUser } from '../../services/session';
 
 export default function ConfiguracionPaciente({ navigation }) {
     const { aplicarEscala, textSizeLabel, setTextSizeLabel, isDarkMode, setIsDarkMode, cargarDesdeServidor } = useAccesibilidad();
@@ -102,7 +103,8 @@ export default function ConfiguracionPaciente({ navigation }) {
                 { 
                     text: "Sí, salir", 
                     style: "destructive",
-                    onPress: () => {
+                    onPress: async () => {
+                        await logoutUser();
                         navigation.reset({
                             index: 0,
                             routes: [{ name: 'Bienvenida' }], 

@@ -1,8 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { onAuthStateChanged } from 'firebase/auth';
 
 import { AccesibilidadProvider } from './services/accesibilidadContext';
+import { auth } from './services/firebase';
+import { clearStoredSession, setStoredToken } from './services/session';
 
 // Auth
 import Bienvenida from './screens/auth/bienvenida';
@@ -41,19 +47,71 @@ import ChatBotCuidador from './screens/common/chatBotCuidador';
 import { inicializarNotificaciones } from './services/notificacionesService';
 
 const Stack = createNativeStackNavigator();
+const API = `${process.env.EXPO_PUBLIC_IP}`;
+
+const getRouteForUser = (user) => (
+  user?.tipo_usuario === 'paciente' ? 'DashboardPaciente' : 'DashboardCuidador'
+);
 
 export default function App() {
+  const [initialRouteName, setInitialRouteName] = useState(null);
+
   useEffect(() => {
     inicializarNotificaciones().catch((error) => {
       console.log('No se pudieron inicializar las notificaciones:', error.message);
     });
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      try {
+        if (!firebaseUser) {
+          await clearStoredSession();
+          setInitialRouteName('Bienvenida');
+          return;
+        }
+
+        const idToken = await firebaseUser.getIdToken();
+        await setStoredToken(idToken);
+
+        const storedUser = await AsyncStorage.getItem('user');
+        if (storedUser) {
+          setInitialRouteName(getRouteForUser(JSON.parse(storedUser)));
+          return;
+        }
+
+        const res = await axios.get(`${API}/perfil/profile`, {
+          headers: { Authorization: `Bearer ${idToken}` },
+        });
+        const perfil = res.data.usuario;
+
+        await AsyncStorage.setItem('user', JSON.stringify(perfil));
+        setInitialRouteName(getRouteForUser(perfil));
+      } catch (error) {
+        console.log('No se pudo restaurar la sesion:', error.message);
+        await clearStoredSession();
+        setInitialRouteName('Bienvenida');
+      }
+    });
+
+    return unsubscribe;
+  }, []);
+
+  if (!initialRouteName) {
+    return (
+      <AccesibilidadProvider>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
+          <ActivityIndicator size="large" color="#4D6BFE" />
+        </View>
+      </AccesibilidadProvider>
+    );
+  }
+
   return (
     <AccesibilidadProvider>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="Bienvenida"
+          initialRouteName={initialRouteName}
           screenOptions={{
             headerShown: true,
             headerBackTitleVisible: false,
