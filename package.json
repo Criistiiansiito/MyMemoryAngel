@@ -10,7 +10,10 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "start-backend": "nodemon backend/index.js",
-    "start-frontend": "expo start"
+    "start-frontend": "expo start",
+    "test:backend": "npm --prefix backend test",
+    "test:frontend": "node backend/node_modules/jest/bin/jest.js --config frontend/jest.config.js --runInBand",
+    "test": "npm run test:backend && npm run test:frontend"
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
@@ -51,12 +54,15 @@
     "react-native-web": "^0.21.0"
   },
   "devDependencies": {
+    "@testing-library/react-native": "^13.3.3",
     "concurrently": "^9.2.1",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~10.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "jest": "^30.4.2",
     "nodemon": "^3.0.2",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "react-test-renderer": "^19.1.0"
   }
 }

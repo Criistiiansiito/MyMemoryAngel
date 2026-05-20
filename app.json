@@ -5,7 +5,6 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./frontend/assets/icons/splash.png",
-    "resizeMode": "cover",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -21,15 +20,15 @@
         ],
         "ITSAppUsesNonExemptEncryption": false
       },
-      "bundleIdentifier": "com.criistiian.MyMemoryAngel"
+      "bundleIdentifier": "com.criistiian.mymemoryangel"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./frontend/assets/icons/adaptive-icon.png",
+        "foregroundImage": "./frontend/assets/icons/adaptive-icon-2.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.criistiian.MyMemoryAngel"
+      "package": "com.criistiian.mymemoryangel"
     },
     "web": {
       "favicon": "./assets/favicon.png"
