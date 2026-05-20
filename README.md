@@ -32,7 +32,7 @@ Los contenidos interactivos han sido concebidos con un propósito claro: contrib
 
 ## También puedes escanear el QR para probar la aplicación
 
-<img src="./frontend/assets/icons/qr-apk.png" width="250"/>
+<img src="./frontend/assets/icons/qr-apk-definitivo.png" width="250"/>
 
 </div>
 
