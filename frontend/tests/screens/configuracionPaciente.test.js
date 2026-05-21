@@ -2,6 +2,22 @@ jest.mock('@expo/vector-icons', () => ({
   MaterialCommunityIcons: 'MaterialCommunityIcons',
 }), { virtual: true });
 
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  removeItem: jest.fn(),
+}));
+
+jest.mock('expo-secure-store', () => ({
+  deleteItemAsync: jest.fn(),
+}));
+
+jest.mock('firebase/auth', () => ({
+  signOut: jest.fn(() => Promise.resolve()),
+}));
+
+jest.mock('../../src/services/firebase', () => ({
+  auth: {},
+}));
+
 jest.mock('react-native', () => {
   const React = require('react');
   const createHost = (name) =>
