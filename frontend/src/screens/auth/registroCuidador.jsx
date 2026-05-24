@@ -8,7 +8,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import * as SecureStore from 'expo-secure-store';
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
-import { registerForPushNotificationsAsync, enviarPushTokenAlBackend } from '../../services/notificacionesService';
+import { registrarDispositivoParaNotificaciones } from '../../services/notificacionesService';
 
 const API = `${process.env.EXPO_PUBLIC_IP}`;
 
@@ -83,17 +83,6 @@ export default function RegistroCuidador({ navigation }) {
       const user = userCredential.user;
       const idToken = await user.getIdToken();
 
-      try {
-        const expoPushToken = await registerForPushNotificationsAsync();
-        await enviarPushTokenAlBackend({
-          token: expoPushToken,
-          firebaseToken: idToken,
-          platform: Platform.OS,
-        });
-      } catch (pushError) {
-        console.log('Push error ignored');
-      }      
-
       await setToken('userToken', idToken);
 
       await axios.post(`${API}/auth/sync`, {
@@ -104,6 +93,12 @@ export default function RegistroCuidador({ navigation }) {
       }, {
         headers: { Authorization: `Bearer ${idToken}` }
       });
+
+      try {
+        await registrarDispositivoParaNotificaciones(idToken);
+      } catch (pushError) {
+        console.log('No se pudo registrar push token:', pushError.message);
+      }
 
       setLoading(false);
       setRegistroExitoso(true); // Aquí es cuando todo se ilumina en verde

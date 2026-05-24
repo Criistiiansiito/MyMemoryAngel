@@ -5,6 +5,8 @@ import Constants from 'expo-constants';
 import axios from 'axios';
 
 const API = `${process.env.EXPO_PUBLIC_IP}`;
+const RECORDATORIOS_CHANNEL_ID = 'default';
+const RECORDATORIOS_CATEGORY_ID = 'recordatorio-actions';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -17,8 +19,21 @@ Notifications.setNotificationHandler({
 
 let notificationResponseSubscription = null;
 
+const configurarCanalAndroid = async () => {
+  if (Platform.OS !== 'android') return;
+
+  await Notifications.setNotificationChannelAsync(RECORDATORIOS_CHANNEL_ID, {
+    name: 'Recordatorios',
+    importance: Notifications.AndroidImportance.MAX,
+    sound: 'default',
+    vibrationPattern: [0, 250, 250, 250],
+  });
+};
+
 export const inicializarNotificaciones = async () => {
-  await Notifications.setNotificationCategoryAsync('recordatorio-actions', [
+  await configurarCanalAndroid();
+
+  await Notifications.setNotificationCategoryAsync(RECORDATORIOS_CATEGORY_ID, [
     {
       identifier: 'marcar-cumplido',
       buttonTitle: 'Cumplido',
@@ -40,16 +55,8 @@ export const inicializarNotificaciones = async () => {
 export const registerForPushNotificationsAsync = async () => {
   await inicializarNotificaciones();
 
-  if (!Device.isDevice) {
+  if (!Device.isDevice && Platform.OS !== 'android') {
     throw new Error('Las push notifications requieren dispositivo físico');
-  }
-
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      sound: 'default',
-    });
   }
 
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -74,6 +81,16 @@ export const registerForPushNotificationsAsync = async () => {
 
   const tokenResponse = await Notifications.getExpoPushTokenAsync({ projectId });
   return tokenResponse.data;
+};
+
+export const registrarDispositivoParaNotificaciones = async (firebaseToken) => {
+  const expoPushToken = await registerForPushNotificationsAsync();
+  await enviarPushTokenAlBackend({
+    token: expoPushToken,
+    firebaseToken,
+    platform: Platform.OS,
+  });
+  return expoPushToken;
 };
 
 export const enviarPushTokenAlBackend = async ({ token, firebaseToken, platform }) => {

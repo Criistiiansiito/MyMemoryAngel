@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "247798717830",
+    "project_id": "memoryangel-42b42",
+    "storage_bucket": "memoryangel-42b42.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247798717830:android:5a3aa25eb104a20313a007",
+        "android_client_info": {
+          "package_name": "com.criistiian.mymemoryangel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7uIcLAIRDYf930H4FZOd7RQQy7tu3b5g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

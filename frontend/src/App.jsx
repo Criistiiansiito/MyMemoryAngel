@@ -44,7 +44,7 @@ import ModificarRecordatorio from './screens/common/modificarRecordatorio';
 import NuevoRecordatorio from './screens/common/nuevoRecordatorio';
 import ChatBot from './screens/common/chatBot';
 import ChatBotCuidador from './screens/common/chatBotCuidador';
-import { inicializarNotificaciones } from './services/notificacionesService';
+import { inicializarNotificaciones, registrarDispositivoParaNotificaciones } from './services/notificacionesService';
 
 const Stack = createNativeStackNavigator();
 const API = `${process.env.EXPO_PUBLIC_IP}`;
@@ -76,6 +76,9 @@ export default function App() {
 
         const storedUser = await AsyncStorage.getItem('user');
         if (storedUser) {
+          registrarDispositivoParaNotificaciones(idToken).catch((error) => {
+            console.log('No se pudo registrar push token:', error.message);
+          });
           setInitialRouteName(getRouteForUser(JSON.parse(storedUser)));
           return;
         }
@@ -86,6 +89,9 @@ export default function App() {
         const perfil = res.data.usuario;
 
         await AsyncStorage.setItem('user', JSON.stringify(perfil));
+        registrarDispositivoParaNotificaciones(idToken).catch((error) => {
+          console.log('No se pudo registrar push token:', error.message);
+        });
         setInitialRouteName(getRouteForUser(perfil));
       } catch (error) {
         console.log('No se pudo restaurar la sesion:', error.message);

@@ -89,7 +89,14 @@ const ejecutarRecordatoriosPendientes = async () => {
             title: `${icono} ${rec.titulo}`,
             body: `${fechaFormateada} a las ${horaActual}`,
             sound: rec.tipo_alerta === 'visual' ? null : 'default',
-            categoryId: 'recordatorio-actions'
+            channelId: 'default',
+            categoryId: 'recordatorio-actions',
+            priority: 'high',
+            data: {
+                id_recordatorio: String(rec.id_recordatorio),
+                id_usuario: rec.id_usuario,
+                tipo: rec.tipo || 'otro',
+            },
         });
 
         console.log(`Notificacion enviada para recordatorio ${rec.id_recordatorio}`);
