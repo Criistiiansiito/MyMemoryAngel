@@ -24,7 +24,7 @@ Los contenidos interactivos han sido concebidos con un propósito claro: contrib
 
 ##  Descarga y prueba la aplicación (fase de pruebas)
 
-### [ APK Android](https://expo.dev/accounts/criistiian/projects/MyMemoryAngel/builds/12a9585b-9beb-44ec-93ca-1e69426f690a)
+### [ APK Android](https://expo.dev/accounts/criistiian/projects/MyMemoryAngel/builds/051e4d79-2245-4e3c-96a1-a2d49d704d80)
 
 </div>
 
