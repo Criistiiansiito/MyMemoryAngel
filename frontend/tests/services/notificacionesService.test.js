@@ -39,6 +39,7 @@ import * as Notifications from 'expo-notifications';
 import {
   enviarPushTokenAlBackend,
   inicializarNotificaciones,
+  registrarDispositivoParaNotificaciones,
   registerForPushNotificationsAsync,
 } from '../../src/services/notificacionesService';
 
@@ -72,6 +73,15 @@ describe('notificacionesService', () => {
     );
   });
 
+  //Verifica que Android no se bloquea al ejecutarse en un emulador compatible.
+  test('registerForPushNotificationsAsync permite emulador Android', async () => {
+    Object.defineProperty(Device, 'isDevice', { value: false, writable: true, configurable: true });
+
+    const token = await registerForPushNotificationsAsync();
+
+    expect(token).toBe('ExponentPushToken[token]');
+  });
+
   //Verifica que el registro rechaza si el usuario deniega el permiso de notificaciones.
   test('registerForPushNotificationsAsync falla si se deniega el permiso', async () => {
     Notifications.getPermissionsAsync.mockResolvedValueOnce({ status: 'denied' });
@@ -90,6 +100,20 @@ describe('notificacionesService', () => {
       platform: 'android',
     });
 
+    expect(axios.post).toHaveBeenCalledWith(
+      'http://api.test/recordatorios/push-token',
+      { expo_push_token: 'ExponentPushToken[token]', platform: 'android' },
+      { headers: { Authorization: 'Bearer firebase-token' } }
+    );
+  });
+
+  //Verifica el flujo completo de registro del dispositivo en backend.
+  test('registrarDispositivoParaNotificaciones obtiene token y lo guarda en backend', async () => {
+    axios.post.mockResolvedValueOnce({ data: { ok: true } });
+
+    const token = await registrarDispositivoParaNotificaciones('firebase-token');
+
+    expect(token).toBe('ExponentPushToken[token]');
     expect(axios.post).toHaveBeenCalledWith(
       'http://api.test/recordatorios/push-token',
       { expo_push_token: 'ExponentPushToken[token]', platform: 'android' },

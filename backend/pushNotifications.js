@@ -1,4 +1,15 @@
-async function sendPushNotifications(tokens, { title, body, data = {}, sound = 'default' }) {
+async function sendPushNotifications(
+    tokens,
+    {
+        title,
+        body,
+        data = {},
+        sound = 'default',
+        channelId = 'default',
+        categoryId,
+        priority = 'high',
+    }
+) {
     const { Expo } = await import('expo-server-sdk');
     const expo = new Expo();
 
@@ -10,10 +21,13 @@ async function sendPushNotifications(tokens, { title, body, data = {}, sound = '
 
     const messages = validTokens.map((token) => ({
         to: token,
-        sound,
         title,
         body,
         data,
+        priority,
+        channelId,
+        ...(sound !== undefined ? { sound } : {}),
+        ...(categoryId ? { categoryId } : {}),
     }));
 
     const chunks = expo.chunkPushNotifications(messages);
@@ -23,6 +37,11 @@ async function sendPushNotifications(tokens, { title, body, data = {}, sound = '
         try {
             const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
             tickets.push(...ticketChunk);
+            ticketChunk
+                .filter((ticket) => ticket.status === 'error')
+                .forEach((ticket) => {
+                    console.error('Error en ticket push:', ticket);
+                });
         } catch (error) {
             console.error('Error enviando push chunk:', error);
         }

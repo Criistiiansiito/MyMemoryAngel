@@ -41,8 +41,7 @@ jest.mock('../../src/services/firebase', () => ({
 }));
 
 jest.mock('../../src/services/notificacionesService', () => ({
-  registerForPushNotificationsAsync: jest.fn(),
-  enviarPushTokenAlBackend: jest.fn(),
+  registrarDispositivoParaNotificaciones: jest.fn(),
 }));
 
 jest.mock('../../src/style/styles', () => ({
@@ -72,10 +71,7 @@ import renderer, { act } from 'react-test-renderer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import {
-  enviarPushTokenAlBackend,
-  registerForPushNotificationsAsync,
-} from '../../src/services/notificacionesService';
+import { registrarDispositivoParaNotificaciones } from '../../src/services/notificacionesService';
 import InicioSesion from '../../src/screens/auth/inicioSesion';
 
 const getTextContent = (node) => {
@@ -132,8 +128,7 @@ describe('InicioSesion screen', () => {
     signInWithEmailAndPassword.mockResolvedValueOnce({
       user: { getIdToken: jest.fn().mockResolvedValue('firebase-token') },
     });
-    registerForPushNotificationsAsync.mockResolvedValueOnce('ExponentPushToken[token]');
-    enviarPushTokenAlBackend.mockResolvedValueOnce();
+    registrarDispositivoParaNotificaciones.mockResolvedValueOnce('ExponentPushToken[token]');
     axios.get.mockResolvedValueOnce({
       data: { usuario: { uid: 'u1', tipo_usuario: 'paciente', nombre: 'Ana' } },
     });
@@ -156,11 +151,7 @@ describe('InicioSesion screen', () => {
       JSON.stringify({ uid: 'u1', tipo_usuario: 'paciente', nombre: 'Ana' })
     );
     expect(global.localStorage.setItem).toHaveBeenCalledWith('userToken', 'firebase-token');
-    expect(enviarPushTokenAlBackend).toHaveBeenCalledWith({
-      token: 'ExponentPushToken[token]',
-      firebaseToken: 'firebase-token',
-      platform: 'web',
-    });
+    expect(registrarDispositivoParaNotificaciones).toHaveBeenCalledWith('firebase-token');
 
     act(() => {
       jest.advanceTimersByTime(800);

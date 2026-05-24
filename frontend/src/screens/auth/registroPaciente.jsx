@@ -9,7 +9,7 @@ import * as SecureStore from 'expo-secure-store';
 import { getStyles } from '../../style/styles';
 import { useAccesibilidad } from '../../services/accesibilidadContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { registerForPushNotificationsAsync, enviarPushTokenAlBackend } from '../../services/notificacionesService';
+import { registrarDispositivoParaNotificaciones } from '../../services/notificacionesService';
 
 const API = `${process.env.EXPO_PUBLIC_IP}`;
 
@@ -51,18 +51,6 @@ export default function RegistroPaciente({ navigation }) {
       const user = userCredential.user;
       const idToken = await user.getIdToken();
 
-      // Registrar push token del dispositivo
-        try {
-          const expoPushToken = await registerForPushNotificationsAsync();
-          await enviarPushTokenAlBackend({
-            token: expoPushToken,
-            firebaseToken: idToken,
-            platform: Platform.OS,
-          });
-        } catch (pushError) {
-          console.log('No se pudo registrar push token:', pushError.message);
-        }      
-
       // 2. Guardar token localmente
       await setToken('userToken', idToken);
 
@@ -85,6 +73,12 @@ export default function RegistroPaciente({ navigation }) {
       };
 
       await AsyncStorage.setItem('user', JSON.stringify(perfilUsuario));
+
+      try {
+        await registrarDispositivoParaNotificaciones(idToken);
+      } catch (pushError) {
+        console.log('No se pudo registrar push token:', pushError.message);
+      }
       // -----------------------------------------------------
 
       setLoading(false);

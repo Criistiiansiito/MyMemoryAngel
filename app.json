@@ -27,6 +27,17 @@
         "foregroundImage": "./frontend/assets/icons/adaptive-icon-2.png",
         "backgroundColor": "#ffffff"
       },
+      "permissions": [
+        "CAMERA",
+        "INTERNET",
+        "MODIFY_AUDIO_SETTINGS",
+        "POST_NOTIFICATIONS",
+        "READ_EXTERNAL_STORAGE",
+        "RECORD_AUDIO",
+        "VIBRATE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "googleServicesFile": "./google-services.json",
       "edgeToEdgeEnabled": true,
       "package": "com.criistiian.mymemoryangel"
     },
@@ -39,7 +50,8 @@
         "expo-notifications",
         {
           "icon": "./frontend/assets/icons/adaptive-icon.png",
-          "color": "#4D6BFE"
+          "color": "#4D6BFE",
+          "defaultChannel": "default"
         }
       ]
     ],
